@@ -2,31 +2,31 @@ fileFormatVersion: 2
 guid: a05eff2631f130740b57abbb7183b75c
 TextureImporter:
   fileIDToRecycleName:
-    21300000: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_0"
-    21300002: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_1"
-    21300004: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_2"
-    21300006: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_3"
-    21300008: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_4"
-    21300010: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_6"
-    21300012: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_7"
-    21300014: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_8"
-    21300016: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_9"
-    21300018: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_10"
-    21300020: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_11"
-    21300022: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_12"
-    21300024: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_13"
-    21300026: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_14"
-    21300028: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_15"
-    21300030: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_5"
-    21300032: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_16"
-    21300034: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_17"
-    21300036: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_18"
-    21300038: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_19"
-    21300040: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_20"
-    21300042: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_21"
-    21300044: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_22"
-    21300046: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_23"
-    21300048: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_24"
+    21300000: buttonNletterBullet_0
+    21300002: buttonNletterBullet_1
+    21300004: buttonNletterBullet_2
+    21300006: buttonNletterBullet_3
+    21300008: buttonNletterBullet_4
+    21300010: buttonNletterBullet_6
+    21300012: buttonNletterBullet_7
+    21300014: buttonNletterBullet_8
+    21300016: buttonNletterBullet_9
+    21300018: buttonNletterBullet_10
+    21300020: buttonNletterBullet_11
+    21300022: buttonNletterBullet_12
+    21300024: buttonNletterBullet_13
+    21300026: buttonNletterBullet_14
+    21300028: buttonNletterBullet_15
+    21300030: buttonNletterBullet_5
+    21300032: buttonNletterBullet_16
+    21300034: buttonNletterBullet_17
+    21300036: buttonNletterBullet_18
+    21300038: buttonNletterBullet_19
+    21300040: buttonNletterBullet_20
+    21300042: buttonNletterBullet_21
+    21300044: buttonNletterBullet_22
+    21300046: buttonNletterBullet_23
+    21300048: buttonNletterBullet_24
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -118,7 +118,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_0"
+      name: buttonNletterBullet_0
       rect:
         serializedVersion: 2
         x: 0
@@ -138,7 +138,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_1"
+      name: buttonNletterBullet_1
       rect:
         serializedVersion: 2
         x: 125
@@ -158,7 +158,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_2"
+      name: buttonNletterBullet_2
       rect:
         serializedVersion: 2
         x: 250
@@ -178,7 +178,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_3"
+      name: buttonNletterBullet_3
       rect:
         serializedVersion: 2
         x: 0
@@ -198,7 +198,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_4"
+      name: buttonNletterBullet_4
       rect:
         serializedVersion: 2
         x: 125
@@ -218,7 +218,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_6"
+      name: buttonNletterBullet_6
       rect:
         serializedVersion: 2
         x: 0
@@ -238,7 +238,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_7"
+      name: buttonNletterBullet_7
       rect:
         serializedVersion: 2
         x: 125
@@ -258,7 +258,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_8"
+      name: buttonNletterBullet_8
       rect:
         serializedVersion: 2
         x: 250
@@ -278,7 +278,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_9"
+      name: buttonNletterBullet_9
       rect:
         serializedVersion: 2
         x: 0
@@ -298,7 +298,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_10"
+      name: buttonNletterBullet_10
       rect:
         serializedVersion: 2
         x: 125
@@ -318,7 +318,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_11"
+      name: buttonNletterBullet_11
       rect:
         serializedVersion: 2
         x: 250
@@ -338,7 +338,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_12"
+      name: buttonNletterBullet_12
       rect:
         serializedVersion: 2
         x: 0
@@ -358,7 +358,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_13"
+      name: buttonNletterBullet_13
       rect:
         serializedVersion: 2
         x: 125
@@ -378,7 +378,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_14"
+      name: buttonNletterBullet_14
       rect:
         serializedVersion: 2
         x: 136
@@ -398,7 +398,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_15"
+      name: buttonNletterBullet_15
       rect:
         serializedVersion: 2
         x: 140
@@ -418,7 +418,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_5"
+      name: buttonNletterBullet_5
       rect:
         serializedVersion: 2
         x: 258
@@ -438,7 +438,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_16"
+      name: buttonNletterBullet_16
       rect:
         serializedVersion: 2
         x: 260
@@ -458,7 +458,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_17"
+      name: buttonNletterBullet_17
       rect:
         serializedVersion: 2
         x: 260
@@ -478,7 +478,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_18"
+      name: buttonNletterBullet_18
       rect:
         serializedVersion: 2
         x: 286
@@ -498,11 +498,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_19"
+      name: buttonNletterBullet_19
       rect:
         serializedVersion: 2
-        x: 314
-        y: 443
+        x: 313
+        y: 444
         width: 20
         height: 20
       alignment: 0
@@ -518,7 +518,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_20"
+      name: buttonNletterBullet_20
       rect:
         serializedVersion: 2
         x: 343
@@ -538,7 +538,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_21"
+      name: buttonNletterBullet_21
       rect:
         serializedVersion: 2
         x: 261
@@ -558,7 +558,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_22"
+      name: buttonNletterBullet_22
       rect:
         serializedVersion: 2
         x: 285
@@ -578,7 +578,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_23"
+      name: buttonNletterBullet_23
       rect:
         serializedVersion: 2
         x: 314
@@ -598,7 +598,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uBC84\uD2BC\uB4E4\uACFC\uB9D0\uD0C4\uD658_24"
+      name: buttonNletterBullet_24
       rect:
         serializedVersion: 2
         x: 343

@@ -4,19 +4,16 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - unit
   - floor
   - door
   - ladder
   - wall
   - item
   - UI
-  - UI_JumpButton
-  - UI_AttackButton
-  - UI_SkillButton
-  - UI_Attack
-  - UI_AttackText
   - Shield
+  - enemy1
+  - enemy2
+  - floor_middle
   layers:
   - Default
   - TransparentFX

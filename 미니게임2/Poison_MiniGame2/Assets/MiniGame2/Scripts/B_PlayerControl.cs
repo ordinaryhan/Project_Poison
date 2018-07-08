@@ -40,12 +40,10 @@ public class B_PlayerControl : MonoBehaviour {
     public int AttackLimit = 15;
     public Collider2D shield;
     public int ShieldLimit = 5;
-    public Transform center;
-    private Collider2D ThisCollider;
     public GameObject playerShield;
     // 애니메이션을 위한
     private Animator myAnimator;
-    // UIAttackManager관련
+    // UIManager관련
     public B_UIManager UIM;
 
     // 체력 체크
@@ -68,7 +66,7 @@ public class B_PlayerControl : MonoBehaviour {
     }
 
     [SerializeField]
-    private static float _Health = 100f;
+    private static float _Health = 600f;
     // Use this for initialization
     private void Awake()
     {
@@ -76,7 +74,6 @@ public class B_PlayerControl : MonoBehaviour {
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
         myAnimator = GetComponent<Animator>();
-        ThisCollider = GetComponent<Collider2D>();
 
         playerShield.SetActive(false);
 
