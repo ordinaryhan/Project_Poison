@@ -16,6 +16,7 @@ TagManager:
   - UI_SkillButton
   - UI_Attack
   - UI_AttackText
+  - Shield
   layers:
   - Default
   - TransparentFX

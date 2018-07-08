@@ -22,24 +22,31 @@ public class B_PlayerControl : MonoBehaviour {
     public float JumpPower = 600;
     public float JumpTimeOut = 1f;
     public float bulletSpeed = 500f;
-    public float bulletTimeOut = 1f;
-    // 현재 점프/공격할 수 있는지 여부
+    public float bulletTimeOut = 3f;
+    public float shieldTimeOut = 3f;
+    // 현재 점프/공격/방어할 수 있는지 여부
     private bool CanJump = true;
     private bool CanAttack = true;
+    private bool CanShield = true;
     // 플레이어를 조종할 수 있는지 여부
     public bool CanControl = true;
     public static B_PlayerControl PlayerInstance = null;
     // 주 입력 축
     public string HorzAxis = "Horizontal";
     public string JumpButton = "Jump";
-    // 공격을 위한
+    // 공격/방어를 위한
     public Transform barrel;
     public Rigidbody2D bullet;
     public int AttackLimit = 15;
+    public Collider2D shield;
+    public int ShieldLimit = 5;
+    public Transform center;
+    private Collider2D ThisCollider;
+    public GameObject playerShield;
     // 애니메이션을 위한
     private Animator myAnimator;
     // UIAttackManager관련
-    public B_AttackLimit UIM;
+    public B_UIManager UIM;
 
     // 체력 체크
     public static float Health
@@ -65,10 +72,13 @@ public class B_PlayerControl : MonoBehaviour {
     // Use this for initialization
     private void Awake()
     {
-        // transform과 rigidbody를 얻는다.
+        // 이 객체의 정보들을 담는다.
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
         myAnimator = GetComponent<Animator>();
+        ThisCollider = GetComponent<Collider2D>();
+
+        playerShield.SetActive(false);
 
         // 정적 인스턴스를 설정한다.
         PlayerInstance = this;
@@ -139,17 +149,19 @@ public class B_PlayerControl : MonoBehaviour {
     // 공격
     public void Attack()
     {
+        if (AttackLimit <= 0 || !CanAttack)
+            return;
+
         if (AttackLimit > 0 && CanAttack)
         {
+            CanAttack = false;
             myAnimator.SetTrigger("Attack");
-            if (AttackLimit > 0 && CanAttack)
-                new WaitForSeconds(3);
-            var firedBullet = Instantiate(bullet, barrel.position, barrel.rotation);
-            firedBullet.AddForce(barrel.up * bulletSpeed);
+            new WaitForSeconds(3);
+            var waterBullet = Instantiate(bullet, barrel.position, barrel.rotation);
+            waterBullet.AddForce(barrel.up * bulletSpeed);
             AttackLimit--;
             UIM.Attack();
         }
-        CanAttack = false;
         Invoke("ActivateBullet", bulletTimeOut);
     }
 
@@ -157,6 +169,29 @@ public class B_PlayerControl : MonoBehaviour {
     private void ActivateBullet()
     {
         CanAttack = true;
+    }
+
+    // 방어
+    public void Shield()
+    {
+        if (ShieldLimit <= 0 || !CanShield)
+            return;
+
+        if (ShieldLimit > 0 && CanShield)
+        {
+            CanShield = false;
+            playerShield.SetActive(true);
+            ShieldLimit--;
+            UIM.Shield();
+        }
+        Invoke("ActivateShield", shieldTimeOut);
+    }
+
+    // 방어 딜레이. 제한 시간이 지나야 CanJump 변수를 활성화한다.
+    private void ActivateShield()
+    {
+        CanShield = true;
+        playerShield.SetActive(false);
     }
 
 
@@ -178,6 +213,7 @@ public class B_PlayerControl : MonoBehaviour {
         // 필요한 경우 방향을 바꾼다.
         if ((Horz < 0f && Facing != FaceDirection.FaceLeft) || (Horz > 0f && Facing != FaceDirection.FaceRight))
             FlipDirection();
+            
     }
 
     private void OnDestroy()
