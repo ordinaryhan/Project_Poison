@@ -15,12 +15,14 @@ public class B_EnemyMovement : MonoBehaviour {
     // 속도 변수
     public float Speed = 10f;
     public float bulletSpeed = 500;
-    public float bulletTimeOut = 1.5f;
+    [SerializeField]
+    public float[] bulletTimeOut;
     // 공격/방어를 위한
-    public Transform barrel;
+    public Transform[] barrel;
     public Rigidbody2D[] bullet;
     public B_PlayerControl target;
-    private bool CanAttack = true;
+    private bool enemy1_CanAttack = true;
+    private bool enemy2_CanAttack = true;
     // 애니메이션을 위한
     private Animator myAnimator;
     // 이동 관련
@@ -79,6 +81,8 @@ public class B_EnemyMovement : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+
+        // enemy1의 이동 기본 패턴
         if (ThisName.Equals("enemy1"))
         {
             if (flag)
@@ -88,27 +92,74 @@ public class B_EnemyMovement : MonoBehaviour {
                 transform.position = new Vector2(posX, posY);
                 angle = angle + Time.deltaTime * angularSpeed;
             }
+        }
+        // enemy2의 이동 기본 패턴
+        else if (ThisName.Equals("enemy2"))
+        {
+            if (flag)
+            {
+                posX = rotationCenter[0].position.x - Mathf.Cos(angle) * rotationRadius;
+                posY = rotationCenter[0].position.y - Mathf.Sin(angle) * rotationRadius;
+                transform.position = new Vector2(posX, posY);
+                angle = angle + Time.deltaTime * angularSpeed;
+            }
 
-            if (target.GetComponent<Transform>().position.x - transform.position.x > 0)
+            if (enemy2_CanAttack)
             {
-                if(Facing == FaceDirection.FaceLeft)
-                    FlipDirection();
+                enemy2_CanAttack = false;
+                StartCoroutine(Enemy2_Attack());
             }
-            else
-            {
-                if (Facing == FaceDirection.FaceRight)
-                    FlipDirection();
-            }
+        }
+
+        // target(플레이어)가 있는 방향으로 고개를 돌림
+        if (target.GetComponent<Transform>().position.x - transform.position.x > 0)
+        {
+            if (Facing == FaceDirection.FaceLeft)
+                FlipDirection();
+        }
+        else
+        {
+            if (Facing == FaceDirection.FaceRight)
+                FlipDirection();
         }
 
     }
 
+    // enemy2 공격 함수
+    IEnumerator Enemy2_Attack()
+    {
+        // barrel 방향으로 말탄환을 날린다.
+        Vector2 barrelDir;
+        Vector2 Dir;
+        flag = false;
+        // 상하좌우+대각선4방향으로 말탄환을 날린다.
+        for (int k = 0; k < 8; k++)
+        {
+            barrelDir = barrel[k].position;
+            Dir = barrelDir - (Vector2)transform.position;
+            var letterBullets = Instantiate(bullet[k], barrel[k].position, barrel[k].rotation);
+            yield return new WaitForSecondsRealtime(0.1f);
+            letterBullets.GetComponent<B_DestroyInTime>().MoveBullet(Dir, bulletSpeed, 1.5f - 0.025f*k);
+        }
+        myAnimator.SetTrigger("Attack");
+        yield return new WaitForSecondsRealtime(1f);
+        Invoke("setFlag", 0.8f);
+        Invoke("ActivateBullets", bulletTimeOut[Random.Range(0, bulletTimeOut.Length)]);
+    }
+
+    // enemy2 공격 딜레이
+    private void ActivateBullets()
+    {
+        enemy2_CanAttack = true;
+    }
+
+    // enemy1의 이동 경로 조작. 네 개의 원의 교차점에서는 잠시 멈춰 공격을 날리고 다른 원을 따라 움직이는 것을 반복한다.
     public void Change_i()
     {
         flag = false;
         i = (i + 1) % 4;
         angle -= 1.47f;
-        Attack();
+        Enemy1_Attack();
         Invoke("setFlag", 0.8f);
     }
 
@@ -117,34 +168,34 @@ public class B_EnemyMovement : MonoBehaviour {
         flag = true;
     }
 
-    // 공격
-    public void Attack()
+    // enemy1 공격 함수
+    public void Enemy1_Attack()
     {
-        if (!CanAttack)
+        if (!enemy1_CanAttack)
             return;
-        Vector3 LocalScale = barrel.localScale;
-        LocalScale.x = -Mathf.Abs(LocalScale.x);
-        barrel.localScale = LocalScale;
-        CanAttack = false;
+        
+        enemy1_CanAttack = false;
         myAnimator.SetTrigger("Attack");
-        new WaitForSeconds(1);
+        new WaitForSeconds(2f);
+        // target(플레이어) 방향으로 말탄환을 날린다.
         Vector2 targetDir = target.GetComponent<Transform>().position;
         Vector2 Dir = targetDir - (Vector2) transform.position;
         if (Facing == FaceDirection.FaceLeft)
-            digree = Mathf.Atan2(barrel.position.y - targetDir.y, barrel.position.x - targetDir.x) * 180f / Mathf.PI;
+            digree = Mathf.Atan2(barrel[0].position.y - targetDir.y, barrel[0].position.x - targetDir.x) * 180f / Mathf.PI;
         else
-            digree = - Mathf.Atan2(barrel.position.y - targetDir.y, barrel.position.x - targetDir.x) * 180f / Mathf.PI + 180;
-        barrel.Rotate(0, 0, digree);
-        var letterBullet = Instantiate(bullet[Random.Range(0, bullet.Length)], barrel.position, barrel.rotation);
-            letterBullet.AddForce(Dir.normalized * bulletSpeed);
-        Invoke("ActivateBullet", bulletTimeOut);
+            digree = - Mathf.Atan2(barrel[0].position.y - targetDir.y, barrel[0].position.x - targetDir.x) * 180f / Mathf.PI + 180;
+        barrel[0].Rotate(0, 0, digree);
+        var letterBullet = Instantiate(bullet[Random.Range(0, bullet.Length)], barrel[0].position, barrel[0].rotation);
+        letterBullet.AddForce(Dir.normalized * bulletSpeed);
+        // 공격 딜레이
+        Invoke("ActivateBullet", bulletTimeOut[0]);
     }
 
-    // 공격 딜레이. 제한 시간이 지나야 CanJump 변수를 활성화한다.
+    // enemy1 공격 딜레이. 제한 시간이 지나야 CanJump 변수를 활성화한다.
     private void ActivateBullet()
     {
-        CanAttack = true;
-        barrel.Rotate(0, 0, -digree);
+        enemy1_CanAttack = true;
+        barrel[0].Rotate(0, 0, -digree);
     }
 
     // 적이 클리어된 경우
