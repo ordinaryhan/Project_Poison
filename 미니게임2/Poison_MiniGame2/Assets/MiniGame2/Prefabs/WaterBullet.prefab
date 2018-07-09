@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114377490221269450}
   m_Layer: 0
   m_Name: WaterBullet
-  m_TagString: Untagged
+  m_TagString: waterbullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -90,6 +90,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyTime: 2
+  GroundLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!212 &212318472608675294
 SpriteRenderer:
   m_ObjectHideFlags: 1

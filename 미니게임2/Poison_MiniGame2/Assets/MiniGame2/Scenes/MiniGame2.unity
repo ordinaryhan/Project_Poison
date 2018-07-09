@@ -1445,7 +1445,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 363921792}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.98, y: 8.89, z: 0}
+  m_LocalPosition: {x: -3.76, y: -4.78, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 0}
   m_Children:
   - {fileID: 98268432}
@@ -2042,7 +2042,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7.733
+  orthographic size: 5.733
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2609,7 +2609,7 @@ MonoBehaviour:
   Facing: 1
   Speed: 10
   bulletSpeed: 500
-  bulletTimeOut: 3
+  bulletTimeOut: 1.5
   barrel: {fileID: 469314500}
   bullet:
   - {fileID: 50795374066525170, guid: 66526799697d7e4459abe594e1ea0f5a, type: 2}

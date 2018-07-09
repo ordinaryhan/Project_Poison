@@ -17,6 +17,7 @@ public class B_OnTrigger : MonoBehaviour {
         {
             target.Change_i();
         }
+
     }
 
 }
