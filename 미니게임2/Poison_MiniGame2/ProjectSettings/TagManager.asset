@@ -15,6 +15,7 @@ TagManager:
   - enemy2
   - floor_middle
   - waterbullet
+  - letterbullet
   layers:
   - Default
   - TransparentFX

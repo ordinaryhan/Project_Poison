@@ -19,43 +19,28 @@ public class B_EnemyMovement : MonoBehaviour {
     public float[] bulletTimeOut;
     // 공격/방어를 위한
     public Transform[] barrel;
-    public Rigidbody2D[] bullet;
+    public Transform[] bullet;
+    public float destroyTime = 1f;
     public B_PlayerControl target;
+    private Transform targetTransform;
     private bool enemy1_CanAttack = true;
     private bool enemy2_CanAttack = true;
     // 애니메이션을 위한
     private Animator myAnimator;
+    public GameObject waterball;
     // 이동 관련
     [SerializeField]
     public Transform[] rotationCenter;
     public float rotationRadius = 2f, angularSpeed = 2f;
-    float posX, posY, angle = -1f, temp0 = 0, temp1 = 0;
+    float posX, posY, angle = -1f, temp0 = 0, temp1 = 0, digree;
     int i = 0;
     bool flag = true;
-    float digree;
+    Vector2 targetDir, Dir;
     Vector3 position0 = new Vector3(-8.48f, -1.224f, 0f);
+    //  체력 5칸
+    public int Health = 5;
+    public B_UIManager UIM;
 
-    // 체력 체크
-    public static float Health
-    {
-        get
-        {
-            return _Health;
-        }
-
-        set
-        {
-            _Health = value;
-            // 캐릭터가 죽은 경우 게임을 끝낸다.
-            if (_Health <= 0)
-            {
-                Clear();
-            }
-        }
-    }
-
-    [SerializeField]
-    private static float _Health = 5f;  // 체력 5칸
     // Use this for initialization
     private void Awake()
     {
@@ -64,10 +49,12 @@ public class B_EnemyMovement : MonoBehaviour {
         ThisTransform = GetComponent<Transform>();
         myAnimator = GetComponent<Animator>();
         ThisName = ThisTransform.tag;
-        // enemy1의 초기위치 설정(Floor_middle 중앙에서 시작)
-        if (ThisName.Equals("enemy1"))
-            ThisTransform.position = position0;
-        
+        targetTransform = target.GetComponent<Transform>();
+        for (int i = 0; i < bullet.Length; i++)
+        {
+            bullet[i].gameObject.SetActive(false);
+        }
+        waterball.SetActive(false);
     }
 
     // 캐릭터 방향을 바꾼다.
@@ -112,7 +99,7 @@ public class B_EnemyMovement : MonoBehaviour {
         }
 
         // target(플레이어)가 있는 방향으로 고개를 돌림
-        if (target.GetComponent<Transform>().position.x - transform.position.x > 0)
+        if (targetTransform.position.x - transform.position.x > 0)
         {
             if (Facing == FaceDirection.FaceLeft)
                 FlipDirection();
@@ -128,18 +115,17 @@ public class B_EnemyMovement : MonoBehaviour {
     // enemy2 공격 함수
     IEnumerator Enemy2_Attack()
     {
-        // barrel 방향으로 말탄환을 날린다.
-        Vector2 barrelDir;
-        Vector2 Dir;
         flag = false;
         // 상하좌우+대각선4방향으로 말탄환을 날린다.
         for (int k = 0; k < 8; k++)
         {
-            barrelDir = barrel[k].position;
-            Dir = barrelDir - (Vector2)transform.position;
-            var letterBullets = Instantiate(bullet[k], barrel[k].position, barrel[k].rotation);
+            targetDir = barrel[k].position;
+            Dir = targetDir - (Vector2)transform.position;
+            bullet[k].gameObject.SetActive(true);
+            bullet[k].position = barrel[k].position;
+            bullet[k].rotation = barrel[k].rotation;
             yield return new WaitForSecondsRealtime(0.1f);
-            letterBullets.GetComponent<B_DestroyInTime>().MoveBullet(Dir, bulletSpeed, 1.5f - 0.025f*k);
+            bullet[k].GetComponent<B_DestroyInTime>().MoveBullet(Dir, bulletSpeed, 1.5f - 0.025f*k);
         }
         myAnimator.SetTrigger("Attack");
         yield return new WaitForSecondsRealtime(1f);
@@ -176,17 +162,20 @@ public class B_EnemyMovement : MonoBehaviour {
         
         enemy1_CanAttack = false;
         myAnimator.SetTrigger("Attack");
-        new WaitForSeconds(2f);
         // target(플레이어) 방향으로 말탄환을 날린다.
-        Vector2 targetDir = target.GetComponent<Transform>().position;
-        Vector2 Dir = targetDir - (Vector2) transform.position;
+        targetDir = targetTransform.position;
+        Dir = targetDir - (Vector2) transform.position;
         if (Facing == FaceDirection.FaceLeft)
             digree = Mathf.Atan2(barrel[0].position.y - targetDir.y, barrel[0].position.x - targetDir.x) * 180f / Mathf.PI;
         else
             digree = - Mathf.Atan2(barrel[0].position.y - targetDir.y, barrel[0].position.x - targetDir.x) * 180f / Mathf.PI + 180;
         barrel[0].Rotate(0, 0, digree);
-        var letterBullet = Instantiate(bullet[Random.Range(0, bullet.Length)], barrel[0].position, barrel[0].rotation);
-        letterBullet.AddForce(Dir.normalized * bulletSpeed);
+        int k = Random.Range(0, bullet.Length);
+        bullet[k].gameObject.SetActive(true);
+        bullet[k].GetComponent<B_DestroyInTime>().Invoke("Delete", destroyTime);
+        bullet[k].position = barrel[0].position;
+        bullet[k].rotation = barrel[0].rotation;
+        bullet[k].GetComponent<Rigidbody2D>().AddForce(Dir.normalized * bulletSpeed);
         // 공격 딜레이
         Invoke("ActivateBullet", bulletTimeOut[0]);
     }
@@ -196,6 +185,27 @@ public class B_EnemyMovement : MonoBehaviour {
     {
         enemy1_CanAttack = true;
         barrel[0].Rotate(0, 0, -digree);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag.Equals("waterbullet") && Health != 0)
+        {
+            Health--;
+            if(transform.tag.Equals("enemy1"))
+                UIM.HitEnemy1();
+            else if(transform.tag.Equals("enemy2"))
+                UIM.HitEnemy2();
+            waterball.SetActive(true);
+            flag = false;
+            Invoke("setFlagAndBall", 2f);
+        }
+    }
+
+    private void setFlagAndBall()
+    {
+        flag = true;
+        waterball.SetActive(false);
     }
 
     // 적이 클리어된 경우

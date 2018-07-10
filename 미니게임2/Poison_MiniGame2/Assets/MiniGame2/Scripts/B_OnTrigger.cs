@@ -18,6 +18,17 @@ public class B_OnTrigger : MonoBehaviour {
             target.Change_i();
         }
 
+        if (collision.tag.Equals("letterbullet") && transform.tag.Equals("Shield"))
+        {
+            collision.gameObject.SetActive(false);
+            Invoke("ActiveOff", 1);
+        }
+
+    }
+
+    private void ActiveOff()
+    {
+        transform.gameObject.SetActive(false);
     }
 
 }

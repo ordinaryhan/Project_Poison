@@ -36,7 +36,7 @@ public class B_PlayerControl : MonoBehaviour {
     public string JumpButton = "Jump";
     // 공격/방어를 위한
     public Transform barrel;
-    public Rigidbody2D bullet;
+    public Transform bullet;
     public int AttackLimit = 15;
     public Collider2D shield;
     public int ShieldLimit = 5;
@@ -45,28 +45,9 @@ public class B_PlayerControl : MonoBehaviour {
     private Animator myAnimator;
     // UIManager관련
     public B_UIManager UIM;
-
     // 체력 체크
-    public static float Health
-    {
-        get
-        {
-            return _Health;
-        }
+    public int Health = 600;
 
-        set
-        {
-            _Health = value;
-            // 캐릭터가 죽은 경우 게임을 끝낸다.
-            if(_Health <= 0)
-            {
-                Die();
-            }
-        }
-    }
-
-    [SerializeField]
-    private static float _Health = 600f;
     // Use this for initialization
     private void Awake()
     {
@@ -76,6 +57,7 @@ public class B_PlayerControl : MonoBehaviour {
         myAnimator = GetComponent<Animator>();
 
         playerShield.SetActive(false);
+        bullet.gameObject.SetActive(false);
 
         // 정적 인스턴스를 설정한다.
         PlayerInstance = this;
@@ -85,7 +67,7 @@ public class B_PlayerControl : MonoBehaviour {
     private bool GetGrounded()
     {
         // 바닥을 확인한다
-        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(transform.position.x - 1f, transform.position.y - 1f),
+        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(transform.position.x - 1.2f, transform.position.y - 1.2f),
             new Vector2(transform.position.x, transform.position.y), GroundLayer);
         if (HitColliders.Length > 0)
             return true;
@@ -154,8 +136,10 @@ public class B_PlayerControl : MonoBehaviour {
             CanAttack = false;
             myAnimator.SetTrigger("Attack");
             new WaitForSeconds(3);
-            var waterBullet = Instantiate(bullet, barrel.position, barrel.rotation);
-            waterBullet.AddForce(barrel.up * bulletSpeed);
+            bullet.gameObject.SetActive(true);
+            bullet.position = barrel.position;
+            bullet.rotation = barrel.rotation;
+            bullet.GetComponent<Rigidbody2D>().AddForce(barrel.up * bulletSpeed);
             AttackLimit--;
             UIM.Attack();
         }
@@ -218,16 +202,30 @@ public class B_PlayerControl : MonoBehaviour {
         PlayerInstance = null;
     }
 
+    // 말탄환에 맞거나 enemy와 충돌했을 경우
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (Health != 0)
+        {
+            if (collision.tag.Equals("letterbullet"))
+            {
+                int damage = collision.GetComponent<B_DestroyInTime>().power;
+                Health -= damage;
+                UIM.HitPlayer(damage);
+            }
+
+            if (collision.tag.Equals("enemy1") || collision.tag.Equals("enemy2"))
+            {
+                Health -= 30;
+                UIM.HitPlayer(30);
+            }
+        }
+    }
+
     // 플레이어를 죽이는 함수
     static void Die()
     {
         Destroy(B_PlayerControl.PlayerInstance.gameObject);
-    }
-
-    // 플레이어를 기본 상태로 재설정한다.
-    public static void Reset()
-    {
-        Health = 100f;
     }
 
 }
