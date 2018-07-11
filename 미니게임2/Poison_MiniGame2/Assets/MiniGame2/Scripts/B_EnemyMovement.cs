@@ -8,10 +8,10 @@ public class B_EnemyMovement : MonoBehaviour {
     // 바라보는 방향
     public enum FaceDirection { FaceLeft = -1, FaceRight = 1 };
     public FaceDirection Facing = FaceDirection.FaceRight;
-    // rigidbody에 대한 참조
+    // 이 객체에 대한 참조
     private Rigidbody2D ThisBody = null;
-    // transform에 대한 참조
     private Transform ThisTransform = null;
+    private Collider2D ThisCollider = null;
     // 속도 변수
     public float Speed = 10f;
     public float bulletSpeed = 500;
@@ -32,14 +32,16 @@ public class B_EnemyMovement : MonoBehaviour {
     [SerializeField]
     public Transform[] rotationCenter;
     public float rotationRadius = 2f, angularSpeed = 2f;
-    float posX, posY, angle = -1f, temp0 = 0, temp1 = 0, digree;
+    float posX, posY, angle = -1f, digree;
     int i = 0;
     bool flag = true;
     Vector2 targetDir, Dir;
-    Vector3 position0 = new Vector3(-8.48f, -1.224f, 0f);
     //  체력 5칸
     public int Health = 5;
     public B_UIManager UIM;
+    // 클리어 관련
+    public GameObject ClearEnemy;
+    public GameObject HitMessage;
 
     // Use this for initialization
     private void Awake()
@@ -47,6 +49,7 @@ public class B_EnemyMovement : MonoBehaviour {
         // 이 객체의 정보들을 담는다.
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
+        ThisCollider = GetComponent<Collider2D>();
         myAnimator = GetComponent<Animator>();
         ThisName = ThisTransform.tag;
         targetTransform = target.GetComponent<Transform>();
@@ -55,6 +58,8 @@ public class B_EnemyMovement : MonoBehaviour {
             bullet[i].gameObject.SetActive(false);
         }
         waterball.SetActive(false);
+        ClearEnemy.SetActive(false);
+        HitMessage.SetActive(false);
     }
 
     // 캐릭터 방향을 바꾼다.
@@ -67,8 +72,7 @@ public class B_EnemyMovement : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
-
+    void FixedUpdate () {
         // enemy1의 이동 기본 패턴
         if (ThisName.Equals("enemy1"))
         {
@@ -197,21 +201,35 @@ public class B_EnemyMovement : MonoBehaviour {
             else if(transform.tag.Equals("enemy2"))
                 UIM.HitEnemy2();
             waterball.SetActive(true);
+            HitMessage.SetActive(true);
             flag = false;
-            Invoke("setFlagAndBall", 2f);
+            if(Health > 0)
+                Invoke("SetFlagAndBall", 2f);
+            else
+                Invoke("SetFlagAndBall", 1.5f);
         }
     }
 
-    private void setFlagAndBall()
+    private void SetFlagAndBall()
     {
-        flag = true;
         waterball.SetActive(false);
+        HitMessage.SetActive(false);
+        if (Health > 0)
+            flag = true;
+        else
+            Clear();
     }
 
     // 적이 클리어된 경우
-    static void Clear()
+    public void Clear()
     {
-        
+        ClearEnemy.GetComponent<Transform>().position = new Vector2(transform.position.x, transform.position.y - 1.2f);
+        ClearEnemy.SetActive(true);
+        if (gameObject.tag.Equals("enemy1"))
+            UIM.flag1 = false;
+        else if (gameObject.tag.Equals("enemy2"))
+            UIM.flag2 = false;
+        gameObject.SetActive(false);
     }
 
 }

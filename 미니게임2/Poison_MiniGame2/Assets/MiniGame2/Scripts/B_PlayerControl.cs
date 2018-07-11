@@ -47,6 +47,7 @@ public class B_PlayerControl : MonoBehaviour {
     public B_UIManager UIM;
     // 체력 체크
     public int Health = 600;
+    bool HitFlag = true;
 
     // Use this for initialization
     private void Awake()
@@ -58,9 +59,7 @@ public class B_PlayerControl : MonoBehaviour {
 
         playerShield.SetActive(false);
         bullet.gameObject.SetActive(false);
-
-        // 정적 인스턴스를 설정한다.
-        PlayerInstance = this;
+        
     }
 
     // 플레이어가 착지 상태인지 여부를 반환한다.
@@ -175,18 +174,12 @@ public class B_PlayerControl : MonoBehaviour {
         playerShield.SetActive(false);
     }
 
-
     // Update is called once per frame
     private void FixedUpdate()
     {
-        // 캐릭터를 조종할 수 없으면 종료한다.
-        if (!CanControl || Health <= 0f)
-            return;
-
-        // 점프
+        //점프
         isGrounded = GetGrounded();
         float Horz = CrossPlatformInputManager.GetAxis(HorzAxis);
-        ThisBody.AddForce(Vector2.right * Horz * MaxSpeed);
 
         // 속도를 제한한다.
         ThisBody.velocity = new Vector2(Mathf.Clamp(ThisBody.velocity.x, -MaxSpeed, MaxSpeed), Mathf.Clamp(ThisBody.velocity.y, -Mathf.Infinity, JumpPower));
@@ -197,29 +190,35 @@ public class B_PlayerControl : MonoBehaviour {
             
     }
 
-    private void OnDestroy()
-    {
-        PlayerInstance = null;
-    }
-
     // 말탄환에 맞거나 enemy와 충돌했을 경우
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (Health != 0)
+        if (Health != 0 && HitFlag && !shield.isActiveAndEnabled)
         {
             if (collision.tag.Equals("letterbullet"))
             {
+                HitFlag = false;
                 int damage = collision.GetComponent<B_DestroyInTime>().power;
                 Health -= damage;
                 UIM.HitPlayer(damage);
+                myAnimator.SetTrigger("Hit");
+                Invoke("HitFlagOn", 2f);
             }
 
             if (collision.tag.Equals("enemy1") || collision.tag.Equals("enemy2"))
             {
+                HitFlag = false;
                 Health -= 30;
                 UIM.HitPlayer(30);
+                myAnimator.SetTrigger("Hit");
+                Invoke("HitFlagOn", 1f);
             }
         }
+    }
+
+    private void HitFlagOn()
+    {
+        HitFlag = true;
     }
 
     // 플레이어를 죽이는 함수

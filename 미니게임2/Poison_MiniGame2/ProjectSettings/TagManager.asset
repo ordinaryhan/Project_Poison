@@ -16,6 +16,7 @@ TagManager:
   - floor_middle
   - waterbullet
   - letterbullet
+  - PlayerCenter
   layers:
   - Default
   - TransparentFX

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class B_UIManager : MonoBehaviour {
     
     public Camera mainCame;
-    public Transform playerTarget, enemy1Target, enemy2Target;
+    public Transform playerTarget, enemy1Target, enemy2Target, clear1Target, clear2Target;
     public RectTransform attackImage, enemy1_bar, enemy2_bar;
     public Text attackLimitText1, attackLimitText2;
     public Text shieldLimitText1, shieldLimitText2;
@@ -15,6 +15,7 @@ public class B_UIManager : MonoBehaviour {
     [SerializeField]
     public int playerMaxHP = 600;
     int playerHP;
+    public bool flag1 = true, flag2 = true;
     [SerializeField]
     public int enemyMaxHP = 5;
     int enemy1HP, enemy2HP;
@@ -36,8 +37,14 @@ public class B_UIManager : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         attackImage.position = mainCame.WorldToScreenPoint(new Vector3(playerTarget.position.x, playerTarget.position.y, transform.position.z));
-        enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(enemy1Target.position.x, enemy1Target.position.y, transform.position.z));
-        enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(enemy2Target.position.x, enemy2Target.position.y, transform.position.z));
+        if (flag1)
+            enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(enemy1Target.position.x, enemy1Target.position.y, transform.position.z));
+        else
+            enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear1Target.position.x, clear1Target.position.y+0.4f, transform.position.z));
+        if (flag2)
+            enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(enemy2Target.position.x, enemy2Target.position.y, transform.position.z));
+        else
+            enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear2Target.position.x, clear2Target.position.y+0.4f, transform.position.z));
     }
 
     public void HitPlayer(int power)
