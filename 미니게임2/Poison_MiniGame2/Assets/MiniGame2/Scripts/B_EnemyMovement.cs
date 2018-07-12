@@ -35,6 +35,7 @@ public class B_EnemyMovement : MonoBehaviour {
     float posX, posY, angle = -1f, digree;
     int i = 0;
     bool flag = true;
+    bool flip = true;
     Vector2 targetDir, Dir;
     //  체력 5칸
     public int Health = 5;
@@ -69,6 +70,8 @@ public class B_EnemyMovement : MonoBehaviour {
         Vector3 LocalScale = ThisTransform.localScale;
         LocalScale.x *= -1f;
         ThisTransform.localScale = LocalScale;
+        HitMessage.GetComponent<SpriteRenderer>().flipX = flip;
+        flip = !flip;
     }
 
     // Update is called once per frame
