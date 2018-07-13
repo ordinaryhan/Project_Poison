@@ -5,32 +5,48 @@ using UnityEngine;
 public class B_OnTrigger : MonoBehaviour {
 
     public B_EnemyMovement target;
+    public Transform Camera = null;
     private Animator myAnimator;
+    string ThisTag;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         myAnimator = GetComponent<Animator>();
+        ThisTag = transform.tag;
 	}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag.Equals("floor_middle"))
+        string tag = collision.tag;
+
+        if (tag.Equals("floor_middle"))
         {
             target.Change_i();
         }
 
-        if (collision.tag.Equals("letterbullet") && transform.tag.Equals("Shield"))
+        if (tag.Equals("letterbullet") && ThisTag.Equals("Shield"))
         {
             collision.gameObject.SetActive(false);
             myAnimator.SetTrigger("break");
             Invoke("ActiveOff", 1f);
         }
 
+        if (tag.Equals("Player") && ThisTag.Equals("door0"))
+        {
+            collision.GetComponent<Transform>().position = new Vector2(-6.404f, -4.78f);
+            Camera.position = new Vector3(Camera.position.x, 0f, Camera.position.z);
+        }
+
+        if (tag.Equals("Player") && ThisTag.Equals("door1"))
+        {
+            print("*** Clear!!! ***");
+        }
+
     }
 
     private void ActiveOff()
     {
-        transform.gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
 }

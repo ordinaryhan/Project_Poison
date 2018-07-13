@@ -48,6 +48,9 @@ public class B_PlayerControl : MonoBehaviour {
     // 체력 체크
     public int Health = 600;
     bool HitFlag = true;
+    // 아이템
+    public bool isItem = false;
+    public GameObject ItemOnImage;
 
     // Use this for initialization
     private void Awake()
@@ -56,7 +59,7 @@ public class B_PlayerControl : MonoBehaviour {
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
         myAnimator = GetComponent<Animator>();
-
+        ItemOnImage.SetActive(false);
         playerShield.SetActive(false);
         bullet.gameObject.SetActive(false);
         
@@ -199,8 +202,18 @@ public class B_PlayerControl : MonoBehaviour {
             {
                 HitFlag = false;
                 int damage = collision.GetComponent<B_DestroyInTime>().power;
-                Health -= damage;
-                UIM.HitPlayer(damage);
+                // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
+                if (!isItem)
+                {
+                    Health -= damage;
+                    UIM.HitPlayer(damage);
+                }
+                // 아이템을 먹었다면, 체력이 데미지 양만큼 회복된다.
+                else
+                {
+                    Health += damage;
+                    UIM.HealPlayer(damage);
+                }
                 myAnimator.SetTrigger("Hit");
                 Invoke("HitFlagOn", 2f);
             }
@@ -208,17 +221,47 @@ public class B_PlayerControl : MonoBehaviour {
             if (collision.tag.Equals("enemy1") || collision.tag.Equals("enemy2"))
             {
                 HitFlag = false;
-                Health -= 30;
-                UIM.HitPlayer(30);
+                // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
+                if (!isItem)
+                {
+                    Health -= 30;
+                    UIM.HitPlayer(30);
+                }
+                // 아이템을 먹었다면, 체력이 데미지 양만큼 회복된다.
+                else
+                {
+                    Health += 30;
+                    UIM.HealPlayer(30);
+                }
                 myAnimator.SetTrigger("Hit");
                 Invoke("HitFlagOn", 1f);
             }
+        }
+
+        // 클리어 후 문에 닿으면 방향 전환
+        if (collision.tag.Equals("door0") || collision.tag.Equals("door1"))
+        {
+            FlipDirection();
         }
     }
 
     private void HitFlagOn()
     {
         HitFlag = true;
+    }
+
+    // 아이템 관련
+    public void ItemOn()
+    {
+        ItemOnImage.SetActive(true);
+        isItem = true;
+        Invoke("ItemOff", 10f);
+    }
+
+    private void ItemOff()
+    {
+        ItemOnImage.SetActive(false);
+        isItem = false;
     }
 
     // 플레이어를 죽이는 함수

@@ -5,7 +5,6 @@ TagManager:
   serializedVersion: 2
   tags:
   - floor
-  - door
   - ladder
   - wall
   - item
@@ -17,6 +16,8 @@ TagManager:
   - waterbullet
   - letterbullet
   - PlayerCenter
+  - door0
+  - door1
   layers:
   - Default
   - TransparentFX
