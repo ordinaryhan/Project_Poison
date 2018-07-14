@@ -36,7 +36,7 @@ public class B_PlayerControl : MonoBehaviour {
     public string JumpButton = "Jump";
     // 공격/방어를 위한
     public Transform barrel;
-    public Rigidbody2D bullet;
+    public Transform bullet;
     public int AttackLimit = 15;
     public Collider2D shield;
     public int ShieldLimit = 5;
@@ -45,28 +45,13 @@ public class B_PlayerControl : MonoBehaviour {
     private Animator myAnimator;
     // UIManager관련
     public B_UIManager UIM;
-
     // 체력 체크
-    public static float Health
-    {
-        get
-        {
-            return _Health;
-        }
+    public int Health = 600;
+    bool HitFlag = true;
+    // 아이템
+    public bool isItem = false;
+    public GameObject ItemOnImage;
 
-        set
-        {
-            _Health = value;
-            // 캐릭터가 죽은 경우 게임을 끝낸다.
-            if(_Health <= 0)
-            {
-                Die();
-            }
-        }
-    }
-
-    [SerializeField]
-    private static float _Health = 600f;
     // Use this for initialization
     private void Awake()
     {
@@ -74,18 +59,17 @@ public class B_PlayerControl : MonoBehaviour {
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
         myAnimator = GetComponent<Animator>();
-
+        ItemOnImage.SetActive(false);
         playerShield.SetActive(false);
-
-        // 정적 인스턴스를 설정한다.
-        PlayerInstance = this;
+        bullet.gameObject.SetActive(false);
+        
     }
 
     // 플레이어가 착지 상태인지 여부를 반환한다.
     private bool GetGrounded()
     {
         // 바닥을 확인한다
-        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(transform.position.x - 1f, transform.position.y - 1f),
+        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(transform.position.x - 1.2f, transform.position.y - 1.2f),
             new Vector2(transform.position.x, transform.position.y), GroundLayer);
         if (HitColliders.Length > 0)
             return true;
@@ -154,8 +138,10 @@ public class B_PlayerControl : MonoBehaviour {
             CanAttack = false;
             myAnimator.SetTrigger("Attack");
             new WaitForSeconds(3);
-            var waterBullet = Instantiate(bullet, barrel.position, barrel.rotation);
-            waterBullet.AddForce(barrel.up * bulletSpeed);
+            bullet.gameObject.SetActive(true);
+            bullet.position = barrel.position;
+            bullet.rotation = barrel.rotation;
+            bullet.GetComponent<Rigidbody2D>().AddForce(barrel.up * bulletSpeed);
             AttackLimit--;
             UIM.Attack();
         }
@@ -191,18 +177,12 @@ public class B_PlayerControl : MonoBehaviour {
         playerShield.SetActive(false);
     }
 
-
     // Update is called once per frame
     private void FixedUpdate()
     {
-        // 캐릭터를 조종할 수 없으면 종료한다.
-        if (!CanControl || Health <= 0f)
-            return;
-
-        // 점프
+        //점프
         isGrounded = GetGrounded();
         float Horz = CrossPlatformInputManager.GetAxis(HorzAxis);
-        ThisBody.AddForce(Vector2.right * Horz * MaxSpeed);
 
         // 속도를 제한한다.
         ThisBody.velocity = new Vector2(Mathf.Clamp(ThisBody.velocity.x, -MaxSpeed, MaxSpeed), Mathf.Clamp(ThisBody.velocity.y, -Mathf.Infinity, JumpPower));
@@ -213,21 +193,81 @@ public class B_PlayerControl : MonoBehaviour {
             
     }
 
-    private void OnDestroy()
+    // 말탄환에 맞거나 enemy와 충돌했을 경우
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        PlayerInstance = null;
+        if (Health != 0 && HitFlag && !shield.isActiveAndEnabled)
+        {
+            if (collision.tag.Equals("letterbullet"))
+            {
+                HitFlag = false;
+                int damage = collision.GetComponent<B_DestroyInTime>().power;
+                // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
+                if (!isItem)
+                {
+                    Health -= damage;
+                    UIM.HitPlayer(damage);
+                }
+                // 아이템을 먹었다면, 체력이 데미지 양만큼 회복된다.
+                else
+                {
+                    Health += damage;
+                    UIM.HealPlayer(damage);
+                }
+                myAnimator.SetTrigger("Hit");
+                Invoke("HitFlagOn", 2f);
+            }
+
+            if (collision.tag.Equals("enemy1") || collision.tag.Equals("enemy2"))
+            {
+                HitFlag = false;
+                // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
+                if (!isItem)
+                {
+                    Health -= 30;
+                    UIM.HitPlayer(30);
+                }
+                // 아이템을 먹었다면, 체력이 데미지 양만큼 회복된다.
+                else
+                {
+                    Health += 30;
+                    UIM.HealPlayer(30);
+                }
+                myAnimator.SetTrigger("Hit");
+                Invoke("HitFlagOn", 1f);
+            }
+        }
+
+        // 클리어 후 문에 닿으면 방향 전환
+        if (collision.tag.Equals("door0") || collision.tag.Equals("door1"))
+        {
+            FlipDirection();
+        }
+    }
+
+    private void HitFlagOn()
+    {
+        HitFlag = true;
+    }
+
+    // 아이템 관련
+    public void ItemOn()
+    {
+        ItemOnImage.SetActive(true);
+        isItem = true;
+        Invoke("ItemOff", 10f);
+    }
+
+    private void ItemOff()
+    {
+        ItemOnImage.SetActive(false);
+        isItem = false;
     }
 
     // 플레이어를 죽이는 함수
     static void Die()
     {
         Destroy(B_PlayerControl.PlayerInstance.gameObject);
-    }
-
-    // 플레이어를 기본 상태로 재설정한다.
-    public static void Reset()
-    {
-        Health = 100f;
     }
 
 }
