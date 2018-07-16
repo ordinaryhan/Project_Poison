@@ -7,20 +7,23 @@ public class B_UIManager : MonoBehaviour {
     
     public Camera mainCame;
     public Transform playerTarget, enemy1Target, enemy2Target, clear1Target, clear2Target;
-    public GameObject door1, door2;
+    public GameObject door1, door2, item1, item2;
     public RectTransform attackImage, enemy1_bar, enemy2_bar;
     public Text attackLimitText1, attackLimitText2;
     public Text shieldLimitText1, shieldLimitText2;
     public Scrollbar playerHPbar;
+    public Slider hourglassA, hourglassB, hourglassC;
     public int attackLimit = 15, shieldLimit = 5;
     [SerializeField]
     public int playerMaxHP = 600;
     int playerHP;
+    public bool moveSand = false;
     // 적이 클리어되면 false가 된다.
-    public bool flag1 = true, flag2 = true, doflag = false;
+    public bool flag1 = true, flag2 = true, doflag = false, isItem = false;
     [SerializeField]
     public int enemyMaxHP = 5;
     int enemy1HP, enemy2HP;
+    float diffHP;
     // 애니메이션을 위한
     private Animator myAnimator1;
     private Animator myAnimator2;
@@ -50,16 +53,75 @@ public class B_UIManager : MonoBehaviour {
         else
             enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear2Target.position.x, clear2Target.position.y+0.4f, transform.position.z));
 
-        if(!flag1 && !flag2 && !doflag)
+        // 모래시계 UI 관련
+        if (moveSand)
+        {
+            moveSand = false;
+            StartCoroutine("MoveSand");
+        }
+        if (hourglassA.value > playerHP && !isItem)
+        {
+            diffHP = (hourglassA.value - playerHP)*0.12f;
+            hourglassA.value -= diffHP;
+            hourglassB.value += diffHP;
+        }
+        else if (hourglassA.value < playerHP && isItem)
+        {
+            diffHP = (playerHP - hourglassA.value) * 0.12f;
+            hourglassA.value += diffHP;
+            hourglassB.value -= diffHP;
+        }
+
+        if (!flag1 && !flag2 && !doflag)
         {
             doflag = true;
             door1.SetActive(true);
             door2.SetActive(true);
+            item1.SetActive(false);
+            item2.SetActive(false);
+        }
+    }
+
+    IEnumerator MoveSand()
+    {
+        for (int i = 1; i <= 10; i++)
+        {
+            hourglassC.value += 0.1f;
+            yield return new WaitForSecondsRealtime(0.02f);
+        }
+        Vector3 tempV = hourglassC.GetComponent<Transform>().localScale;
+        tempV.y *= -1;
+        if (hourglassC.direction == Slider.Direction.TopToBottom)
+        {
+            hourglassC.SetDirection(Slider.Direction.BottomToTop, true);
+            hourglassC.GetComponent<Transform>().localScale = tempV;
+        }
+        else
+        {
+            hourglassC.SetDirection(Slider.Direction.TopToBottom, true);
+            hourglassC.GetComponent<Transform>().localScale = tempV;
+        }
+        for (int i = 1; i <= 10; i++)
+        {
+            hourglassC.value -= 0.1f;
+            yield return new WaitForSecondsRealtime(0.02f);
+        }
+        tempV.y *= -1;
+        if (hourglassC.direction == Slider.Direction.TopToBottom)
+        {
+            hourglassC.SetDirection(Slider.Direction.BottomToTop, true);
+            hourglassC.GetComponent<Transform>().localScale = tempV;
+        }
+        else
+        {
+            hourglassC.SetDirection(Slider.Direction.TopToBottom, true);
+            hourglassC.GetComponent<Transform>().localScale = tempV;
         }
     }
 
     public void HitPlayer(int power)
     {
+        moveSand = true;
         playerHP -= power;
         playerHPbar.size = (float) playerHP / playerMaxHP;
         print(playerHP + " HitPlayer " + power);
@@ -67,6 +129,7 @@ public class B_UIManager : MonoBehaviour {
 
     public void HealPlayer(int power)
     {
+        moveSand = true;
         playerHP += power;
         playerHPbar.size = (float)playerHP / playerMaxHP;
         print(playerHP + " HealPlayer " + power);
