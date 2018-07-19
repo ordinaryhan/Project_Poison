@@ -50,7 +50,7 @@ public class B_PlayerControl : MonoBehaviour {
     bool HitFlag = true;
     // 아이템
     public bool isItem = false;
-    public GameObject ItemOnImage;
+    public B_FlipHourglass HourglassScript;
 
     // Use this for initialization
     private void Awake()
@@ -59,7 +59,6 @@ public class B_PlayerControl : MonoBehaviour {
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
         myAnimator = GetComponent<Animator>();
-        ItemOnImage.SetActive(false);
         playerShield.SetActive(false);
         bullet.gameObject.SetActive(false);
         
@@ -253,15 +252,19 @@ public class B_PlayerControl : MonoBehaviour {
     // 아이템 관련
     public void ItemOn()
     {
-        ItemOnImage.SetActive(true);
+        UIM.isItem = true;
+        HourglassScript.doFlip = true;
         isItem = true;
         Invoke("ItemOff", 10f);
+        print("ItemOn");
     }
 
     private void ItemOff()
     {
-        ItemOnImage.SetActive(false);
+        UIM.isItem = false;
+        HourglassScript.doFlip = true;
         isItem = false;
+        print("ItemOff");
     }
 
     // 플레이어를 죽이는 함수
