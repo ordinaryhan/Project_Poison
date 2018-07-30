@@ -7,7 +7,7 @@ public class B_UIManager : MonoBehaviour {
     
     public Camera mainCame;
     public Transform playerTarget, enemy1Target, enemy2Target, clear1Target, clear2Target;
-    public GameObject door1, door2, item1, item2;
+    public GameObject door1, door2;
     public RectTransform attackImage, enemy1_bar, enemy2_bar;
     public Text attackLimitText1, attackLimitText2;
     public Text shieldLimitText1, shieldLimitText2;
@@ -77,8 +77,6 @@ public class B_UIManager : MonoBehaviour {
             doflag = true;
             door1.SetActive(true);
             door2.SetActive(true);
-            item1.SetActive(false);
-            item2.SetActive(false);
         }
     }
 

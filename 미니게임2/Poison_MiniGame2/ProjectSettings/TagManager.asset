@@ -18,6 +18,8 @@ TagManager:
   - PlayerCenter
   - door0
   - door1
+  - hourGlass
+  - ladder+
   layers:
   - Default
   - TransparentFX

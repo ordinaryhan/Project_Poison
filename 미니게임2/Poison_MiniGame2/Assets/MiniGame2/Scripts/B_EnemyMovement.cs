@@ -41,8 +41,7 @@ public class B_EnemyMovement : MonoBehaviour {
     public int Health = 5;
     public B_UIManager UIM;
     // 클리어 관련
-    public GameObject ClearEnemy;
-    public GameObject HitMessage;
+    public GameObject ClearEnemy, HitMessage, item1, item2;
 
     // Use this for initialization
     private void Awake()
@@ -227,11 +226,16 @@ public class B_EnemyMovement : MonoBehaviour {
     public void Clear()
     {
         ClearEnemy.GetComponent<Transform>().position = new Vector2(transform.position.x, transform.position.y - 1.2f);
-        ClearEnemy.SetActive(true);
         if (gameObject.tag.Equals("enemy1"))
             UIM.flag1 = false;
         else if (gameObject.tag.Equals("enemy2"))
             UIM.flag2 = false;
+        ClearEnemy.SetActive(true);
+        if (!UIM.flag1 && !UIM.flag2)
+        {
+            item1.SetActive(false);
+            item2.SetActive(false);
+        }
         gameObject.SetActive(false);
     }
 
