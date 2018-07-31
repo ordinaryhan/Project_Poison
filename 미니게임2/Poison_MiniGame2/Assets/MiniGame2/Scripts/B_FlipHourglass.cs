@@ -35,17 +35,17 @@ public class B_FlipHourglass : MonoBehaviour {
         float initY = transform.localScale.y;
         if (initY > 0)
         {
-            for (int i = 1; i <= 40; i++)
+            for (int i = 1; i <= 28; i++)
             {
-                transform.localScale = new Vector3(1, 1f - i*0.05f, 1);
+                transform.localScale = new Vector3(0.7f, 0.7f - i*0.05f, 1);
                 yield return new WaitForSecondsRealtime(0.015f);
             }
         }
         else
         {
-            for (int i = 1; i <= 40; i++)
+            for (int i = 1; i <= 28; i++)
             {
-                transform.localScale = new Vector3(1, -1f + i * 0.05f, 1);
+                transform.localScale = new Vector3(0.7f, -0.7f + i * 0.05f, 1);
                 yield return new WaitForSecondsRealtime(0.015f);
             }
         }
