@@ -47,11 +47,11 @@ public class B_UIManager : MonoBehaviour {
         if (flag1)
             enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(enemy1Target.position.x, enemy1Target.position.y, transform.position.z));
         else
-            enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear1Target.position.x, clear1Target.position.y+0.4f, transform.position.z));
+            enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear1Target.position.x-0.35f, clear1Target.position.y+0.85f, transform.position.z));
         if (flag2)
             enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(enemy2Target.position.x, enemy2Target.position.y, transform.position.z));
         else
-            enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear2Target.position.x, clear2Target.position.y+0.4f, transform.position.z));
+            enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear2Target.position.x-0.25f, clear2Target.position.y+0.7f, transform.position.z));
 
         // 모래시계 UI 관련
         if (moveSand)
@@ -80,6 +80,7 @@ public class B_UIManager : MonoBehaviour {
         }
     }
 
+    //모래 쏟아져 내리는 효과 관련
     IEnumerator MoveSand()
     {
         for (int i = 1; i <= 10; i++)
@@ -117,6 +118,7 @@ public class B_UIManager : MonoBehaviour {
         }
     }
 
+    // 플레이어 체력 관련
     public void HitPlayer(int power)
     {
         moveSand = true;
@@ -133,6 +135,7 @@ public class B_UIManager : MonoBehaviour {
         print(playerHP + " HealPlayer " + power);
     }
 
+    // 적 체력 관련
     public void HitEnemy1()
     {
         enemy1HP--;
@@ -147,6 +150,7 @@ public class B_UIManager : MonoBehaviour {
         print(enemy2HP + " enemy2 ");
     }
 
+    // 공격/방어 개수 제한 관련
     public void Attack()
     {
         attackLimit--;

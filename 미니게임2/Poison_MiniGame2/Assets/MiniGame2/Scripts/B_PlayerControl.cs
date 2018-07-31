@@ -18,8 +18,8 @@ public class B_PlayerControl : MonoBehaviour {
     // 착지 여부
     public bool isGrounded = false;
     // 속도 변수
-    public float MaxSpeed = 10f;
-    public float JumpPower = 600;
+    public float MaxSpeed = 10f, Speed = 5f;
+    public float JumpPower = 500;
     public float JumpTimeOut = 1f;
     public float bulletSpeed = 500f;
     public float bulletTimeOut = 3f;
@@ -31,9 +31,6 @@ public class B_PlayerControl : MonoBehaviour {
     // 플레이어를 조종할 수 있는지 여부
     public bool CanControl = true;
     public static B_PlayerControl PlayerInstance = null;
-    // 주 입력 축
-    public string HorzAxis = "Horizontal";
-    public string JumpButton = "Jump";
     // 공격/방어를 위한
     public Transform barrel;
     public Transform bullet;
@@ -53,8 +50,9 @@ public class B_PlayerControl : MonoBehaviour {
     // 아이템
     public bool isItem = false;
     public B_FlipHourglass HourglassScript;
-    
+    // 필요 변수 선언
     bool isFall = false;
+    float dirX;
 
     // Use this for initialization
     private void Awake()
@@ -99,70 +97,10 @@ public class B_PlayerControl : MonoBehaviour {
         Invoke("ActivateJump", JumpTimeOut);
     }
 
-    // 왼쪽 대각선 점프를 처리한다.
-    public void Jump_L()
-    {
-        if (!isGrounded || !CanJump)
-            return;
-        if (Facing == FaceDirection.FaceLeft)
-            FlipDirection();
-        // 점프한다.
-        ThisBody.AddForce(new Vector2(-JumpPower*0.6f, JumpPower));
-        CanJump = false;
-        Invoke("ActivateJump", JumpTimeOut);
-    }
-
-    // 오른쪽 대각선 점프를 처리한다.
-    public void Jump_R()
-    {
-        if (!isGrounded || !CanJump)
-            return;
-        if (Facing == FaceDirection.FaceRight)
-            FlipDirection();
-        // 점프한다.
-        ThisBody.AddForce(new Vector2(JumpPower*0.6f, JumpPower));
-        CanJump = false;
-        Invoke("ActivateJump", JumpTimeOut);
-    }
-
     // 이단 점프를 방지하기 위해 점프 제한 시간이 지나야 CanJump 변수를 활성화한다.
     private void ActivateJump()
     {
         CanJump = true;
-    }
-
-    // 이동 처리
-    public void LeftMove()
-    {
-        if (ThisBody.velocity.x < 0)
-        {
-            handsAnimator.SetBool("walk", false);
-            bodyAnimator.SetBool("walk", false);
-            ThisBody.velocity = new Vector2(0, 0);
-        }
-        else if (ThisBody.velocity.x >= 0)
-        {
-            handsAnimator.SetBool("walk", true);
-            bodyAnimator.SetBool("walk", true);
-            if (Facing == FaceDirection.FaceLeft)
-                FlipDirection();
-            ThisBody.velocity = new Vector2(-MaxSpeed, 0);
-        }
-    }
-    public void RightMove()
-    {
-        if (ThisBody.velocity.x > 0)
-        {
-            ThisBody.velocity = new Vector2(0, 0);
-        }
-        else if (ThisBody.velocity.x <= 0)
-        {
-            handsAnimator.SetBool("walk", true);
-            bodyAnimator.SetBool("walk", true);
-            if (Facing == FaceDirection.FaceRight)
-                FlipDirection();
-            ThisBody.velocity = new Vector2(+MaxSpeed, 0);
-        }
     }
 
     // 공격
@@ -219,9 +157,14 @@ public class B_PlayerControl : MonoBehaviour {
     // Update is called once per frame
     private void FixedUpdate()
     {
+        // 이동
+        dirX = CrossPlatformInputManager.GetAxis("Horizontal");
+        ThisBody.velocity = new Vector2(dirX * Speed, ThisBody.velocity.y);
+
         //점프
         isGrounded = GetGrounded();
-        float Horz = CrossPlatformInputManager.GetAxis(HorzAxis);
+        if (CrossPlatformInputManager.GetButtonDown("Jump"))
+            Jump();
 
         // 속도를 제한한다.
         ThisBody.velocity = new Vector2(Mathf.Clamp(ThisBody.velocity.x, -MaxSpeed, MaxSpeed), Mathf.Clamp(ThisBody.velocity.y, -Mathf.Infinity, JumpPower));
@@ -232,11 +175,11 @@ public class B_PlayerControl : MonoBehaviour {
             handsAnimator.SetBool("walk", false);
             bodyAnimator.SetBool("walk", false);
         }
-       /* if (!handsAnimator.GetBool("walk") && ThisBody.velocity != Vstop)
+        if (!handsAnimator.GetBool("walk") && ThisBody.velocity.x != 0)
         {
             handsAnimator.SetBool("walk", true);
             bodyAnimator.SetBool("walk", true);
-        }*/
+        }
 
         // 낙하 모션
         if (!isFall && ThisBody.velocity.y < 0 && !isGrounded)
@@ -251,7 +194,7 @@ public class B_PlayerControl : MonoBehaviour {
         }
 
         // 필요한 경우 방향을 바꾼다.
-        if ((Horz < 0f && Facing != FaceDirection.FaceLeft) || (Horz > 0f && Facing != FaceDirection.FaceRight))
+        if ((dirX < 0f && Facing == FaceDirection.FaceLeft) || (dirX > 0f && Facing == FaceDirection.FaceRight))
             FlipDirection();
             
     }
@@ -323,7 +266,6 @@ public class B_PlayerControl : MonoBehaviour {
         HourglassScript.doFlip = true;
         isItem = true;
         Invoke("ItemOff", 10f);
-        print("ItemOn");
     }
 
     private void ItemOff()
@@ -331,7 +273,6 @@ public class B_PlayerControl : MonoBehaviour {
         UIM.isItem = false;
         HourglassScript.doFlip = true;
         isItem = false;
-        print("ItemOff");
     }
 
     // 플레이어를 죽이는 함수
