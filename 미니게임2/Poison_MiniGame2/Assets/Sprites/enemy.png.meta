@@ -1,16 +1,21 @@
 fileFormatVersion: 2
-guid: 9cc979d9308d1ea4dacf3dfe1a8338e4
+guid: c499f9b278ba78e4a9df1953f33ad005
 TextureImporter:
   fileIDToRecycleName:
-    21300000: birdIdle_0
-    21300002: birdIdle_1
-    21300004: birdIdle_2
-    21300006: birdIdle_3
-    21300008: birdIdle_4
-    21300010: birdIdle_5
-    21300012: birdIdle_6
-    21300014: birdIdle_7
-    21300016: birdIdle_8
+    21300000: enemy_0
+    21300002: enemy_1
+    21300004: enemy_2
+    21300006: enemy_3
+    21300008: enemy_4
+    21300010: enemy_5
+    21300012: enemy_6
+    21300014: enemy_7
+    21300016: enemy_8
+    21300018: enemy_9
+    21300020: enemy_10
+    21300022: enemy_11
+    21300024: enemy_12
+    21300026: enemy_13
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -53,7 +58,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 190, y: 201, z: 190, w: 201}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -87,28 +92,17 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - serializedVersion: 2
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: birdIdle_0
+      name: enemy_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 400
-        width: 190
-        height: 200
+        y: 172
+        width: 45
+        height: 84
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -116,19 +110,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a743116df00bfd84784627b8ff1f880e
+      spriteID: 61a5193c10aba25419b5aecd5b7c6a46
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: birdIdle_1
+      name: enemy_1
       rect:
         serializedVersion: 2
-        x: 190
-        y: 400
-        width: 190
-        height: 200
+        x: 59
+        y: 219
+        width: 25
+        height: 13
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -136,19 +130,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 476ee1064492ace47a6e3ac0db203c4a
+      spriteID: ab2453693703bc441a6fcc9ab237c8ee
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: birdIdle_2
+      name: enemy_2
       rect:
         serializedVersion: 2
-        x: 380
-        y: 400
-        width: 190
-        height: 200
+        x: 104
+        y: 185
+        width: 80
+        height: 71
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,19 +150,59 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bbe1bfe9c744932448f9a6b1960f8ee8
+      spriteID: 5f5b84e3d81e3754f8f7f4dae57137c0
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: birdIdle_3
+      name: enemy_3
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 185
+        width: 68
+        height: 71
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3dfd5f69baabace42aaba6f92f3a14f9
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy_4
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 188
+        width: 23
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: afa61ebfa54d13e45852db20643d0020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy_5
       rect:
         serializedVersion: 2
         x: 0
-        y: 200
-        width: 190
-        height: 200
+        y: 90
+        width: 64
+        height: 74
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -176,39 +210,39 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b1d7eeba74afa5c48be1de9d8d810b6f
+      spriteID: 94241ea85db9edd4984e0f07573f8053
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: birdIdle_4
+      name: enemy_6
       rect:
         serializedVersion: 2
-        x: 190
-        y: 200
-        width: 190
-        height: 200
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 105
+        y: 111
+        width: 80
+        height: 72
+      alignment: 9
+      pivot: {x: 0.4761904, y: 0.5000004}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f3551dd616a376a4096a2e9576ac2061
+      spriteID: afe78fc2bb19a8a498616e9606be9934
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: birdIdle_5
+      name: enemy_7
       rect:
         serializedVersion: 2
-        x: 380
-        y: 200
-        width: 190
-        height: 200
+        x: 188
+        y: 112
+        width: 68
+        height: 71
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -216,67 +250,127 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 092b72e20011dec45aac39708cc672d8
+      spriteID: 91e101f6ebe2c63488a6830b186de76c
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: birdIdle_6
+      name: enemy_8
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 84
+        width: 24
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1ad4790a97783e43b5f4e9c590ea56b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy_9
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 88
+        width: 20
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b8797ba0055ba34a9d7e34e66899e24
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy_10
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 58
+        width: 74
+        height: 52
+      alignment: 9
+      pivot: {x: 0.010939315, y: 0.12148975}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ebc44d21701d8434794352bd9a8765a1
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy_11
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 190
-        height: 200
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 48
+        height: 63
+      alignment: 9
+      pivot: {x: 0.9629631, y: 0.03640724}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0d7c5adc173c75a4f82c218b731079fc
+      spriteID: 71bf20cd83f5f2f4ca09697028aa764a
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: birdIdle_7
+      name: enemy_12
       rect:
         serializedVersion: 2
-        x: 190
+        x: 67
         y: 0
-        width: 190
-        height: 200
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 68
+        height: 76
+      alignment: 9
+      pivot: {x: 0.04248372, y: 0.0906435}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1cd16237b992b344cb0eb9aaaf81731d
+      spriteID: f51bd39327b6be94f9e4e85ab755cd06
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: birdIdle_8
+      name: enemy_13
       rect:
         serializedVersion: 2
-        x: 380
+        x: 152
         y: 0
-        width: 190
-        height: 200
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 57
+        height: 57
+      alignment: 9
+      pivot: {x: 0.9678363, y: 0.04330307}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8969e0c235477c14ebfc61d4ea814c8c
+      spriteID: 3df6650c859b85241a372cf51ecf10a7
       vertices: []
       indices: 
       edges: []
@@ -284,7 +378,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 1ea6fe15b1368df4883b57b81f3be475
+    spriteID: 44dcb2b7b275ed443a289fcf0df71504
     vertices: []
     indices: 
     edges: []

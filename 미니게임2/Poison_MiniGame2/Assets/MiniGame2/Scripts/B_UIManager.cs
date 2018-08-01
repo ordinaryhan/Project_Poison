@@ -13,13 +13,14 @@ public class B_UIManager : MonoBehaviour {
     public Text shieldLimitText1, shieldLimitText2;
     public Scrollbar playerHPbar;
     public Slider hourglassA, hourglassB, hourglassC;
+    public Animator BreakHourglass;
     public int attackLimit = 15, shieldLimit = 5;
     [SerializeField]
     public int playerMaxHP = 600;
     int playerHP;
     public bool moveSand = false;
     // 적이 클리어되면 false가 된다.
-    public bool flag1 = true, flag2 = true, doflag = false, isItem = false;
+    public bool flag1 = true, flag2 = true, doflag = false, isItem = false, breakHourglass = false;
     [SerializeField]
     public int enemyMaxHP = 5;
     int enemy1HP, enemy2HP;
@@ -39,6 +40,9 @@ public class B_UIManager : MonoBehaviour {
         enemy2HP = enemyMaxHP;
         door1.SetActive(false);
         door2.SetActive(false);
+        hourglassA.value = 600;
+        hourglassB.value = 0;
+        hourglassC.value = 0;
     }
 
     // Update is called once per frame
@@ -54,22 +58,30 @@ public class B_UIManager : MonoBehaviour {
             enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear2Target.position.x-0.25f, clear2Target.position.y+0.7f, transform.position.z));
 
         // 모래시계 UI 관련
-        if (moveSand)
+        if (playerHP > 0)
         {
-            moveSand = false;
-            StartCoroutine("MoveSand");
+            if (moveSand)
+            {
+                moveSand = false;
+                StartCoroutine("MoveSand");
+            }
+            if (hourglassA.value > playerHP && !isItem)
+            {
+                diffHP = (hourglassA.value - playerHP) * 0.12f;
+                hourglassA.value -= diffHP;
+                hourglassB.value += diffHP;
+            }
+            else if (hourglassA.value < playerHP && isItem)
+            {
+                diffHP = (playerHP - hourglassA.value) * 0.12f;
+                hourglassA.value += diffHP;
+                hourglassB.value -= diffHP;
+            }
         }
-        if (hourglassA.value > playerHP && !isItem)
+        else if(!breakHourglass)
         {
-            diffHP = (hourglassA.value - playerHP)*0.12f;
-            hourglassA.value -= diffHP;
-            hourglassB.value += diffHP;
-        }
-        else if (hourglassA.value < playerHP && isItem)
-        {
-            diffHP = (playerHP - hourglassA.value) * 0.12f;
-            hourglassA.value += diffHP;
-            hourglassB.value -= diffHP;
+            breakHourglass = true;
+            BreakHourglass.SetTrigger("break");
         }
 
         if (!flag1 && !flag2 && !doflag)
