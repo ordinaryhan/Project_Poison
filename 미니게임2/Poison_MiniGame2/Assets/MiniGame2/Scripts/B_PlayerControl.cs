@@ -53,7 +53,7 @@ public class B_PlayerControl : MonoBehaviour {
     public bool isItem = false;
     public B_FlipHourglass HourglassScript;
     // 필요 변수 선언
-    bool isFall = false;
+    bool isFall = false, DragFlag = false;
     float dirX;
 
     // Use this for initialization
@@ -168,8 +168,11 @@ public class B_PlayerControl : MonoBehaviour {
 
         //점프
         isGrounded = GetGrounded();
-        if (isGrounded && drag)
-            drag = false;
+        if (isGrounded && drag && !DragFlag)
+        {
+            DragFlag = true;
+            Invoke("DragOff", 0.5f);
+        }
         if (CrossPlatformInputManager.GetButtonDown("Jump"))
             Jump();
 
@@ -316,6 +319,7 @@ public class B_PlayerControl : MonoBehaviour {
     private void DragOff()
     {
         drag = false;
+        DragFlag = false;
     }
 
     private void HitFlagOn()
@@ -327,7 +331,7 @@ public class B_PlayerControl : MonoBehaviour {
     public void Door0()
     {
         drag = true;
-        ThisBody.velocity = Vector2.right * 5;
+        ThisBody.velocity = Vector2.right * 6;
         Invoke("DragOff", 0.5f);
     }
 
