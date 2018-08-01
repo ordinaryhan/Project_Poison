@@ -498,7 +498,6 @@ MonoBehaviour:
   MainCanvas: {fileID: 1484121818}
   StartCanvas: {fileID: 123258612}
   CollectionCanvas: {fileID: 1726008996}
-  AnimeCanvas: {fileID: 78284190}
 --- !u!1 &123258612
 GameObject:
   m_ObjectHideFlags: 0

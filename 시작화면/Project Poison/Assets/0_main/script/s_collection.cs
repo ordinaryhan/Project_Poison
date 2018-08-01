@@ -6,8 +6,8 @@ public class s_collection : MonoBehaviour {
     public enum Collect { one, two, three, four }
     public Collect collectNum;
 
-    private int[] score = new int[4];
-    private bool[] grade = new bool[4];
+    private int[] score = new int[3];
+    private bool[] grade = new bool[3];
     private bool[] iscollect = new bool[4];
 
     public GameObject Collection;
@@ -20,8 +20,11 @@ public class s_collection : MonoBehaviour {
         image.SetActive(false);
         for (int i = 0; i < 4; i++)
         {
-            score[i] = 0;
-            grade[i] = false;
+            if (i < 3)
+            {
+                score[i] = 0;
+                grade[i] = false;
+            }
             iscollect[i] = false;
         }
     }
@@ -32,6 +35,8 @@ public class s_collection : MonoBehaviour {
     }
     public void Score()
     {
+        //Stage 결과 score에 저장하기
+
         if (score[0] > 420) grade[0] = true;
         if (score[0] <= 420) grade[0] = false;
         if (score[1] > 250) grade[1] = true;

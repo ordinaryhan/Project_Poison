@@ -7,14 +7,16 @@ public class s_stage : MonoBehaviour {
     
     public enum Stage { one, two, three }
     public Stage stage;
-    private bool canStart2;
-    private bool canStart3;
+    private int[] score = new int[2];
     public GameObject rock;
+
     
 	void Start () {
-        canStart2 = false;
-        canStart3 = false;
         if(rock != null) rock.SetActive(true);
+        for(int i=0; i<2; i++)
+        {
+            score[i] = 0;
+        }
 	}
 	
 	void Update () {
@@ -23,13 +25,13 @@ public class s_stage : MonoBehaviour {
     }
     public void StageClear()
     {
-        //Stage Clear 결과 상, 하 > 클리어 조건 추가하기 (canStart)
-
-        if (stage == Stage.two && canStart2)
+        //Stage 결과 score에 저장하기
+        
+        if (stage == Stage.two && score[0]>0)
         {
             if (rock != null) rock.SetActive(false);
         }
-        if (stage == Stage.three && canStart3)
+        if (stage == Stage.three && score[1] > 0)
         {
             if (rock != null) rock.SetActive(false);
         }
@@ -39,9 +41,9 @@ public class s_stage : MonoBehaviour {
     {
         if (stage == Stage.one)
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        if (stage == Stage.two && canStart2)
+        if (stage == Stage.two && score[0] > 0)
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
-        if (stage == Stage.three && canStart3)
+        if (stage == Stage.three && score[1] > 0)
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 3);
 
     }
