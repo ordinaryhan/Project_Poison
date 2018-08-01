@@ -26,7 +26,7 @@ public class B_EnemyMovement : MonoBehaviour {
     private bool enemy1_CanAttack = true;
     private bool enemy2_CanAttack = true;
     // 애니메이션을 위한
-    private Animator myAnimator;
+    public Animator headAnimator, wingsAnimator, bodyAnimator;
     public GameObject waterball;
     // 이동 관련
     [SerializeField]
@@ -34,15 +34,13 @@ public class B_EnemyMovement : MonoBehaviour {
     public float rotationRadius = 2f, angularSpeed = 2f;
     float posX, posY, angle = -1f, digree;
     int i = 0;
-    bool flag = true;
-    bool flip = true;
+    bool flag = true, flip = true, clear = false;
     Vector2 targetDir, Dir;
     //  체력 5칸
     public int Health = 5;
     public B_UIManager UIM;
     // 클리어 관련
-    public GameObject ClearEnemy;
-    public GameObject HitMessage;
+    public GameObject ClearEnemy, HitMessage, item1, item2;
 
     // Use this for initialization
     private void Awake()
@@ -51,7 +49,6 @@ public class B_EnemyMovement : MonoBehaviour {
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
         ThisCollider = GetComponent<Collider2D>();
-        myAnimator = GetComponent<Animator>();
         ThisName = ThisTransform.tag;
         targetTransform = target.GetComponent<Transform>();
         for (int i = 0; i < bullet.Length; i++)
@@ -134,7 +131,8 @@ public class B_EnemyMovement : MonoBehaviour {
             yield return new WaitForSecondsRealtime(0.1f);
             bullet[k].GetComponent<B_DestroyInTime>().MoveBullet(Dir, bulletSpeed, 1.5f - 0.025f*k);
         }
-        myAnimator.SetTrigger("Attack");
+        headAnimator.SetTrigger("attack");
+        wingsAnimator.SetTrigger("attack");
         yield return new WaitForSecondsRealtime(1f);
         Invoke("setFlag", 0.8f);
         Invoke("ActivateBullets", bulletTimeOut[Random.Range(0, bulletTimeOut.Length)]);
@@ -168,7 +166,8 @@ public class B_EnemyMovement : MonoBehaviour {
             return;
         
         enemy1_CanAttack = false;
-        myAnimator.SetTrigger("Attack");
+        headAnimator.SetTrigger("attack");
+        wingsAnimator.SetTrigger("attack");
         // target(플레이어) 방향으로 말탄환을 날린다.
         targetDir = targetTransform.position;
         Dir = targetDir - (Vector2) transform.position;
@@ -194,18 +193,22 @@ public class B_EnemyMovement : MonoBehaviour {
         barrel[0].Rotate(0, 0, -digree);
     }
 
+    // 공격 당했을 시
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag.Equals("waterbullet") && Health != 0)
         {
             Health--;
-            if(transform.tag.Equals("enemy1"))
+            headAnimator.SetTrigger("hit");
+            wingsAnimator.SetTrigger("hit");
+            bodyAnimator.SetTrigger("hit");
+            flag = false;
+            if (transform.tag.Equals("enemy1"))
                 UIM.HitEnemy1();
             else if(transform.tag.Equals("enemy2"))
                 UIM.HitEnemy2();
             waterball.SetActive(true);
             HitMessage.SetActive(true);
-            flag = false;
             if(Health > 0)
                 Invoke("SetFlagAndBall", 2f);
             else
@@ -226,13 +229,23 @@ public class B_EnemyMovement : MonoBehaviour {
     // 적이 클리어된 경우
     public void Clear()
     {
-        ClearEnemy.GetComponent<Transform>().position = new Vector2(transform.position.x, transform.position.y - 1.2f);
-        ClearEnemy.SetActive(true);
-        if (gameObject.tag.Equals("enemy1"))
-            UIM.flag1 = false;
-        else if (gameObject.tag.Equals("enemy2"))
-            UIM.flag2 = false;
-        gameObject.SetActive(false);
+        if (!clear)
+        {
+            print("이동");
+            ClearEnemy.GetComponent<Transform>().position = new Vector2(transform.position.x, transform.position.y - 1.2f);
+            if (gameObject.tag.Equals("enemy1"))
+                UIM.flag1 = false;
+            else if (gameObject.tag.Equals("enemy2"))
+                UIM.flag2 = false;
+            gameObject.SetActive(false);
+            ClearEnemy.SetActive(true);
+            if (!UIM.flag1 && !UIM.flag2)
+            {
+                item1.SetActive(false);
+                item2.SetActive(false);
+            }
+        }
+        clear = true;
     }
 
 }

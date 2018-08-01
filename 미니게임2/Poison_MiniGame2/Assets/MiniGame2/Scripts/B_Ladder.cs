@@ -10,16 +10,14 @@ public class B_Ladder : MonoBehaviour {
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag.Equals("PlayerCenter") && Mathf.Abs(target.velocity.x) < 3f)
+        if (collision.tag.Equals("PlayerCenter") && Mathf.Abs(target.velocity.x) < 6f)
         {
             Floor.isTrigger = true;
             target.velocity = new Vector2(0, speed);
         }
-        else if(collision.tag.Equals("PlayerCenter") && target.velocity.y < 0)
+        else if (collision.tag.Equals("PlayerCenter") && target.velocity.y < 0)
         {
             target.GetComponent<Rigidbody2D>().velocity = new Vector2(0, speed);
         }
-
     }
-
 }
