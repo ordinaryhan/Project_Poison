@@ -21,7 +21,8 @@ public class B_OnTrigger : MonoBehaviour {
 
         if (tag.Equals("floor_middle"))
         {
-            target.Change_i();
+            if(target.mode == B_UIManager.enemyMode.normal)
+                target.Change_i();
         }
 
         if (tag.Equals("letterbullet") && ThisTag.Equals("Shield"))

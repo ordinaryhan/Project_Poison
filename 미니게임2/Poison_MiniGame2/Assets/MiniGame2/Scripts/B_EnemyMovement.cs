@@ -5,13 +5,14 @@ using UnityEngine;
 public class B_EnemyMovement : MonoBehaviour {
 
     private string ThisName;
+    // 공격 패턴
+    public B_UIManager.enemyMode mode = B_UIManager.enemyMode.normal;
     // 바라보는 방향
     public enum FaceDirection { FaceLeft = -1, FaceRight = 1 };
     public FaceDirection Facing = FaceDirection.FaceRight;
     // 이 객체에 대한 참조
     private Rigidbody2D ThisBody = null;
     private Transform ThisTransform = null;
-    private Collider2D ThisCollider = null;
     // 속도 변수
     public float Speed = 10f;
     public float bulletSpeed = 500;
@@ -31,13 +32,15 @@ public class B_EnemyMovement : MonoBehaviour {
     // 이동 관련
     [SerializeField]
     public Transform[] rotationCenter;
+    [SerializeField]
+    public Transform[] Path_UpTogether;
     public float rotationRadius = 2f, angularSpeed = 2f;
     float posX, posY, angle = -1f, digree;
-    int i = 0;
+    int i = 0, page = 1, count = 0;
     bool flag = true, flip = true, clear = false;
     Vector2 targetDir, Dir;
     //  체력 5칸
-    public int Health = 5;
+    int Health;
     public B_UIManager UIM;
     // 클리어 관련
     public GameObject ClearEnemy, HitMessage, item1, item2;
@@ -46,9 +49,9 @@ public class B_EnemyMovement : MonoBehaviour {
     private void Awake()
     {
         // 이 객체의 정보들을 담는다.
+        Health = UIM.enemyMaxHP;
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
-        ThisCollider = GetComponent<Collider2D>();
         ThisName = ThisTransform.tag;
         targetTransform = target.GetComponent<Transform>();
         for (int i = 0; i < bullet.Length; i++)
@@ -71,35 +74,119 @@ public class B_EnemyMovement : MonoBehaviour {
         flip = !flip;
     }
 
-    // Update is called once per frame
-    void FixedUpdate () {
-        // enemy1의 이동 기본 패턴
-        if (ThisName.Equals("enemy1"))
-        {
-            if (flag)
-            {
-                posX = rotationCenter[i].position.x - Mathf.Cos(angle) * rotationRadius;
-                posY = rotationCenter[i].position.y - Mathf.Sin(angle) * rotationRadius;
-                transform.position = new Vector2(posX, posY);
-                angle = angle + Time.deltaTime * angularSpeed;
-            }
-        }
-        // enemy2의 이동 기본 패턴
-        else if (ThisName.Equals("enemy2"))
-        {
-            if (flag)
-            {
-                posX = rotationCenter[0].position.x - Mathf.Cos(angle) * rotationRadius;
-                posY = rotationCenter[0].position.y - Mathf.Sin(angle) * rotationRadius;
-                transform.position = new Vector2(posX, posY);
-                angle = angle + Time.deltaTime * angularSpeed;
-            }
+    // 모드를 확인한다. (모드는 UIManager가 관리한다.)
+    private void CheckMode()
+    {
+        mode = UIM.mode;
+    }
 
-            if (enemy2_CanAttack)
-            {
-                enemy2_CanAttack = false;
-                StartCoroutine(Enemy2_Attack());
-            }
+    // Update is called once per frame
+    void FixedUpdate() {
+
+        // 모드 확인
+        CheckMode();
+        // 모드에 따라 코드 진행
+        switch (mode) {
+            /* normal 모드 일 때 */
+            case B_UIManager.enemyMode.normal:
+                // enemy1의 이동 기본 패턴
+                if (ThisName.Equals("enemy1"))
+                {
+                    if (flag)
+                    {
+                        posX = rotationCenter[i].position.x - Mathf.Cos(angle) * rotationRadius;
+                        posY = rotationCenter[i].position.y - Mathf.Sin(angle) * rotationRadius;
+                        transform.position = new Vector2(posX, posY);
+                        angle = angle + Time.deltaTime * angularSpeed;
+                    }
+                }
+                // enemy2의 이동 기본 패턴
+                else if (ThisName.Equals("enemy2"))
+                {
+                    if (flag)
+                    {
+                        posX = rotationCenter[0].position.x - Mathf.Cos(angle) * rotationRadius;
+                        posY = rotationCenter[0].position.y - Mathf.Sin(angle) * rotationRadius;
+                        transform.position = new Vector2(posX, posY);
+                        angle = angle + Time.deltaTime * angularSpeed;
+                    }
+
+                    if (enemy2_CanAttack)
+                    {
+                        enemy2_CanAttack = false;
+                        StartCoroutine(Enemy2_Attack1());
+                    }
+                }
+                break;
+
+            /* UpTogether 모드 일 때 */
+            case B_UIManager.enemyMode.UpTogether:
+                // enemy1의 UpTogether 모드 이동 패턴
+                if (ThisName.Equals("enemy1"))
+                {
+                    if (flag)
+                    {
+                        if (page == 1)
+                        {
+                            if (Path_UpTogether[0].position == transform.position)
+                            {
+                                page = 2;
+                                ThisBody.velocity = new Vector2(0, 0);
+                            }
+                            else
+                                ThisBody.velocity = (Path_UpTogether[0].position - transform.position) * 5f;
+                        }
+                        else if (page == 2)
+                        {
+                            if (UIM.enemy2_page2)
+                            {
+                                if (Path_UpTogether[1].position == transform.position)
+                                {
+                                    page = 1;
+                                    ThisBody.velocity = new Vector2(0, 0);
+                                    new WaitForSecondsRealtime(3f);
+                                }
+                                else
+                                    ThisBody.velocity = (Path_UpTogether[1].position - transform.position) * 5f;
+                            }
+                        }
+                    }
+
+                    if (enemy1_CanAttack)
+                        Enemy1_Attack();
+
+                }
+                // enemy2의 UpTogether 모드 이동 패턴
+                else if (ThisName.Equals("enemy2"))
+                {
+                    if (page == 1)
+                    {
+                        if (Path_UpTogether[0].position == transform.position)
+                        {
+                            page = 2;
+                            ThisBody.velocity = new Vector2(0, 0);
+                        }
+                        else
+                            ThisBody.velocity = (Path_UpTogether[0].position - transform.position) * 5f;
+                    }
+                    else if (page == 2)
+                    {
+                        if (count == 0)
+                        {
+                            count += 1;
+                            StartCoroutine(Enemy2_Attack2());
+                        }
+                        UIM.enemy2_page2 = true;
+                        if (Path_UpTogether[1].position == transform.position)
+                        {
+                            page = 1;
+                            ThisBody.velocity = new Vector2(0, 0);
+                        }
+                        else
+                            ThisBody.velocity = (Path_UpTogether[1].position - transform.position) * 5f;
+                    }
+                }
+                break;
         }
 
         // target(플레이어)가 있는 방향으로 고개를 돌림
@@ -116,10 +203,12 @@ public class B_EnemyMovement : MonoBehaviour {
 
     }
 
-    // enemy2 공격 함수
-    IEnumerator Enemy2_Attack()
+    // enemy2 공격 함수1
+    IEnumerator Enemy2_Attack1()
     {
         flag = false;
+        headAnimator.SetTrigger("attack");
+        wingsAnimator.SetTrigger("attack");
         // 상하좌우+대각선4방향으로 말탄환을 날린다.
         for (int k = 0; k < 8; k++)
         {
@@ -128,14 +217,55 @@ public class B_EnemyMovement : MonoBehaviour {
             bullet[k].gameObject.SetActive(true);
             bullet[k].position = barrel[k].position;
             bullet[k].rotation = barrel[k].rotation;
+            bullet[k].GetComponent<B_DestroyInTime>().MoveBullet(Dir, bulletSpeed, 0);
             yield return new WaitForSecondsRealtime(0.1f);
-            bullet[k].GetComponent<B_DestroyInTime>().MoveBullet(Dir, bulletSpeed, 1.5f - 0.025f*k);
         }
-        headAnimator.SetTrigger("attack");
-        wingsAnimator.SetTrigger("attack");
-        yield return new WaitForSecondsRealtime(1f);
         Invoke("setFlag", 0.8f);
         Invoke("ActivateBullets", bulletTimeOut[Random.Range(0, bulletTimeOut.Length)]);
+    }
+
+    // enemy2 공격 함수2
+    IEnumerator Enemy2_Attack2()
+    {
+        int index = 0;
+        Quaternion[] R = {barrel[2].rotation, barrel[3].rotation, barrel[4].rotation, barrel[5].rotation, barrel[6].rotation};
+        // 좌우하+대각선2방향으로 말탄환을 날린다.
+        for (int i = 0; i < 4; i++) {
+            for (int k = 2; k <= 6; k++)
+            {
+                barrel[k].rotation = R[k-2];
+                targetDir = barrel[k].position;
+                Dir = targetDir - (Vector2)transform.position;
+                bullet[index].gameObject.SetActive(true);
+                bullet[index].position = barrel[k].position;
+                bullet[index].rotation = barrel[k].rotation;
+                bullet[index].GetComponent<B_DestroyInTime>().MoveBullet(Dir, bulletSpeed, 0);
+                yield return new WaitForSecondsRealtime(0.2f);
+                index += 1;
+                index %= 16;
+            }
+            yield return new WaitForSecondsRealtime(1f);
+            for (int k = 6; k >= 2; k--)
+            {
+                if (i % 2 == 0)
+                    barrel[k].Rotate(new Vector3(0, 0, 22.5f));
+                else
+                    barrel[k].Rotate(new Vector3(0, 0, -22.5f));
+                targetDir = barrel[k].position;
+                Dir = targetDir - (Vector2)transform.position;
+                bullet[index].gameObject.SetActive(true);
+                bullet[index].position = barrel[k].position;
+                bullet[index].rotation = barrel[k].rotation;
+                bullet[index].GetComponent<B_DestroyInTime>().MoveBullet(Dir, bulletSpeed, 0);
+                yield return new WaitForSecondsRealtime(0.2f);
+                index += 1;
+                index %= 16;
+            }
+            yield return new WaitForSecondsRealtime(1f);
+        }
+        yield return new WaitForSecondsRealtime(1f);
+        Invoke("ActivateBullets", 0.5f);
+        count = 0;
     }
 
     // enemy2 공격 딜레이
@@ -179,15 +309,23 @@ public class B_EnemyMovement : MonoBehaviour {
         barrel[0].Rotate(0, 0, digree);
         int k = Random.Range(0, bullet.Length);
         bullet[k].gameObject.SetActive(true);
-        bullet[k].GetComponent<B_DestroyInTime>().Invoke("Delete", destroyTime);
         bullet[k].position = barrel[0].position;
         bullet[k].rotation = barrel[0].rotation;
         bullet[k].GetComponent<Rigidbody2D>().AddForce(Dir.normalized * bulletSpeed);
         // 공격 딜레이
-        Invoke("ActivateBullet", bulletTimeOut[0]);
+        if (mode == B_UIManager.enemyMode.normal)
+        {
+            bullet[k].GetComponent<B_DestroyInTime>().Invoke("Delete", destroyTime);
+            Invoke("ActivateBullet", bulletTimeOut[0]);
+        }
+        else if (mode == B_UIManager.enemyMode.UpTogether)
+        {
+            bullet[k].GetComponent<B_DestroyInTime>().Invoke("Delete", 2f);
+            Invoke("ActivateBullet", 2.5f);
+        }
     }
 
-    // enemy1 공격 딜레이. 제한 시간이 지나야 CanJump 변수를 활성화한다.
+    // enemy1 공격 딜레이. 제한 시간이 지나야 CanAttack 변수를 활성화한다.
     private void ActivateBullet()
     {
         enemy1_CanAttack = true;

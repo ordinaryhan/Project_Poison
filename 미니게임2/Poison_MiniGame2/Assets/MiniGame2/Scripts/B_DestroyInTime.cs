@@ -8,26 +8,25 @@ public class B_DestroyInTime : MonoBehaviour {
     float destroyTime = 1f;
     public int power = 30;
     Vector2 Dir;
-    float speed, delay;
+    float speed;
     Rigidbody2D thisbody;
-    string ThisTag;
 
     // Use this for initialization
     void Start () {
-        Invoke("Delete", destroyTime);
         thisbody = GetComponent<Rigidbody2D>();
-        ThisTag = transform.tag;
+        if(!tag.Equals("leterbullet"))
+            Invoke("Delete", destroyTime);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        string tag = collision.tag;
-
-        if ((tag.Equals("floor") || tag.Equals("floor_middle")) && ThisTag.Equals("waterbullet"))
+        string Ctag = collision.tag;
+        
+        if (Ctag.Equals("floor") && tag.Equals("waterbullet"))
             Delete();
-        if(tag.Equals("wall"))
+        if(Ctag.Equals("wall"))
             Delete();
-        if ((tag.Equals("Player")) && ThisTag.Equals("item"))
+        if ((Ctag.Equals("Player")) && tag.Equals("item"))
         {
             collision.GetComponent<B_PlayerControl>().ItemOn();
             Delete();

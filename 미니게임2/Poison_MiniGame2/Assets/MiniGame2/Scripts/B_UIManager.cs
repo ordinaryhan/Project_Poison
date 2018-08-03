@@ -18,7 +18,10 @@ public class B_UIManager : MonoBehaviour {
     [SerializeField]
     public int playerMaxHP = 600;
     int playerHP;
-    public bool moveSand = false;
+    public bool moveSand = false, enemy2_page2 = false;
+    // 적 공격 패턴
+    public enum enemyMode { normal = -1, UpTogether = 0 };
+    public enemyMode mode = enemyMode.normal;
     // 적이 클리어되면 false가 된다.
     public bool flag1 = true, flag2 = true, doflag = false, isItem = false, breakHourglass = false;
     [SerializeField]
@@ -40,8 +43,8 @@ public class B_UIManager : MonoBehaviour {
         enemy2HP = enemyMaxHP;
         door1.SetActive(false);
         door2.SetActive(false);
-        hourglassA.value = 600;
-        hourglassB.value = 0;
+        hourglassA.value = playerHP;
+        hourglassB.value = playerMaxHP - playerHP;
         hourglassC.value = 0;
     }
 
@@ -65,6 +68,7 @@ public class B_UIManager : MonoBehaviour {
                 moveSand = false;
                 StartCoroutine("MoveSand");
             }
+            // 플레이어 체력 양과 모래시계 양이 차이가 나면 diffHP씩 맞춰간다.
             if (hourglassA.value > playerHP && !isItem)
             {
                 diffHP = (hourglassA.value - playerHP) * 0.12f;
@@ -78,12 +82,18 @@ public class B_UIManager : MonoBehaviour {
                 hourglassB.value -= diffHP;
             }
         }
+        // 플레이어 체력이 0이 되면 모래시계 깨지는 효과가 나오게 한다. (1회 실행)
         else if(!breakHourglass)
         {
             breakHourglass = true;
             BreakHourglass.SetTrigger("break");
         }
 
+        // 적 하나의 체력이 절반이하로 떨어지면 mode를 UpTogether로 바꾼다.
+        if (enemy2HP <= enemyMaxHP * 0.5f || enemy1HP <= enemyMaxHP * 0.5f)
+            mode = enemyMode.UpTogether;
+
+        // 적이 모두 clear되면 문을 활성화 시킨다. (1회 실행)
         if (!flag1 && !flag2 && !doflag)
         {
             doflag = true;
@@ -92,7 +102,7 @@ public class B_UIManager : MonoBehaviour {
         }
     }
 
-    //모래 쏟아져 내리는 효과 관련
+    //모래 쏟아져 내리는 효과 관련 (hourglassC가 모래 막대 부분임)
     IEnumerator MoveSand()
     {
         for (int i = 1; i <= 10; i++)
@@ -136,7 +146,6 @@ public class B_UIManager : MonoBehaviour {
         moveSand = true;
         playerHP -= power;
         playerHPbar.size = (float) playerHP / playerMaxHP;
-        print(playerHP + " HitPlayer " + power);
     }
 
     public void HealPlayer(int power)
@@ -144,7 +153,6 @@ public class B_UIManager : MonoBehaviour {
         moveSand = true;
         playerHP += power;
         playerHPbar.size = (float)playerHP / playerMaxHP;
-        print(playerHP + " HealPlayer " + power);
     }
 
     // 적 체력 관련
@@ -152,14 +160,12 @@ public class B_UIManager : MonoBehaviour {
     {
         enemy1HP--;
         enemy1_bar.GetComponent<Scrollbar>().size = (float) enemy1HP / enemyMaxHP;
-        print(enemy1HP + " enemy1 ");
     }
 
     public void HitEnemy2()
     {
         enemy2HP--;
         enemy2_bar.GetComponent<Scrollbar>().size = (float) enemy2HP / enemyMaxHP;
-        print(enemy2HP + " enemy2 ");
     }
 
     // 공격/방어 개수 제한 관련
