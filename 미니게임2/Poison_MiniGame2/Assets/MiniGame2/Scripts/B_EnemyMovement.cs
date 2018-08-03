@@ -37,13 +37,14 @@ public class B_EnemyMovement : MonoBehaviour {
     public float rotationRadius = 2f, angularSpeed = 2f;
     float posX, posY, angle = -1f, digree;
     int i = 0, page = 1, count = 0;
-    bool flag = true, flip = true, clear = false;
+    bool flag = true, flip = true, clear = false, switchA = false;
     Vector2 targetDir, Dir;
     //  체력 5칸
     int Health;
     public B_UIManager UIM;
     // 클리어 관련
     public GameObject ClearEnemy, HitMessage, item1, item2;
+    public Transform barrelPoint;
 
     // Use this for initialization
     private void Awake()
@@ -67,9 +68,12 @@ public class B_EnemyMovement : MonoBehaviour {
     private void FlipDirection()
     {
         Facing = (FaceDirection)((int)Facing * -1f);
-        Vector3 LocalScale = ThisTransform.localScale;
-        LocalScale.x *= -1f;
-        ThisTransform.localScale = LocalScale;
+        Vector3 LocalScale1 = ThisTransform.localScale;
+        LocalScale1.x *= -1f;
+        ThisTransform.localScale = LocalScale1;
+        Vector3 LocalScale2 = barrelPoint.localScale;
+        LocalScale2.x *= -1f;
+        barrelPoint.localScale = LocalScale2;
         HitMessage.GetComponent<SpriteRenderer>().flipX = flip;
         flip = !flip;
     }
@@ -124,32 +128,30 @@ public class B_EnemyMovement : MonoBehaviour {
                 // enemy1의 UpTogether 모드 이동 패턴
                 if (ThisName.Equals("enemy1"))
                 {
-                    if (flag)
+                    if (page == 1)
                     {
-                        if (page == 1)
+                        if (!switchA)
                         {
-                            if (Path_UpTogether[0].position == transform.position)
-                            {
-                                page = 2;
-                                ThisBody.velocity = new Vector2(0, 0);
-                            }
-                            else
-                                ThisBody.velocity = (Path_UpTogether[0].position - transform.position) * 5f;
+                            StartCoroutine(ModeMotion());
                         }
-                        else if (page == 2)
+                        if (Path_UpTogether[0].position == transform.position)
                         {
-                            if (UIM.enemy2_page2)
-                            {
-                                if (Path_UpTogether[1].position == transform.position)
-                                {
-                                    page = 1;
-                                    ThisBody.velocity = new Vector2(0, 0);
-                                    new WaitForSecondsRealtime(3f);
-                                }
-                                else
-                                    ThisBody.velocity = (Path_UpTogether[1].position - transform.position) * 5f;
-                            }
+                            ThisBody.velocity = new Vector2(0, 0);
+                            page = 2;
                         }
+                        else
+                            ThisBody.velocity = (Path_UpTogether[0].position - transform.position) * 5f;
+                    }
+                    else if (UIM.enemy2_page2)
+                    {
+                        if (Path_UpTogether[1].position == transform.position)
+                        {
+                            page = 1;
+                            ThisBody.velocity = new Vector2(0, 0);
+                            new WaitForSecondsRealtime(3f);
+                        }
+                        else
+                            ThisBody.velocity = (Path_UpTogether[1].position - transform.position) * 5f;
                     }
 
                     if (enemy1_CanAttack)
@@ -161,6 +163,10 @@ public class B_EnemyMovement : MonoBehaviour {
                 {
                     if (page == 1)
                     {
+                        if (!switchA)
+                        {
+                            StartCoroutine(ModeMotion());
+                        }
                         if (Path_UpTogether[0].position == transform.position)
                         {
                             page = 2;
@@ -203,6 +209,17 @@ public class B_EnemyMovement : MonoBehaviour {
 
     }
 
+
+    // 모드 바뀔 때 모션
+    IEnumerator ModeMotion()
+    {
+        switchA = true;
+        headAnimator.ResetTrigger("hit");
+        bodyAnimator.ResetTrigger("hit");
+        bodyAnimator.SetTrigger("mode");
+        yield return new WaitForSecondsRealtime(3f);
+    }
+
     // enemy2 공격 함수1
     IEnumerator Enemy2_Attack1()
     {
@@ -231,6 +248,8 @@ public class B_EnemyMovement : MonoBehaviour {
         Quaternion[] R = {barrel[2].rotation, barrel[3].rotation, barrel[4].rotation, barrel[5].rotation, barrel[6].rotation};
         // 좌우하+대각선2방향으로 말탄환을 날린다.
         for (int i = 0; i < 4; i++) {
+            headAnimator.SetTrigger("attack");
+            wingsAnimator.SetTrigger("attack");
             for (int k = 2; k <= 6; k++)
             {
                 barrel[k].rotation = R[k-2];
@@ -245,6 +264,8 @@ public class B_EnemyMovement : MonoBehaviour {
                 index %= 16;
             }
             yield return new WaitForSecondsRealtime(1f);
+            headAnimator.SetTrigger("attack");
+            wingsAnimator.SetTrigger("attack");
             for (int k = 6; k >= 2; k--)
             {
                 if (i % 2 == 0)

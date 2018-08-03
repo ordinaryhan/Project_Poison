@@ -35,15 +35,16 @@ public class B_CameraMove : MonoBehaviour {
         // UpTogether 모드로 변하는 순간 1회에 한해 작동
         if (mode == B_UIManager.enemyMode.UpTogether && !switchB)
         {
+
             if (!switchA)
             {
                 if (transform.position == UP)
                 {
                     ThisBody.velocity = new Vector2(0, 0);
-                    Invoke("SetSwitchA", 1f);
+                    Invoke("SetSwitchA", 0.5f);
                 }
                 else
-                    ThisBody.velocity = (UP - transform.position) * 4f;
+                    ThisBody.velocity = (UP - transform.position) * 3f;
             }
             else
             {
@@ -51,9 +52,9 @@ public class B_CameraMove : MonoBehaviour {
                 {
                     y = 0;
                 }
-                else if (y >= 11.5f)
+                else if (y >= 13.58f)
                 {
-                    y = 11.5f;
+                    y = 13.58f;
                 }
                 if (x <= -1)
                 {
@@ -70,7 +71,7 @@ public class B_CameraMove : MonoBehaviour {
                     switchB = true;
                 }
                 else
-                    ThisBody.velocity = (targetXY - transform.position) * 4f;
+                    ThisBody.velocity = (targetXY - transform.position) * 3f;
             }
         }
         else
@@ -79,9 +80,9 @@ public class B_CameraMove : MonoBehaviour {
             {
                 y = 0;
             }
-            else if (y >= 11.5f)
+            else if (y >= 13.58f)
             {
-                y = 11.5f;
+                y = 13.58f;
             }
             if (x <= -1)
             {

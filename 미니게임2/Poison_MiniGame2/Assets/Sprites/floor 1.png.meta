@@ -1,13 +1,15 @@
 fileFormatVersion: 2
-guid: af77247acae616b4f901be32b8c560da
+guid: 2a326cf1195f0c74aae75d8480b122b1
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Floor_0
-    21300002: Floor_1
-    21300004: Floor_2
-    21300006: Floor_3
-    21300008: Floor_4
-    21300010: Floor_5
+    21300000: floor1
+    21300002: door
+    21300004: floor2
+    21300006: floor3
+    21300008: door_active
+    21300010: labor
+    21300012: floor_downL
+    21300014: floor_downR
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -99,121 +101,161 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Floor_0
+      name: floor1
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 218
+        width: 138
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c2de24760f205643a4129a57b7d7b03
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: door
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 181
+        width: 48
+        height: 69
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f311bc8d429e0514e822ab287af288d6
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: floor2
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 192
+        width: 137
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 138b26fe1700bdb46b172af0ff274e76
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: floor3
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 165
+        width: 138
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1545850f3b89d1f41ad6fe80936c1b50
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: door_active
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 106
+        width: 49
+        height: 70
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2d25091090281c441bf14d13c2c66f68
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: labor
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 99
+        width: 42
+        height: 61
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 740842b7d9bf37642a969b30ccac4217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: floor_downL
       rect:
         serializedVersion: 2
         x: 0
-        y: 146
-        width: 600
-        height: 74
+        y: 56
+        width: 184
+        height: 25
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7fd5d0188440eb741955f802633b7d24
+      spriteID: dadc9d94f38f20144a3180cf7d901456
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Floor_1
+      name: floor_downR
       rect:
         serializedVersion: 2
-        x: 1
-        y: 72
-        width: 366
-        height: 72
+        x: 68
+        y: 17
+        width: 188
+        height: 27
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 51c8269e2b1e28445882179f45ef0d41
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Floor_2
-      rect:
-        serializedVersion: 2
-        x: 390
-        y: 3
-        width: 187
-        height: 126
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 280a73c967234d44d8913913ff790a6c
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Floor_3
-      rect:
-        serializedVersion: 2
-        x: 3
-        y: 0
-        width: 176
-        height: 40
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 94416c65053f17544902159cfac50458
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Floor_4
-      rect:
-        serializedVersion: 2
-        x: 239
-        y: 7
-        width: 50
-        height: 50
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c65d1bf8bb27daa4c9cda80d1b00831b
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Floor_5
-      rect:
-        serializedVersion: 2
-        x: 305
-        y: 7
-        width: 50
-        height: 50
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 08d39b2ed1bf9d643bfbdd57266eb221
+      spriteID: c95c7da33847a754b99ce6d6888e5e27
       vertices: []
       indices: 
       edges: []
@@ -221,7 +263,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 23107c9b5c505d64ca04aa63f946c94f
+    spriteID: 754df9c2c5a530d4a8dd88c926ec6608
     vertices: []
     indices: 
     edges: []

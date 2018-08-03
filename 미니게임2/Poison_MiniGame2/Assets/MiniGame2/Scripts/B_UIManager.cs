@@ -15,7 +15,6 @@ public class B_UIManager : MonoBehaviour {
     public Slider hourglassA, hourglassB, hourglassC;
     public Animator BreakHourglass;
     public int attackLimit = 15, shieldLimit = 5;
-    [SerializeField]
     public int playerMaxHP = 600;
     int playerHP;
     public bool moveSand = false, enemy2_page2 = false;
@@ -71,13 +70,13 @@ public class B_UIManager : MonoBehaviour {
             // 플레이어 체력 양과 모래시계 양이 차이가 나면 diffHP씩 맞춰간다.
             if (hourglassA.value > playerHP && !isItem)
             {
-                diffHP = (hourglassA.value - playerHP) * 0.12f;
+                diffHP = (hourglassA.value - playerHP) * 0.1f;
                 hourglassA.value -= diffHP;
                 hourglassB.value += diffHP;
             }
             else if (hourglassA.value < playerHP && isItem)
             {
-                diffHP = (playerHP - hourglassA.value) * 0.12f;
+                diffHP = (playerHP - hourglassA.value) * 0.1f;
                 hourglassA.value += diffHP;
                 hourglassB.value -= diffHP;
             }
@@ -91,7 +90,7 @@ public class B_UIManager : MonoBehaviour {
 
         // 적 하나의 체력이 절반이하로 떨어지면 mode를 UpTogether로 바꾼다.
         if (enemy2HP <= enemyMaxHP * 0.5f || enemy1HP <= enemyMaxHP * 0.5f)
-            mode = enemyMode.UpTogether;
+            Invoke("ChangeMode", 2f);
 
         // 적이 모두 clear되면 문을 활성화 시킨다. (1회 실행)
         if (!flag1 && !flag2 && !doflag)
@@ -100,6 +99,11 @@ public class B_UIManager : MonoBehaviour {
             door1.SetActive(true);
             door2.SetActive(true);
         }
+    }
+
+    private void ChangeMode()
+    {
+        mode = enemyMode.UpTogether;
     }
 
     //모래 쏟아져 내리는 효과 관련 (hourglassC가 모래 막대 부분임)
@@ -145,14 +149,12 @@ public class B_UIManager : MonoBehaviour {
     {
         moveSand = true;
         playerHP -= power;
-        playerHPbar.size = (float) playerHP / playerMaxHP;
     }
 
     public void HealPlayer(int power)
     {
         moveSand = true;
         playerHP += power;
-        playerHPbar.size = (float)playerHP / playerMaxHP;
     }
 
     // 적 체력 관련

@@ -99,10 +99,10 @@ TextureImporter:
       name: enemy_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 172
-        width: 45
-        height: 84
+        x: 18
+        y: 169
+        width: 57
+        height: 83
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -119,8 +119,8 @@ TextureImporter:
       name: enemy_1
       rect:
         serializedVersion: 2
-        x: 59
-        y: 219
+        x: 222
+        y: 36
         width: 25
         height: 13
       alignment: 0
@@ -179,8 +179,8 @@ TextureImporter:
       name: enemy_4
       rect:
         serializedVersion: 2
-        x: 63
-        y: 188
+        x: 226
+        y: 6
         width: 23
         height: 12
       alignment: 0
@@ -203,8 +203,8 @@ TextureImporter:
         y: 90
         width: 64
         height: 74
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.3444445, y: 0.4039048}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

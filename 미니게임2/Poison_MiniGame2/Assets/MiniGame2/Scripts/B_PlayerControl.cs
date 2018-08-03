@@ -47,7 +47,7 @@ public class B_PlayerControl : MonoBehaviour {
     // UIManager관련
     public B_UIManager UIM;
     // 체력 체크
-    public int Health = 600;
+    private int Health;
     bool HitFlag = true;
     // 아이템
     public bool isItem = false;
@@ -65,7 +65,7 @@ public class B_PlayerControl : MonoBehaviour {
         playerShield.SetActive(false);
         bullet.gameObject.SetActive(false);
         FlipDirection();
-        
+        Health = UIM.playerMaxHP;
     }
 
     // 플레이어가 착지 상태인지 여부를 반환한다.
@@ -306,7 +306,6 @@ public class B_PlayerControl : MonoBehaviour {
             // 적과 충돌한 경우
             if (collision.tag.Equals("enemy1") || collision.tag.Equals("enemy2"))
             {
-                print("enemy in");
                 HitFlag = false;
                 // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
                 if (!isItem)
