@@ -1,0 +1,17 @@
+/* 긴박한 분위기 */
+[효과음(.wav)] < AudioSource 위치
+++ player 이동 소리 <player
+++ player 점프 소리
+++ player 공격 소리
+++ player 공격 당하는 소리
+++ player 방어 소리
+++ player 방어막 깨지는 소리 < shield
+- player 죽을 때 소리
+++ 모래시계 깨지는 소리 < UI
+- 아이템 먹을 때 소리
+- enemy 공격 소리 (타자기 소리?)
+- enemy 공격 당하는 소리
+- enemy mode 변할 때 소리
+- enemy clear되는 소리
+++ door 활성화 소리 <UI
+++ door 입장 소리

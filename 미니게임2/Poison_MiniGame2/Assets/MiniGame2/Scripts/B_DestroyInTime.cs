@@ -5,28 +5,28 @@ using UnityEngine;
 public class B_DestroyInTime : MonoBehaviour {
 
     [SerializeField]
-    float destroyTime = 1f;
+    float destroyTime = 5f;
     public int power = 30;
     Vector2 Dir;
     float speed;
+    string ThisName;
     Rigidbody2D thisbody;
 
     // Use this for initialization
     void Awake () {
         thisbody = GetComponent<Rigidbody2D>();
-        if(!tag.Equals("letterbullet"))
-            Invoke("Delete", destroyTime);
+        ThisName = transform.tag;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("wall"))
             Delete();
-        else if (collision.CompareTag("floor") && tag.Equals("waterbullet"))
+        else if (collision.CompareTag("floor") && ThisName.Equals("waterbullet"))
             Delete();
-        else if (collision.CompareTag("waterbullet") && tag.Equals("letterbullet"))
+        else if (collision.CompareTag("waterbullet") && ThisName.Equals("letterbullet"))
             Delete();
-        else if ((collision.CompareTag("Player")) && tag.Equals("item"))
+        else if ((collision.CompareTag("Player")) && ThisName.Equals("item"))
         {
             collision.GetComponent<B_PlayerControl>().ItemOn();
             Delete();

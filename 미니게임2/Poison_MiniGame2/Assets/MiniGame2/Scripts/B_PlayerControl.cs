@@ -12,7 +12,7 @@ public class B_PlayerControl : MonoBehaviour {
     // 바닥 태그가 지정된 오브젝트
     public LayerMask GroundLayer;
     // rigidbody에 대한 참조
-    private Rigidbody2D ThisBody = null;
+    private Rigidbody2D ThisBody = null, bulletBody;
     // transform에 대한 참조
     private Transform ThisTransform = null;
     // 착지 여부
@@ -53,15 +53,20 @@ public class B_PlayerControl : MonoBehaviour {
     public bool isItem = false;
     public B_FlipHourglass HourglassScript;
     // 필요 변수 선언
-    bool isFall = false, DragFlag = false, isFloor = false;
+    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchA = false;
     float dirX;
+    // 효과음
+    public AudioClip playerJump, playerAttack, createShield, playerHit;
+    private AudioSource ThisAudio;
 
     // Use this for initialization
     private void Awake()
     {
         // 이 객체의 정보들을 담는다.
+        ThisAudio = GetComponent<AudioSource>();
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
+        bulletBody = bullet.GetComponent<Rigidbody2D>();
         playerShield.SetActive(false);
         bullet.gameObject.SetActive(false);
         FlipDirection();
@@ -95,6 +100,7 @@ public class B_PlayerControl : MonoBehaviour {
         if (!isGrounded || !CanJump)
             return;
         // 점프한다.
+        SoundManager.instance.PlaySingle(playerJump);
         ThisBody.AddForce(Vector2.up * JumpPower);
         CanJump = false;
         Invoke("ActivateJump", JumpTimeOut);
@@ -114,13 +120,14 @@ public class B_PlayerControl : MonoBehaviour {
 
         if (AttackLimit > 0 && CanAttack)
         {
+            SoundManager.instance.PlaySingle(playerAttack);
             CanAttack = false;
             faceAnimator.SetTrigger("attack");
             handsAnimator.SetTrigger("attack");
             bullet.gameObject.SetActive(true);
             bullet.position = barrel.position;
             bullet.rotation = barrel.rotation;
-            bullet.GetComponent<Rigidbody2D>().AddForce(barrel.up * bulletSpeed);
+            bulletBody.AddForce(barrel.up * bulletSpeed);
             AttackLimit--;
             UIM.Attack();
         }
@@ -141,6 +148,7 @@ public class B_PlayerControl : MonoBehaviour {
 
         if (ShieldLimit > 0 && CanShield)
         {
+            SoundManager.instance.PlaySingle(createShield);
             CanShield = false;
             playerShield.SetActive(true);
             ShieldLimit--;
@@ -180,17 +188,32 @@ public class B_PlayerControl : MonoBehaviour {
 
         // 속도를 제한한다.
         ThisBody.velocity = new Vector2(Mathf.Clamp(ThisBody.velocity.x, -MaxSpeed, MaxSpeed), Mathf.Clamp(ThisBody.velocity.y, -Mathf.Infinity, JumpPower));
-
+        
+        // 이동 여부 확인
+        isWalk = handsAnimator.GetBool("walk");
+        
         // 걷는 모션
-        if (handsAnimator.GetBool("walk") && ThisBody.velocity.x == 0)
+        if (isWalk && ThisBody.velocity.x == 0)
         {
             handsAnimator.SetBool("walk", false);
             bodyAnimator.SetBool("walk", false);
         }
-        if (!handsAnimator.GetBool("walk") && ThisBody.velocity.x != 0)
+        if (!isWalk && ThisBody.velocity.x != 0)
         {
             handsAnimator.SetBool("walk", true);
             bodyAnimator.SetBool("walk", true);
+        }
+        // 걷는 효과음
+        if(isWalk && isGrounded && !switchA)
+        {
+            switchA = true;
+            ThisAudio.Play();
+            ThisAudio.loop = true;
+        }
+        else if((!isWalk || !isGrounded) && switchA)
+        {
+            switchA = false;
+            ThisAudio.loop = false;
         }
 
         // 낙하 모션
@@ -276,6 +299,7 @@ public class B_PlayerControl : MonoBehaviour {
             // 말탄환에 맞았을 경우
             if (collision.CompareTag("letterbullet"))
             {
+                SoundManager.instance.PlaySingle(playerHit);
                 HitFlag = false;
                 int damage = collision.GetComponent<B_DestroyInTime>().power;
                 // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
@@ -311,6 +335,7 @@ public class B_PlayerControl : MonoBehaviour {
             // 적과 충돌한 경우
             if (collision.CompareTag("enemy1") || collision.CompareTag("enemy2"))
             {
+                SoundManager.instance.PlaySingle(playerHit);
                 HitFlag = false;
                 // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
                 if (!isItem)

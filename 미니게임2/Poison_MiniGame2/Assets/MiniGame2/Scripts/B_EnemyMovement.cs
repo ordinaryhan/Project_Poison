@@ -397,13 +397,24 @@ public class B_EnemyMovement : MonoBehaviour {
     {
         if (!clear)
         {
-            ClearEnemy.GetComponent<Transform>().position = new Vector2(ThisTransform.position.x, ThisTransform.position.y - 1.2f);
-            if (gameObject.tag.Equals("enemy1"))
-                UIM.flag1 = false;
-            else if (gameObject.tag.Equals("enemy2"))
-                UIM.flag2 = false;
+            Vector2 ThisPosition = ThisTransform.position;
+            ClearEnemy.GetComponent<Transform>().position = new Vector2(ThisPosition.x, ThisPosition.y - 1.2f);
             gameObject.SetActive(false);
             ClearEnemy.SetActive(true);
+            if (ThisName.Equals("enemy1"))
+            {
+                UIM.flag1 = false;
+                item1.SetActive(true);
+                item1.GetComponent<B_DestroyInTime>().Invoke("Delete", 5f);
+            }
+            else if (ThisName.Equals("enemy2"))
+            {
+                UIM.flag2 = false;
+                item2.SetActive(true);
+                item2.GetComponent<B_DestroyInTime>().Invoke("Delete", 5f);
+            }
+
+            // 적 둘 다 clear 됐을 시에는 아이템이 나오지 않는다.
             if (!UIM.flag1 && !UIM.flag2)
             {
                 item1.SetActive(false);

@@ -36,9 +36,13 @@ public class B_UIManager : MonoBehaviour {
     private Animator myAnimator2;
     public Button attackButton;
     public Button shieldButton;
+    // 효과음
+    public AudioClip breakGlass, activeDoor;
+    private AudioSource ThisAudio;
 
     private void Awake()
     {
+        ThisAudio = GetComponent<AudioSource>();
         myAnimator1 = attackButton.GetComponent<Animator>();
         myAnimator2 = shieldButton.GetComponent<Animator>();
         ThisTransform = GetComponent<Transform>();
@@ -95,6 +99,7 @@ public class B_UIManager : MonoBehaviour {
         {
             breakHourglass = true;
             BreakHourglass.SetTrigger("break");
+            Invoke("BreakSound", 1.5f);
         }
 
         // 적 하나의 체력이 절반이하로 떨어지면 mode를 UpTogether로 바꾼다.
@@ -105,6 +110,8 @@ public class B_UIManager : MonoBehaviour {
         if (!flag1 && !flag2 && !doflag)
         {
             doflag = true;
+            ThisAudio.clip = activeDoor;
+            ThisAudio.Play();
             door1.SetActive(true);
             door2.SetActive(true);
         }
@@ -113,6 +120,12 @@ public class B_UIManager : MonoBehaviour {
     private void ChangeMode()
     {
         mode = enemyMode.UpTogether;
+    }
+
+    private void BreakSound()
+    {
+        ThisAudio.clip = breakGlass;
+        ThisAudio.Play();
     }
 
     //모래 쏟아져 내리는 효과 관련 (hourglassC가 모래 막대 부분임)
