@@ -5,7 +5,6 @@ TagManager:
   serializedVersion: 2
   tags:
   - floor
-  - ladder
   - wall
   - item
   - UI
@@ -19,8 +18,8 @@ TagManager:
   - door0
   - door1
   - hourGlass
-  - ladder+
   - side
+  - center
   layers:
   - Default
   - TransparentFX

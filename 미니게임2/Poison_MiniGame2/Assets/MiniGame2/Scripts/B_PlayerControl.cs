@@ -72,8 +72,9 @@ public class B_PlayerControl : MonoBehaviour {
     private bool GetGrounded()
     {
         // 바닥을 확인한다
-        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(transform.position.x - 0.01f, transform.position.y - 1.2f),
-            new Vector2(transform.position.x+0.01f, transform.position.y - 0.8f), GroundLayer);
+        Vector3 ThisPosition = ThisTransform.position;
+        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x - 0.01f, ThisPosition.y - 1.2f),
+            new Vector2(ThisPosition.x+0.01f, ThisPosition.y - 0.8f), GroundLayer);
         if (HitColliders.Length > 0)
             return true;
         return false;
@@ -213,7 +214,7 @@ public class B_PlayerControl : MonoBehaviour {
     // 벽, 바닥에 옆면에 붙어있기 금지
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag.Equals("wall"))
+        if (collision.CompareTag("wall"))
         {
             if (!isGrounded)
             {
@@ -222,12 +223,14 @@ public class B_PlayerControl : MonoBehaviour {
             else
                 isDrag = false;
         }
-        else if (collision.tag.Equals("side"))
+        else if (collision.CompareTag("side"))
         {
             bool fc = false;
-            if ((collision.transform.position.x < transform.position.x) && Facing == FaceDirection.FaceLeft)
+            float playerX = ThisTransform.position.x;
+            float collisionX = collision.transform.position.x;
+            if ((collisionX < playerX) && Facing == FaceDirection.FaceLeft)
                 fc = true;
-            else if ((collision.transform.position.x > transform.position.x) && Facing == FaceDirection.FaceRight)
+            else if ((collisionX > playerX) && Facing == FaceDirection.FaceRight)
                 fc = true;
             if (!isGrounded && fc)
             {
@@ -246,7 +249,7 @@ public class B_PlayerControl : MonoBehaviour {
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.tag.Equals("floor"))
+        if (collision.CompareTag("floor"))
             isFloor = false;
     }
 
@@ -254,9 +257,9 @@ public class B_PlayerControl : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // 점프 시 발판에 방해받지 않게 하기
-        if (collision.tag.Equals("floor"))
+        if (collision.CompareTag("floor"))
         {
-            Vector2 playerXY = transform.position;
+            Vector2 playerXY = ThisTransform.position;
             Vector2 collisionXY = collision.transform.position;
             if (collisionXY.y > playerXY.y - 0.5f)
             {
@@ -271,7 +274,7 @@ public class B_PlayerControl : MonoBehaviour {
         if (Health != 0 && HitFlag && !shield.isActiveAndEnabled)
         {
             // 말탄환에 맞았을 경우
-            if (collision.tag.Equals("letterbullet"))
+            if (collision.CompareTag("letterbullet"))
             {
                 HitFlag = false;
                 int damage = collision.GetComponent<B_DestroyInTime>().power;
@@ -292,11 +295,13 @@ public class B_PlayerControl : MonoBehaviour {
                 Invoke("HitFlagOn", 1f);
                 // 맞은 방향 반대편으로 밀려나는 효과
                 isDrag = true;
-                if (collision.transform.position.x < transform.position.x)
+                float playerX = ThisTransform.position.x;
+                float collisionX = collision.transform.position.x;
+                if (collisionX < playerX)
                 {
                     ThisBody.velocity = Vector2.right * 2;
                 }
-                else if (collision.transform.position.x > transform.position.x)
+                else if (collisionX > playerX)
                 {
                     ThisBody.velocity = Vector2.left * 2;
                 }
@@ -304,7 +309,7 @@ public class B_PlayerControl : MonoBehaviour {
             }
 
             // 적과 충돌한 경우
-            if (collision.tag.Equals("enemy1") || collision.tag.Equals("enemy2"))
+            if (collision.CompareTag("enemy1") || collision.CompareTag("enemy2"))
             {
                 HitFlag = false;
                 // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
@@ -324,11 +329,13 @@ public class B_PlayerControl : MonoBehaviour {
                 Invoke("HitFlagOn", 0.5f);
                 // 맞은 방향 반대편으로 밀려나는 효과
                 isDrag = true;
-                if (collision.transform.position.x < transform.position.x)
+                float playerX = ThisTransform.position.x;
+                float collisionX = collision.transform.position.x;
+                if (collisionX < playerX)
                 {
                     ThisBody.velocity = Vector2.right * 4;
                 }
-                else if (collision.transform.position.x > transform.position.x)
+                else if (collisionX > playerX)
                 {
                     ThisBody.velocity = Vector2.left * 4;
                 }
@@ -337,7 +344,7 @@ public class B_PlayerControl : MonoBehaviour {
         }
 
         // 클리어 후 문에 닿으면 방향 전환
-        if (collision.tag.Equals("door0") || collision.tag.Equals("door1"))
+        if (collision.CompareTag("door0") || collision.CompareTag("door1"))
         {
             FlipDirection();
         }

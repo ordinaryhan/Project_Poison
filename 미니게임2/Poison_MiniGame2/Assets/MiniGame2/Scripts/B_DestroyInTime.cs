@@ -12,21 +12,21 @@ public class B_DestroyInTime : MonoBehaviour {
     Rigidbody2D thisbody;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         thisbody = GetComponent<Rigidbody2D>();
-        if(!tag.Equals("leterbullet"))
+        if(!tag.Equals("letterbullet"))
             Invoke("Delete", destroyTime);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        string Ctag = collision.tag;
-        
-        if (Ctag.Equals("floor") && tag.Equals("waterbullet"))
+        if (collision.CompareTag("wall"))
             Delete();
-        if(Ctag.Equals("wall"))
+        else if (collision.CompareTag("floor") && tag.Equals("waterbullet"))
             Delete();
-        if ((Ctag.Equals("Player")) && tag.Equals("item"))
+        else if (collision.CompareTag("waterbullet") && tag.Equals("letterbullet"))
+            Delete();
+        else if ((collision.CompareTag("Player")) && tag.Equals("item"))
         {
             collision.GetComponent<B_PlayerControl>().ItemOn();
             Delete();

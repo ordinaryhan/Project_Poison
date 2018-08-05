@@ -2,6 +2,7 @@
 
 public class B_CameraMove : MonoBehaviour {
 
+    private Transform ThisTransform;
     public B_UIManager UIM;
     public B_UIManager.enemyMode mode = B_UIManager.enemyMode.normal;
     public Transform target;
@@ -13,6 +14,7 @@ public class B_CameraMove : MonoBehaviour {
 
     private void Awake()
     {
+        ThisTransform = GetComponent<Transform>();
         ThisBody = GetComponent<Rigidbody2D>();
     }
 
@@ -35,16 +37,15 @@ public class B_CameraMove : MonoBehaviour {
         // UpTogether 모드로 변하는 순간 1회에 한해 작동
         if (mode == B_UIManager.enemyMode.UpTogether && !switchB)
         {
-
             if (!switchA)
             {
-                if (transform.position == UP)
+                if (ThisTransform.position == UP)
                 {
                     ThisBody.velocity = new Vector2(0, 0);
                     Invoke("SetSwitchA", 0.5f);
                 }
                 else
-                    ThisBody.velocity = (UP - transform.position) * 3f;
+                    ThisBody.velocity = (UP - ThisTransform.position) * 3f;
             }
             else
             {
@@ -65,13 +66,13 @@ public class B_CameraMove : MonoBehaviour {
                     x = 1;
                 }
                 Vector3 targetXY = new Vector3(x, y, -25);
-                if (transform.position == targetXY)
+                if (ThisTransform.position == targetXY)
                 {
                     ThisBody.velocity = new Vector2(0, 0);
                     switchB = true;
                 }
                 else
-                    ThisBody.velocity = (targetXY - transform.position) * 3f;
+                    ThisBody.velocity = (targetXY - ThisTransform.position) * 3f;
             }
         }
         else
@@ -92,7 +93,7 @@ public class B_CameraMove : MonoBehaviour {
             {
                 x = 1;
             }
-            transform.position = new Vector3(x, y, -25);
+            ThisTransform.position = new Vector3(x, y, -25);
         }
     }
 

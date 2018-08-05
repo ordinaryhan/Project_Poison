@@ -21,6 +21,7 @@ public class B_EnemyMovement : MonoBehaviour {
     // 공격/방어를 위한
     public Transform[] barrel;
     public Transform[] bullet;
+    private B_DestroyInTime[] Bullets;
     public float destroyTime = 1f;
     public B_PlayerControl target;
     private Transform targetTransform;
@@ -44,20 +45,24 @@ public class B_EnemyMovement : MonoBehaviour {
     public B_UIManager UIM;
     // 클리어 관련
     public GameObject ClearEnemy, HitMessage, item1, item2;
+    private SpriteRenderer HitMsg;
     public Transform barrelPoint;
 
     // Use this for initialization
     private void Awake()
     {
         // 이 객체의 정보들을 담는다.
+        HitMsg = HitMessage.GetComponent<SpriteRenderer>();
         Health = UIM.enemyMaxHP;
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
         ThisName = ThisTransform.tag;
         targetTransform = target.GetComponent<Transform>();
+        Bullets = new B_DestroyInTime[bullet.Length];
         for (int i = 0; i < bullet.Length; i++)
         {
             bullet[i].gameObject.SetActive(false);
+            Bullets[i] = bullet[i].GetComponent<B_DestroyInTime>();
         }
         waterball.SetActive(false);
         ClearEnemy.SetActive(false);
@@ -74,7 +79,7 @@ public class B_EnemyMovement : MonoBehaviour {
         Vector3 LocalScale2 = barrelPoint.localScale;
         LocalScale2.x *= -1f;
         barrelPoint.localScale = LocalScale2;
-        HitMessage.GetComponent<SpriteRenderer>().flipX = flip;
+        HitMsg.flipX = flip;
         flip = !flip;
     }
 
@@ -85,7 +90,7 @@ public class B_EnemyMovement : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void FixedUpdate() {
+    private void FixedUpdate() {
 
         // 모드 확인
         CheckMode();
@@ -100,7 +105,7 @@ public class B_EnemyMovement : MonoBehaviour {
                     {
                         posX = rotationCenter[i].position.x - Mathf.Cos(angle) * rotationRadius;
                         posY = rotationCenter[i].position.y - Mathf.Sin(angle) * rotationRadius;
-                        transform.position = new Vector2(posX, posY);
+                        ThisTransform.position = new Vector2(posX, posY);
                         angle = angle + Time.deltaTime * angularSpeed;
                     }
                 }
@@ -111,7 +116,7 @@ public class B_EnemyMovement : MonoBehaviour {
                     {
                         posX = rotationCenter[0].position.x - Mathf.Cos(angle) * rotationRadius;
                         posY = rotationCenter[0].position.y - Mathf.Sin(angle) * rotationRadius;
-                        transform.position = new Vector2(posX, posY);
+                        ThisTransform.position = new Vector2(posX, posY);
                         angle = angle + Time.deltaTime * angularSpeed;
                     }
 
@@ -134,24 +139,24 @@ public class B_EnemyMovement : MonoBehaviour {
                         {
                             StartCoroutine(ModeMotion());
                         }
-                        if (Path_UpTogether[0].position == transform.position)
+                        if (Path_UpTogether[0].position == ThisTransform.position)
                         {
                             ThisBody.velocity = new Vector2(0, 0);
                             page = 2;
                         }
                         else
-                            ThisBody.velocity = (Path_UpTogether[0].position - transform.position) * 5f;
+                            ThisBody.velocity = (Path_UpTogether[0].position - ThisTransform.position) * 5f;
                     }
                     else if (UIM.enemy2_page2)
                     {
-                        if (Path_UpTogether[1].position == transform.position)
+                        if (Path_UpTogether[1].position == ThisTransform.position)
                         {
                             page = 1;
                             ThisBody.velocity = new Vector2(0, 0);
                             new WaitForSecondsRealtime(3f);
                         }
                         else
-                            ThisBody.velocity = (Path_UpTogether[1].position - transform.position) * 5f;
+                            ThisBody.velocity = (Path_UpTogether[1].position - ThisTransform.position) * 5f;
                     }
 
                     if (enemy1_CanAttack)
@@ -167,13 +172,13 @@ public class B_EnemyMovement : MonoBehaviour {
                         {
                             StartCoroutine(ModeMotion());
                         }
-                        if (Path_UpTogether[0].position == transform.position)
+                        if (Path_UpTogether[0].position == ThisTransform.position)
                         {
                             page = 2;
                             ThisBody.velocity = new Vector2(0, 0);
                         }
                         else
-                            ThisBody.velocity = (Path_UpTogether[0].position - transform.position) * 5f;
+                            ThisBody.velocity = (Path_UpTogether[0].position - ThisTransform.position) * 5f;
                     }
                     else if (page == 2)
                     {
@@ -183,20 +188,20 @@ public class B_EnemyMovement : MonoBehaviour {
                             StartCoroutine(Enemy2_Attack2());
                         }
                         UIM.enemy2_page2 = true;
-                        if (Path_UpTogether[1].position == transform.position)
+                        if (Path_UpTogether[1].position == ThisTransform.position)
                         {
                             page = 1;
                             ThisBody.velocity = new Vector2(0, 0);
                         }
                         else
-                            ThisBody.velocity = (Path_UpTogether[1].position - transform.position) * 5f;
+                            ThisBody.velocity = (Path_UpTogether[1].position - ThisTransform.position) * 5f;
                     }
                 }
                 break;
         }
 
         // target(플레이어)가 있는 방향으로 고개를 돌림
-        if (targetTransform.position.x - transform.position.x > 0)
+        if (targetTransform.position.x - ThisTransform.position.x > 0)
         {
             if (Facing == FaceDirection.FaceLeft)
                 FlipDirection();
@@ -209,14 +214,15 @@ public class B_EnemyMovement : MonoBehaviour {
 
     }
 
-
     // 모드 바뀔 때 모션
     IEnumerator ModeMotion()
     {
         switchA = true;
+        headAnimator.SetTrigger("mode");
         headAnimator.ResetTrigger("hit");
-        bodyAnimator.ResetTrigger("hit");
+        headAnimator.ResetTrigger("attack");
         bodyAnimator.SetTrigger("mode");
+        bodyAnimator.ResetTrigger("hit");
         yield return new WaitForSecondsRealtime(3f);
     }
 
@@ -230,14 +236,14 @@ public class B_EnemyMovement : MonoBehaviour {
         for (int k = 0; k < 8; k++)
         {
             targetDir = barrel[k].position;
-            Dir = targetDir - (Vector2)transform.position;
+            Dir = targetDir - (Vector2) ThisTransform.position;
             bullet[k].gameObject.SetActive(true);
             bullet[k].position = barrel[k].position;
             bullet[k].rotation = barrel[k].rotation;
-            bullet[k].GetComponent<B_DestroyInTime>().MoveBullet(Dir, bulletSpeed, 0);
+            Bullets[k].MoveBullet(Dir, bulletSpeed, 0);
             yield return new WaitForSecondsRealtime(0.1f);
         }
-        Invoke("setFlag", 0.8f);
+        Invoke("SetFlag", 0.8f);
         Invoke("ActivateBullets", bulletTimeOut[Random.Range(0, bulletTimeOut.Length)]);
     }
 
@@ -254,11 +260,11 @@ public class B_EnemyMovement : MonoBehaviour {
             {
                 barrel[k].rotation = R[k-2];
                 targetDir = barrel[k].position;
-                Dir = targetDir - (Vector2)transform.position;
+                Dir = targetDir - (Vector2) ThisTransform.position;
                 bullet[index].gameObject.SetActive(true);
                 bullet[index].position = barrel[k].position;
                 bullet[index].rotation = barrel[k].rotation;
-                bullet[index].GetComponent<B_DestroyInTime>().MoveBullet(Dir, bulletSpeed, 0);
+                Bullets[index].MoveBullet(Dir, bulletSpeed, 0);
                 yield return new WaitForSecondsRealtime(0.2f);
                 index += 1;
                 index %= 16;
@@ -273,11 +279,11 @@ public class B_EnemyMovement : MonoBehaviour {
                 else
                     barrel[k].Rotate(new Vector3(0, 0, -22.5f));
                 targetDir = barrel[k].position;
-                Dir = targetDir - (Vector2)transform.position;
+                Dir = targetDir - (Vector2) ThisTransform.position;
                 bullet[index].gameObject.SetActive(true);
                 bullet[index].position = barrel[k].position;
                 bullet[index].rotation = barrel[k].rotation;
-                bullet[index].GetComponent<B_DestroyInTime>().MoveBullet(Dir, bulletSpeed, 0);
+                Bullets[index].MoveBullet(Dir, bulletSpeed, 0);
                 yield return new WaitForSecondsRealtime(0.2f);
                 index += 1;
                 index %= 16;
@@ -302,10 +308,10 @@ public class B_EnemyMovement : MonoBehaviour {
         i = (i + 1) % 4;
         angle -= 1.47f;
         Enemy1_Attack();
-        Invoke("setFlag", 0.8f);
+        Invoke("SetFlag", 0.8f);
     }
 
-    private void setFlag()
+    private void SetFlag()
     {
         if(!waterball.activeSelf)
             flag = true;
@@ -322,7 +328,7 @@ public class B_EnemyMovement : MonoBehaviour {
         wingsAnimator.SetTrigger("attack");
         // target(플레이어) 방향으로 말탄환을 날린다.
         targetDir = targetTransform.position;
-        Dir = targetDir - (Vector2) transform.position;
+        Dir = targetDir - (Vector2) ThisTransform.position;
         if (Facing == FaceDirection.FaceLeft)
             digree = Mathf.Atan2(barrel[0].position.y - targetDir.y, barrel[0].position.x - targetDir.x) * 180f / Mathf.PI;
         else
@@ -332,16 +338,16 @@ public class B_EnemyMovement : MonoBehaviour {
         bullet[k].gameObject.SetActive(true);
         bullet[k].position = barrel[0].position;
         bullet[k].rotation = barrel[0].rotation;
-        bullet[k].GetComponent<Rigidbody2D>().AddForce(Dir.normalized * bulletSpeed);
+        Bullets[k].MoveBullet(Dir, bulletSpeed, 0);
         // 공격 딜레이
         if (mode == B_UIManager.enemyMode.normal)
         {
-            bullet[k].GetComponent<B_DestroyInTime>().Invoke("Delete", destroyTime);
+            Bullets[k].Invoke("Delete", destroyTime);
             Invoke("ActivateBullet", bulletTimeOut[0]);
         }
         else if (mode == B_UIManager.enemyMode.UpTogether)
         {
-            bullet[k].GetComponent<B_DestroyInTime>().Invoke("Delete", 2f);
+            Bullets[k].Invoke("Delete", 1.5f);
             Invoke("ActivateBullet", 2.5f);
         }
     }
@@ -363,9 +369,9 @@ public class B_EnemyMovement : MonoBehaviour {
             wingsAnimator.SetTrigger("hit");
             bodyAnimator.SetTrigger("hit");
             flag = false;
-            if (transform.tag.Equals("enemy1"))
+            if (ThisName.Equals("enemy1"))
                 UIM.HitEnemy1();
-            else if(transform.tag.Equals("enemy2"))
+            else if(ThisName.Equals("enemy2"))
                 UIM.HitEnemy2();
             waterball.SetActive(true);
             HitMessage.SetActive(true);
@@ -391,8 +397,7 @@ public class B_EnemyMovement : MonoBehaviour {
     {
         if (!clear)
         {
-            print("이동");
-            ClearEnemy.GetComponent<Transform>().position = new Vector2(transform.position.x, transform.position.y - 1.2f);
+            ClearEnemy.GetComponent<Transform>().position = new Vector2(ThisTransform.position.x, ThisTransform.position.y - 1.2f);
             if (gameObject.tag.Equals("enemy1"))
                 UIM.flag1 = false;
             else if (gameObject.tag.Equals("enemy2"))

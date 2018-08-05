@@ -4,42 +4,40 @@ using UnityEngine;
 
 public class B_OnTrigger : MonoBehaviour {
 
-    public B_EnemyMovement target;
+    public B_EnemyMovement target = null;
     public Transform Camera = null;
     private Animator myAnimator;
-    string ThisTag;
+    private string ThisTag;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         myAnimator = GetComponent<Animator>();
         ThisTag = transform.tag;
 	}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        string tag = collision.tag;
-
-        if (tag.Equals("floor_middle"))
+        if (collision.CompareTag("floor_middle"))
         {
             if(target.mode == B_UIManager.enemyMode.normal)
-                target.Change_i();
+              target.Change_i();
         }
 
-        if (tag.Equals("letterbullet") && ThisTag.Equals("Shield"))
+        if (collision.CompareTag("letterbullet") && ThisTag.Equals("Shield"))
         {
             collision.gameObject.SetActive(false);
             myAnimator.SetTrigger("break");
             Invoke("ActiveOff", 1f);
         }
 
-        if (tag.Equals("Player") && ThisTag.Equals("door0"))
+        if (collision.CompareTag("Player") && ThisTag.Equals("door0"))
         {
             collision.GetComponent<Transform>().position = new Vector2(-6.404f, -4.6f);
             Camera.position = new Vector3(Camera.position.x, 0f, Camera.position.z);
             collision.GetComponent<B_PlayerControl>().Door0();
         }
 
-        if (tag.Equals("Player") && ThisTag.Equals("door1"))
+        if (collision.CompareTag("Player") && ThisTag.Equals("door1"))
         {
             print("*** Clear!!! ***");
         }
