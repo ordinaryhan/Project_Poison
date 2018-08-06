@@ -25,7 +25,7 @@ public class B_UIManager : MonoBehaviour {
     public enum enemyMode { normal = -1, UpTogether = 0 };
     public enemyMode mode = enemyMode.normal;
     // 적이 클리어되면 false가 된다.
-    public bool flag1 = true, flag2 = true, doflag = false, isItem = false, breakHourglass = false;
+    public bool flag1 = true, flag2 = true, doflag = false, isItem = false, breakHourglass = false, one = false, two = false;
     [SerializeField]
     public int enemyMaxHP = 5;
     int enemy1HP, enemy2HP;
@@ -37,7 +37,7 @@ public class B_UIManager : MonoBehaviour {
     public Button attackButton;
     public Button shieldButton;
     // 효과음
-    public AudioClip breakGlass, activeDoor;
+    public AudioClip breakGlass, activeDoor, enemyClear;
     private AudioSource ThisAudio;
 
     private void Awake()
@@ -66,11 +66,27 @@ public class B_UIManager : MonoBehaviour {
         if (flag1)
             enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(enemy1Target.position.x, enemy1Target.position.y, PositionZ));
         else
-            enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear1Target.position.x-0.35f, clear1Target.position.y+0.85f, PositionZ));
+        {
+            if (!one)
+            {
+                one = true;
+                ThisAudio.clip = enemyClear;
+                ThisAudio.Play();
+            }
+            enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear1Target.position.x - 0.35f, clear1Target.position.y + 0.85f, PositionZ));
+        }
         if (flag2)
             enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(enemy2Target.position.x, enemy2Target.position.y, PositionZ));
         else
-            enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear2Target.position.x-0.25f, clear2Target.position.y+0.7f, PositionZ));
+        {
+            if (!two)
+            {
+                two = true;
+                ThisAudio.clip = enemyClear;
+                ThisAudio.Play();
+            }
+            enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear2Target.position.x - 0.25f, clear2Target.position.y + 0.7f, PositionZ));
+        }
 
         // 모래시계 UI 관련
         if (playerHP > 0)

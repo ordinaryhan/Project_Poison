@@ -56,7 +56,7 @@ public class B_PlayerControl : MonoBehaviour {
     bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchA = false;
     float dirX;
     // 효과음
-    public AudioClip playerJump, playerAttack, createShield, playerHit;
+    public AudioClip playerJump, playerAttack, createShield, playerHit, itemSound;
     private AudioSource ThisAudio;
 
     // Use this for initialization
@@ -397,6 +397,9 @@ public class B_PlayerControl : MonoBehaviour {
     // 아이템 관련
     public void ItemOn()
     {
+        AudioSource UIMAudio = UIM.GetComponent<AudioSource>();
+        UIMAudio.clip = itemSound;
+        UIMAudio.Play();
         UIM.isItem = true;
         HourglassScript.doFlip = true;
         isItem = true;
@@ -405,6 +408,9 @@ public class B_PlayerControl : MonoBehaviour {
 
     private void ItemOff()
     {
+        AudioSource UIMAudio = UIM.GetComponent<AudioSource>();
+        UIMAudio.clip = itemSound;
+        UIMAudio.Play();
         UIM.isItem = false;
         HourglassScript.doFlip = true;
         isItem = false;

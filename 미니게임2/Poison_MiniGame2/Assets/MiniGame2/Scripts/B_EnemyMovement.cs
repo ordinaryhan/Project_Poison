@@ -47,11 +47,15 @@ public class B_EnemyMovement : MonoBehaviour {
     public GameObject ClearEnemy, HitMessage, item1, item2;
     private SpriteRenderer HitMsg;
     public Transform barrelPoint;
+    // 효과음
+    public AudioClip enemyHit;
+    private AudioSource ThisAudio;
 
     // Use this for initialization
     private void Awake()
     {
         // 이 객체의 정보들을 담는다.
+        ThisAudio = GetComponent<AudioSource>();
         HitMsg = HitMessage.GetComponent<SpriteRenderer>();
         Health = UIM.enemyMaxHP;
         ThisBody = GetComponent<Rigidbody2D>();
@@ -137,6 +141,7 @@ public class B_EnemyMovement : MonoBehaviour {
                     {
                         if (!switchA)
                         {
+                            switchA = true;
                             StartCoroutine(ModeMotion());
                         }
                         if (Path_UpTogether[0].position == ThisTransform.position)
@@ -170,6 +175,7 @@ public class B_EnemyMovement : MonoBehaviour {
                     {
                         if (!switchA)
                         {
+                            switchA = true;
                             StartCoroutine(ModeMotion());
                         }
                         if (Path_UpTogether[0].position == ThisTransform.position)
@@ -217,13 +223,18 @@ public class B_EnemyMovement : MonoBehaviour {
     // 모드 바뀔 때 모션
     IEnumerator ModeMotion()
     {
-        switchA = true;
-        headAnimator.SetTrigger("mode");
+        print("mode on");
+        yield return new WaitForSecondsRealtime(0.25f);
         headAnimator.ResetTrigger("hit");
         headAnimator.ResetTrigger("attack");
-        bodyAnimator.SetTrigger("mode");
         bodyAnimator.ResetTrigger("hit");
-        yield return new WaitForSecondsRealtime(3f);
+        headAnimator.SetTrigger("mode");
+        bodyAnimator.SetTrigger("mode");
+        yield return new WaitForSecondsRealtime(0.75f);
+        wingsAnimator.SetTrigger("mode");
+        wingsAnimator.ResetTrigger("hit");
+        wingsAnimator.ResetTrigger("attack");
+        
     }
 
     // enemy2 공격 함수1
@@ -362,7 +373,7 @@ public class B_EnemyMovement : MonoBehaviour {
     // 공격 당했을 시
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag.Equals("waterbullet") && Health != 0)
+        if (collision.tag.Equals("waterbullet") && Health > 0)
         {
             Health--;
             headAnimator.SetTrigger("hit");
@@ -387,9 +398,15 @@ public class B_EnemyMovement : MonoBehaviour {
         waterball.SetActive(false);
         HitMessage.SetActive(false);
         if (Health > 0)
+        {
+            ThisAudio.clip = enemyHit;
+            ThisAudio.Play();
             flag = true;
+        }
         else
+        {
             Clear();
+        }
     }
 
     // 적이 클리어된 경우

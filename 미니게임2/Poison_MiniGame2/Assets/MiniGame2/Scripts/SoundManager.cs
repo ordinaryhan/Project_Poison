@@ -32,17 +32,4 @@ public class SoundManager : MonoBehaviour
         efxSource.Play ();
     }
 
-    public void PlayLoop(AudioClip clip)
-    {
-        efxSource.clip = clip;
-        efxSource.Play();
-        efxSource.loop = true;
-    }
-
-    public void StopLoop(AudioClip clip)
-    {
-        efxSource.clip = clip;
-        efxSource.loop = false;
-    }
-
 }

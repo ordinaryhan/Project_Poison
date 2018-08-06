@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class B_DestroyInTime : MonoBehaviour {
-
-    [SerializeField]
-    float destroyTime = 5f;
+    
     public int power = 30;
     Vector2 Dir;
     float speed;
