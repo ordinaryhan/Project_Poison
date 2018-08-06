@@ -56,7 +56,7 @@ public class B_PlayerControl : MonoBehaviour {
     bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchA = false;
     float dirX;
     // 효과음
-    public AudioClip playerJump, playerAttack, createShield, playerHit, itemSound;
+    public AudioClip playerMove, playerJump, playerAttack, createShield, playerHit, itemSound;
     private AudioSource ThisAudio;
 
     // Use this for initialization
@@ -78,8 +78,8 @@ public class B_PlayerControl : MonoBehaviour {
     {
         // 바닥을 확인한다
         Vector3 ThisPosition = ThisTransform.position;
-        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x - 0.01f, ThisPosition.y - 1.2f),
-            new Vector2(ThisPosition.x+0.01f, ThisPosition.y - 0.8f), GroundLayer);
+        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x, ThisPosition.y - 1.2f),
+            new Vector2(ThisPosition.x, ThisPosition.y - 0.8f), GroundLayer);
         if (HitColliders.Length > 0)
             return true;
         return false;
@@ -207,6 +207,7 @@ public class B_PlayerControl : MonoBehaviour {
         if(isWalk && isGrounded && !switchA)
         {
             switchA = true;
+            ThisAudio.clip = playerMove;
             ThisAudio.Play();
             ThisAudio.loop = true;
         }

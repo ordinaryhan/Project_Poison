@@ -126,11 +126,16 @@ public class B_UIManager : MonoBehaviour {
         if (!flag1 && !flag2 && !doflag)
         {
             doflag = true;
-            ThisAudio.clip = activeDoor;
-            ThisAudio.Play();
-            door1.SetActive(true);
-            door2.SetActive(true);
+            Invoke("DoorActivate", 1f);
         }
+    }
+
+    private void DoorActivate()
+    {
+        ThisAudio.clip = activeDoor;
+        ThisAudio.Play();
+        door1.SetActive(true);
+        door2.SetActive(true);
     }
 
     private void ChangeMode()

@@ -48,7 +48,7 @@ public class B_EnemyMovement : MonoBehaviour {
     private SpriteRenderer HitMsg;
     public Transform barrelPoint;
     // 효과음
-    public AudioClip enemyHit;
+    public AudioClip enemyHit, modeChange;
     private AudioSource ThisAudio;
 
     // Use this for initialization
@@ -223,18 +223,18 @@ public class B_EnemyMovement : MonoBehaviour {
     // 모드 바뀔 때 모션
     IEnumerator ModeMotion()
     {
-        print("mode on");
-        yield return new WaitForSecondsRealtime(0.25f);
+        yield return new WaitForSecondsRealtime(0.75f);
         headAnimator.ResetTrigger("hit");
         headAnimator.ResetTrigger("attack");
         bodyAnimator.ResetTrigger("hit");
-        headAnimator.SetTrigger("mode");
         bodyAnimator.SetTrigger("mode");
-        yield return new WaitForSecondsRealtime(0.75f);
-        wingsAnimator.SetTrigger("mode");
+        yield return new WaitForSecondsRealtime(0.1f);
         wingsAnimator.ResetTrigger("hit");
         wingsAnimator.ResetTrigger("attack");
-        
+        wingsAnimator.SetTrigger("mode");
+        yield return new WaitForSecondsRealtime(0.05f);
+        ThisAudio.clip = modeChange;
+        ThisAudio.Play();
     }
 
     // enemy2 공격 함수1
