@@ -10,7 +10,7 @@ public class B_CameraMove : MonoBehaviour {
     private Rigidbody2D ThisBody;
     float x, y;
     bool switchA = false, switchB = false;
-    Vector3 UP = new Vector3(0, 11.5f, -25);
+    Vector3 UP = new Vector3(0, 12.5f, -25);
 
     private void Awake()
     {

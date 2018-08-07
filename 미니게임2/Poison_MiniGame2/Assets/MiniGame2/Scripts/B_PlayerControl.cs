@@ -53,7 +53,7 @@ public class B_PlayerControl : MonoBehaviour {
     public bool isItem = false;
     public B_FlipHourglass HourglassScript;
     // 필요 변수 선언
-    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchA = false;
+    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchA = false, switchB = false;
     float dirX;
     // 효과음
     public AudioClip playerMove, playerJump, playerAttack, createShield, playerHit, itemSound;
@@ -87,7 +87,7 @@ public class B_PlayerControl : MonoBehaviour {
     }
 
     // 캐릭터 방향을 바꾼다.
-    private void FlipDirection()
+    public void FlipDirection()
     {
         Facing = (FaceDirection)((int)Facing * -1f);
         Vector3 LocalScale = ThisTransform.localScale;
@@ -233,6 +233,9 @@ public class B_PlayerControl : MonoBehaviour {
         // 필요한 경우 방향을 바꾼다.
         if (!isDrag && ((dirX < 0f && Facing == FaceDirection.FaceRight) || (dirX > 0f && Facing == FaceDirection.FaceLeft)))
             FlipDirection();
+
+        if (switchB && Facing == FaceDirection.FaceLeft)
+            FlipDirection();
             
     }
 
@@ -325,6 +328,8 @@ public class B_PlayerControl : MonoBehaviour {
                 {
                     Health += damage;
                     UIM.HealPlayer(damage);
+                    if (Health >= 600)
+                        Health = 600;
                 }
                 faceAnimator.SetTrigger("hit");
                 handsAnimator.SetTrigger("hit");
@@ -360,6 +365,8 @@ public class B_PlayerControl : MonoBehaviour {
                 {
                     Health += 30;
                     UIM.HealPlayer(30);
+                    if (Health >= 600)
+                        Health = 600;
                 }
                 faceAnimator.SetTrigger("hit");
                 handsAnimator.SetTrigger("hit");
@@ -380,11 +387,12 @@ public class B_PlayerControl : MonoBehaviour {
             }
         }
 
-        // 클리어 후 문에 닿으면 방향 전환
-        if (collision.CompareTag("door0") || collision.CompareTag("door1"))
+        if (collision.CompareTag("door0"))
         {
+            switchB = true;
             FlipDirection();
         }
+
     }
 
     private void DragOff()
@@ -402,8 +410,15 @@ public class B_PlayerControl : MonoBehaviour {
     public void Door0()
     {
         isDrag = true;
+        ThisTransform.position = new Vector2(-6.4f, -4f);
         ThisBody.velocity = Vector2.right * 6;
         Invoke("DragOff", 0.5f);
+        Invoke("SwitchBOff", 0.5f);
+    }
+
+    private void SwitchBOff()
+    {
+        switchB = false;
     }
 
     // 아이템 관련

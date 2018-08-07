@@ -25,7 +25,7 @@ public class B_UIManager : MonoBehaviour {
     public enum enemyMode { normal = -1, UpTogether = 0 };
     public enemyMode mode = enemyMode.normal;
     // 적이 클리어되면 false가 된다.
-    public bool flag1 = true, flag2 = true, doflag = false, isItem = false, breakHourglass = false, one = false, two = false;
+    public bool flag1 = true, flag2 = true, doflag = false, isItem = false, breakHourglass = false;
     [SerializeField]
     public int enemyMaxHP = 5;
     int enemy1HP, enemy2HP;
@@ -37,11 +37,17 @@ public class B_UIManager : MonoBehaviour {
     public Button attackButton;
     public Button shieldButton;
     // 효과음
-    public AudioClip breakGlass, activeDoor, enemyClear;
+    public AudioClip breakGlass, activeDoor, enemyClear, floorOn;
     private AudioSource ThisAudio;
+    // static
+    public static B_UIManager instance = null;
 
     private void Awake()
     {
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+            Destroy(gameObject);
         ThisAudio = GetComponent<AudioSource>();
         myAnimator1 = attackButton.GetComponent<Animator>();
         myAnimator2 = shieldButton.GetComponent<Animator>();
@@ -67,24 +73,12 @@ public class B_UIManager : MonoBehaviour {
             enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(enemy1Target.position.x, enemy1Target.position.y, PositionZ));
         else
         {
-            if (!one)
-            {
-                one = true;
-                ThisAudio.clip = enemyClear;
-                ThisAudio.Play();
-            }
             enemy1_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear1Target.position.x - 0.35f, clear1Target.position.y + 0.85f, PositionZ));
         }
         if (flag2)
             enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(enemy2Target.position.x, enemy2Target.position.y, PositionZ));
         else
         {
-            if (!two)
-            {
-                two = true;
-                ThisAudio.clip = enemyClear;
-                ThisAudio.Play();
-            }
             enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear2Target.position.x - 0.25f, clear2Target.position.y + 0.7f, PositionZ));
         }
 
@@ -149,6 +143,12 @@ public class B_UIManager : MonoBehaviour {
         ThisAudio.Play();
     }
 
+    public void ClearSound()
+    {
+        ThisAudio.clip = enemyClear;
+        ThisAudio.Play();
+    }
+
     //모래 쏟아져 내리는 효과 관련 (hourglassC가 모래 막대 부분임)
     IEnumerator MoveSand()
     {
@@ -196,8 +196,11 @@ public class B_UIManager : MonoBehaviour {
 
     public void HealPlayer(int power)
     {
-        moveSand = true;
-        playerHP += power;
+        if (playerHP <= playerMaxHP)
+        {
+            moveSand = true;
+            playerHP += power;
+        }
     }
 
     // 적 체력 관련
@@ -228,6 +231,13 @@ public class B_UIManager : MonoBehaviour {
         shieldLimitText1.text = "" + shieldLimit;
         shieldLimitText2.text = "" + shieldLimit;
         myAnimator2.SetTrigger("Shield");
+    }
+
+    // 발판 생성 효과음
+    public void FloorSound()
+    {
+        ThisAudio.clip = floorOn;
+        ThisAudio.Play();
     }
 
 }

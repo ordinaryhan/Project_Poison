@@ -158,7 +158,6 @@ public class B_EnemyMovement : MonoBehaviour {
                         {
                             page = 1;
                             ThisBody.velocity = new Vector2(0, 0);
-                            new WaitForSecondsRealtime(3f);
                         }
                         else
                             ThisBody.velocity = (Path_UpTogether[1].position - ThisTransform.position) * 5f;
@@ -223,7 +222,7 @@ public class B_EnemyMovement : MonoBehaviour {
     // 모드 바뀔 때 모션
     IEnumerator ModeMotion()
     {
-        yield return new WaitForSecondsRealtime(0.75f);
+        yield return new WaitForSecondsRealtime(1.5f);
         headAnimator.ResetTrigger("hit");
         headAnimator.ResetTrigger("attack");
         bodyAnimator.ResetTrigger("hit");
@@ -417,6 +416,7 @@ public class B_EnemyMovement : MonoBehaviour {
             Vector2 ThisPosition = ThisTransform.position;
             ClearEnemy.GetComponent<Transform>().position = new Vector2(ThisPosition.x, ThisPosition.y - 1.2f);
             gameObject.SetActive(false);
+            UIM.ClearSound();
             ClearEnemy.SetActive(true);
             if (ThisName.Equals("enemy1"))
             {

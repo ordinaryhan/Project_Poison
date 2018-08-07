@@ -240,14 +240,13 @@ MonoBehaviour:
   doflag: 0
   isItem: 0
   breakHourglass: 0
-  one: 0
-  two: 0
   enemyMaxHP: 4
   attackButton: {fileID: 1655093067}
   shieldButton: {fileID: 1509161056}
   breakGlass: {fileID: 8300000, guid: f3f95e4954c852744ae9eff3d6f1f533, type: 3}
   activeDoor: {fileID: 8300000, guid: 74dc549265a056047967612744d6cdbe, type: 3}
   enemyClear: {fileID: 8300000, guid: abc8234d392925942981f4440721fd98, type: 3}
+  floorOn: {fileID: 8300000, guid: efdd5dfdbab3d0a45b73ec1e8192ed81, type: 3}
 --- !u!4 &25016163
 Transform:
   m_ObjectHideFlags: 0
@@ -2572,7 +2571,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 363921792}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.834, y: -4.42, z: 0}
+  m_LocalPosition: {x: -6.5, y: -4.03, z: 0}
   m_LocalScale: {x: 1.7491269, y: 1.7491269, z: 0}
   m_Children:
   - {fileID: 98268432}
@@ -2649,7 +2648,7 @@ MonoBehaviour:
   isDrag: 0
   MaxSpeed: 10
   Speed: 4
-  JumpPower: 525
+  JumpPower: 540
   JumpTimeOut: 0.5
   bulletSpeed: 500
   bulletTimeOut: 3
@@ -4503,6 +4502,10 @@ Prefab:
       propertyPath: m_LocalScale.x
       value: -2.11524
       objectReference: {fileID: 0}
+    - target: {fileID: 1585562973942584, guid: b48996f690940e84bacdcc96eb4e3170, type: 2}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b48996f690940e84bacdcc96eb4e3170, type: 2}
   m_IsPrefabParent: 0
@@ -5380,6 +5383,10 @@ Prefab:
     - target: {fileID: 1585562973942584, guid: b48996f690940e84bacdcc96eb4e3170, type: 2}
       propertyPath: m_Name
       value: Floor_Door_L
+      objectReference: {fileID: 0}
+    - target: {fileID: 1585562973942584, guid: b48996f690940e84bacdcc96eb4e3170, type: 2}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b48996f690940e84bacdcc96eb4e3170, type: 2}
