@@ -359,7 +359,7 @@ public class B_EnemyMovement : MonoBehaviour {
         else if (mode == B_UIManager.enemyMode.UpTogether)
         {
             Bullets[k].Invoke("Delete", 1.5f);
-            Invoke("ActivateBullet", 2.5f);
+            Invoke("ActivateBullet", 3f);
         }
     }
 
