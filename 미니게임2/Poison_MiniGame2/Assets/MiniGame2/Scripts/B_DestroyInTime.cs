@@ -3,31 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class B_DestroyInTime : MonoBehaviour {
-
-    [SerializeField]
-    float destroyTime = 1f;
+    
     public int power = 30;
     Vector2 Dir;
-    float speed, delay;
+    float speed;
+    string ThisName;
     Rigidbody2D thisbody;
-    string ThisTag;
 
     // Use this for initialization
-    void Start () {
-        Invoke("Delete", destroyTime);
+    void Awake () {
         thisbody = GetComponent<Rigidbody2D>();
-        ThisTag = transform.tag;
+        ThisName = transform.tag;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        string tag = collision.tag;
-
-        if ((tag.Equals("floor") || tag.Equals("floor_middle")) && ThisTag.Equals("waterbullet"))
+        if (collision.CompareTag("wall"))
             Delete();
-        if(tag.Equals("wall"))
+        else if (collision.CompareTag("floor") && ThisName.Equals("waterbullet"))
             Delete();
-        if ((tag.Equals("Player")) && ThisTag.Equals("item"))
+        else if (collision.CompareTag("waterbullet") && ThisName.Equals("letterbullet"))
+            Delete();
+        else if ((collision.CompareTag("Player")) && ThisName.Equals("item"))
         {
             collision.GetComponent<B_PlayerControl>().ItemOn();
             Delete();
