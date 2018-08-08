@@ -48,7 +48,7 @@ public class B_OnTrigger : MonoBehaviour {
         }
         else if(collision.CompareTag("floor_middle"))
         {
-            if (target.mode == B_UIManager.enemyMode.normal)
+            if (target != null && target.mode == B_UIManager.enemyMode.normal)
                 target.Change_i();
         }
 

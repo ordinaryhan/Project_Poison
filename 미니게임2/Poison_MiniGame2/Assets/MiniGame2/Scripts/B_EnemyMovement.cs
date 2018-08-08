@@ -38,8 +38,9 @@ public class B_EnemyMovement : MonoBehaviour {
     public float rotationRadius = 2f, angularSpeed = 2f;
     float posX, posY, angle = -1f, digree;
     int i = 0, page = 1, count = 0;
-    bool flag = true, flip = true, clear = false, switchA = false;
+    bool flag = true, flip = true, clear = false, switchA = false, switchB = false;
     Vector2 targetDir, Dir;
+    Vector3 UpMiddle = new Vector3(0, 16.7f, 0);
     //  체력 5칸
     int Health;
     public B_UIManager UIM;
@@ -201,6 +202,21 @@ public class B_EnemyMovement : MonoBehaviour {
                         else
                             ThisBody.velocity = (Path_UpTogether[1].position - ThisTransform.position) * 5f;
                     }
+                }
+                break;
+
+            /* LastPang 모드 일 때 */
+            case B_UIManager.enemyMode.LastPang:
+                if (!switchB)
+                {
+                    if (ThisTransform.position == UpMiddle)
+                    {
+                        switchB = true;
+                        ThisBody.velocity = new Vector2(0, 0);
+                        StartCoroutine(ModeMotion());
+                    }
+                    else
+                        ThisBody.velocity = (UpMiddle - ThisTransform.position) * 5f;
                 }
                 break;
         }

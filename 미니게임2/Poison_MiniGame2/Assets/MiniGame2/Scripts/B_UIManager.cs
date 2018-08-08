@@ -12,7 +12,6 @@ public class B_UIManager : MonoBehaviour {
     public RectTransform attackImage, enemy1_bar, enemy2_bar;
     public Text attackLimitText1, attackLimitText2;
     public Text shieldLimitText1, shieldLimitText2;
-    public Scrollbar playerHPbar;
     private Scrollbar enemy1_scroll, enemy2_scroll;
     public Slider hourglassA, hourglassB, hourglassC;
     private Transform transformC;
@@ -22,7 +21,7 @@ public class B_UIManager : MonoBehaviour {
     int playerHP;
     public bool moveSand = false, enemy2_page2 = false;
     // 적 공격 패턴
-    public enum enemyMode { normal = -1, UpTogether = 0 };
+    public enum enemyMode { normal = -1, UpTogether = 0, LastPang = 1, End = 2};
     public enemyMode mode = enemyMode.normal;
     // 적이 클리어되면 false가 된다.
     public bool flag1 = true, flag2 = true, doflag = false, isItem = false, breakHourglass = false;
@@ -31,11 +30,15 @@ public class B_UIManager : MonoBehaviour {
     int enemy1HP, enemy2HP;
     float diffHP;
     float PositionZ;
+    bool switchA = false, switchB = false;
     // 애니메이션을 위한
     private Animator myAnimator1;
     private Animator myAnimator2;
     public Button attackButton;
     public Button shieldButton;
+    public Transform ground;
+    private Rigidbody2D groundBody;
+    private B_FloorReset groundScript;
     // 효과음
     public AudioClip breakGlass, activeDoor, enemyClear, floorOn;
     private AudioSource ThisAudio;
@@ -52,6 +55,8 @@ public class B_UIManager : MonoBehaviour {
         myAnimator1 = attackButton.GetComponent<Animator>();
         myAnimator2 = shieldButton.GetComponent<Animator>();
         ThisTransform = GetComponent<Transform>();
+        groundBody = ground.GetComponent<Rigidbody2D>();
+        groundScript = ground.GetComponent<B_FloorReset>();
         transformC = hourglassC.GetComponent<Transform>();
         enemy1_scroll = enemy1_bar.GetComponent<Scrollbar>();
         enemy2_scroll = enemy2_bar.GetComponent<Scrollbar>();
@@ -113,8 +118,18 @@ public class B_UIManager : MonoBehaviour {
         }
 
         // 적 하나의 체력이 절반이하로 떨어지면 mode를 UpTogether로 바꾼다.
-        if (enemy2HP <= enemyMaxHP * 0.5f || enemy1HP <= enemyMaxHP * 0.5f)
-            Invoke("ChangeMode", 2f);
+        if ((enemy2HP <= enemyMaxHP * 0.5f || enemy1HP <= enemyMaxHP * 0.5f) && !switchA)
+        {
+            switchA = true;
+            Invoke("ChangeMode", 1.5f);
+        }
+
+        // 적 하나가 clear 상태가 될 시 mode를 LastPang으로 바꾼다.
+        if ((!flag1 || !flag2) && !switchB)
+        {
+            switchB = true;
+            Invoke("LastMode", 1.5f);
+        }
 
         // 적이 모두 clear되면 문을 활성화 시킨다. (1회 실행)
         if (!flag1 && !flag2 && !doflag)
@@ -122,6 +137,7 @@ public class B_UIManager : MonoBehaviour {
             doflag = true;
             Invoke("DoorActivate", 1f);
         }
+
     }
 
     private void DoorActivate()
@@ -130,11 +146,25 @@ public class B_UIManager : MonoBehaviour {
         ThisAudio.Play();
         door1.SetActive(true);
         door2.SetActive(true);
+        mode = enemyMode.End;
+        Vector3 pos = ground.position;
+        pos.y -= 11f;
+        ground.position = pos;
     }
 
     private void ChangeMode()
     {
         mode = enemyMode.UpTogether;
+    }
+
+    private void LastMode()
+    {
+        mode = enemyMode.LastPang;
+        groundScript.activeScript = false;
+        groundScript.CreateFloors();
+        Vector3 pos = ground.position;
+        pos.y += 11f;
+        ground.position = pos;
     }
 
     private void BreakSound()

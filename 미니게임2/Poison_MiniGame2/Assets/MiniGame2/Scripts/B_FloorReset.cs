@@ -7,6 +7,7 @@ public class B_FloorReset : MonoBehaviour {
     public GameObject[] floors;
     public B_Floor initialFloor;
     public GameObject door_active;
+    public bool activeScript = true;
     private bool switchA = false;
 
     private void Awake()
@@ -17,9 +18,17 @@ public class B_FloorReset : MonoBehaviour {
         }
     }
 
+    public void CreateFloors()
+    {
+        for (int i = 0; i < floors.Length; i++)
+        {
+            floors[i].SetActive(true);
+        }
+    }
+
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (!switchA && !door_active.activeSelf)
+        if (!switchA && activeScript)
         {
             if (collision.CompareTag("Player"))
             {
@@ -30,6 +39,12 @@ public class B_FloorReset : MonoBehaviour {
                 }
             }
         }
+
+        if (collision.CompareTag("Player"))
+        {
+            collision.GetComponent<CapsuleCollider2D>().isTrigger = false;
+        }
+
     }
 
     IEnumerator ResetFloor()
@@ -52,6 +67,7 @@ public class B_FloorReset : MonoBehaviour {
         if (collision.CompareTag("Player"))
         {
             switchA = false;
+            collision.GetComponent<CapsuleCollider2D>().isTrigger = false;
         }
     }
 
