@@ -6,6 +6,14 @@ TextureImporter:
     21300002: joy_stick
     21300004: background
     21300006: joyStick
+    21300008: background_0
+    21300010: background_1
+    21300012: enemy1_red
+    21300014: enemy1_redwing_L
+    21300016: enemy1_redwing_R
+    21300018: enemy2_red
+    21300020: enemy2_redwing_L
+    21300022: enemy2_redwing_R
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -97,7 +105,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: background
+      name: background_0
       rect:
         serializedVersion: 2
         x: 0
@@ -105,19 +113,19 @@ TextureImporter:
         width: 1280
         height: 1640
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 14fbc7e90535e60449330909cdde11bf
+      spriteID: fa44c68e15251604a968e09ba5862b4e
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: joyStick
+      name: background_1
       rect:
         serializedVersion: 2
         x: 1311
@@ -125,13 +133,133 @@ TextureImporter:
         width: 250
         height: 234
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1ced890aa4475e6448498a4db1f73992
+      spriteID: d4b868769fed2e64da506857b8084cce
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy1_red
+      rect:
+        serializedVersion: 2
+        x: 1320
+        y: 1689
+        width: 80
+        height: 71
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c99ac7179bd2b34caf38ad2083e6741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy1_redwing_L
+      rect:
+        serializedVersion: 2
+        x: 1434
+        y: 1693
+        width: 48
+        height: 63
+      alignment: 9
+      pivot: {x: 0.9857051, y: 0.017746698}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d0c530c5378bf24a9be76dbf2626dae
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy1_redwing_R
+      rect:
+        serializedVersion: 2
+        x: 1502
+        y: 1694
+        width: 68
+        height: 76
+      alignment: 9
+      pivot: {x: 0.03166468, y: 0.07209376}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a1cf197c90075c4682117d8ec9f44f1
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy2_red
+      rect:
+        serializedVersion: 2
+        x: 1322
+        y: 1585
+        width: 65
+        height: 72
+      alignment: 9
+      pivot: {x: 0.4775447, y: 0.4900411}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d18e4ecbaa1df1649957f9a51b43a293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy2_redwing_L
+      rect:
+        serializedVersion: 2
+        x: 1433
+        y: 1597
+        width: 57
+        height: 57
+      alignment: 9
+      pivot: {x: 0.98134464, y: 0.041041326}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd365f67d69035c4ea2263646f4f6110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy2_redwing_R
+      rect:
+        serializedVersion: 2
+        x: 1511
+        y: 1598
+        width: 74
+        height: 52
+      alignment: 9
+      pivot: {x: 0.009006809, y: 0.11191735}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 702be2f95e1932946b830cf5b2a58d34
       vertices: []
       indices: 
       edges: []

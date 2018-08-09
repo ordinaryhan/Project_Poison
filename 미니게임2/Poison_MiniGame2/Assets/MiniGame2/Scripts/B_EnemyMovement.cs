@@ -21,7 +21,7 @@ public class B_EnemyMovement : MonoBehaviour {
     // 공격/방어를 위한
     public Transform[] barrel;
     public Transform[] bullet;
-    private B_DestroyInTime[] Bullets;
+    private B_DestroyInTime[] Bullets = null;
     public float destroyTime = 1f;
     public B_PlayerControl target;
     private Transform targetTransform;
@@ -29,7 +29,9 @@ public class B_EnemyMovement : MonoBehaviour {
     private bool enemy2_CanAttack = true;
     // 애니메이션을 위한
     public Animator headAnimator, wingsAnimator, bodyAnimator;
-    public GameObject waterball;
+    public GameObject waterball, Ihead;
+    public SpriteRenderer wingL, wingR;
+    public Sprite VwingL, VwingR;
     // 이동 관련
     [SerializeField]
     public Transform[] rotationCenter;
@@ -96,7 +98,7 @@ public class B_EnemyMovement : MonoBehaviour {
 
     // Update is called once per frame
     private void FixedUpdate() {
-
+        
         // 모드 확인
         CheckMode();
         // 모드에 따라 코드 진행
@@ -238,10 +240,19 @@ public class B_EnemyMovement : MonoBehaviour {
     // 모드 바뀔 때 모션
     IEnumerator ModeMotion()
     {
-        yield return new WaitForSecondsRealtime(1.5f);
         headAnimator.ResetTrigger("hit");
         headAnimator.ResetTrigger("attack");
         bodyAnimator.ResetTrigger("hit");
+        wingsAnimator.ResetTrigger("hit");
+        wingsAnimator.ResetTrigger("attack");
+        if (mode == B_UIManager.enemyMode.UpTogether)
+            yield return new WaitForSecondsRealtime(1.5f);
+        else
+        {
+            wingL.sprite = VwingL;
+            wingR.sprite = VwingR;
+            Ihead.SetActive(true);
+        }
         bodyAnimator.SetTrigger("mode");
         yield return new WaitForSecondsRealtime(0.1f);
         wingsAnimator.ResetTrigger("hit");

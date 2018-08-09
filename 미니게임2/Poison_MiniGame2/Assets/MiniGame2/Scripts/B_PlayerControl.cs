@@ -12,7 +12,7 @@ public class B_PlayerControl : MonoBehaviour {
     // 바닥 태그가 지정된 오브젝트
     public LayerMask GroundLayer;
     // player에 대한 참조
-    private Rigidbody2D ThisBody = null, bulletBody;
+    private Rigidbody2D ThisBody = null, bulletBody = null;
     private Transform ThisTransform = null;
     private CapsuleCollider2D ThisCollider = null;
     // 착지 여부
@@ -79,7 +79,7 @@ public class B_PlayerControl : MonoBehaviour {
     {
         // 바닥을 확인한다
         Vector3 ThisPosition = ThisTransform.position;
-        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x, ThisPosition.y - 1.2f),
+        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x, ThisPosition.y - 1f),
             new Vector2(ThisPosition.x, ThisPosition.y - 0.8f), GroundLayer);
         if (HitColliders.Length > 0)
             return true;
@@ -177,11 +177,11 @@ public class B_PlayerControl : MonoBehaviour {
 
         // 땅에 서 있는지의 여부 체크
         isGrounded = GetGrounded();
-        // (땅에 서 있는데 이동불가인 상태)*는 0.5초간만 지속된다. (공격 당했을 시 + 페이크 문에 닿았을 시)*
+        // (땅에 서 있는데 이동불가인 상태)*는 0.4초간만 지속된다. (공격 당했을 시 + 페이크 문에 닿았을 시)*
         if (isGrounded && isDrag && !DragFlag)
         {
             DragFlag = true;
-            Invoke("DragOff", 0.5f);
+            Invoke("DragOff", 0.4f);
         }
         // 점프
         if (CrossPlatformInputManager.GetButtonDown("Jump"))
@@ -248,9 +248,9 @@ public class B_PlayerControl : MonoBehaviour {
             {
                 isDrag = true;
                 if (Facing == FaceDirection.FaceLeft)
-                    ThisBody.AddForce(new Vector2(1, -1) * 50);
-                else
-                    ThisBody.AddForce(new Vector2(-1, -1) * 50);
+                    ThisBody.AddForce(new Vector2(1, -1) * 5);
+                else if(Facing == FaceDirection.FaceRight)
+                    ThisBody.AddForce(new Vector2(-1, -1) * 5);
             }
             else
                 isDrag = false;
@@ -270,9 +270,9 @@ public class B_PlayerControl : MonoBehaviour {
                 {
                     isDrag = true;
                     if (Facing == FaceDirection.FaceLeft)
-                        ThisBody.AddForce(new Vector2(1, -1) * 10);
-                    else
-                        ThisBody.AddForce(new Vector2(-1, -1) * 10);
+                        ThisBody.AddForce(new Vector2(1, -1) * 5);
+                    else if (Facing == FaceDirection.FaceRight)
+                        ThisBody.AddForce(new Vector2(-1, -1) * 5);
                 }
             }
             else
