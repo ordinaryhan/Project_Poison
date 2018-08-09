@@ -42,6 +42,8 @@ public class B_UIManager : MonoBehaviour {
     // 효과음
     public AudioClip breakGlass, activeDoor, enemyClear, floorOn;
     private AudioSource ThisAudio;
+    // 설정 버튼
+    public GameObject TimeStop_Screen;
     // static
     public static B_UIManager instance = null;
 
@@ -268,6 +270,22 @@ public class B_UIManager : MonoBehaviour {
     {
         ThisAudio.clip = floorOn;
         ThisAudio.Play();
+    }
+
+    // 게임 일시 정지
+    public void TimeStop()
+    {
+        if (!TimeStop_Screen.activeSelf)
+        {
+            TimeStop_Screen.SetActive(true);
+            Time.timeScale = 0;
+        }
+    }
+    // 일시 정지 취소
+    public void TimeGo()
+    {
+        TimeStop_Screen.SetActive(false);
+        Time.timeScale = 1;
     }
 
 }

@@ -18,6 +18,7 @@ TextureImporter:
     21300026: clear
     21300028: black
     21300030: white
+    21300032: halfBlack
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -424,6 +425,26 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 7affc9a66e641d24dab9d2cd1053f0ff
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halfBlack
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 0
+        width: 37
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cfb9368cdaacd054ea84b1387b0b7a02
       vertices: []
       indices: 
       edges: []
