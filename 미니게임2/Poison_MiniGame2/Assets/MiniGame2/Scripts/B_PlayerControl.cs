@@ -11,10 +11,10 @@ public class B_PlayerControl : MonoBehaviour {
     public FaceDirection Facing = FaceDirection.FaceRight;
     // 바닥 태그가 지정된 오브젝트
     public LayerMask GroundLayer;
-    // rigidbody에 대한 참조
+    // player에 대한 참조
     private Rigidbody2D ThisBody = null, bulletBody;
-    // transform에 대한 참조
     private Transform ThisTransform = null;
+    private CapsuleCollider2D ThisCollider = null;
     // 착지 여부
     public bool isGrounded = false;
     // 이동 여부
@@ -53,7 +53,7 @@ public class B_PlayerControl : MonoBehaviour {
     public bool isItem = false;
     public B_FlipHourglass HourglassScript;
     // 필요 변수 선언
-    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchA = false;
+    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchA = false, switchB = false;
     float dirX;
     // 효과음
     public AudioClip playerMove, playerJump, playerAttack, createShield, playerHit, itemSound;
@@ -66,6 +66,7 @@ public class B_PlayerControl : MonoBehaviour {
         ThisAudio = GetComponent<AudioSource>();
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
+        ThisCollider = GetComponent<CapsuleCollider2D>();
         bulletBody = bullet.GetComponent<Rigidbody2D>();
         playerShield.SetActive(false);
         bullet.gameObject.SetActive(false);
@@ -86,7 +87,7 @@ public class B_PlayerControl : MonoBehaviour {
     }
 
     // 캐릭터 방향을 바꾼다.
-    private void FlipDirection()
+    public void FlipDirection()
     {
         Facing = (FaceDirection)((int)Facing * -1f);
         Vector3 LocalScale = ThisTransform.localScale;
@@ -203,7 +204,7 @@ public class B_PlayerControl : MonoBehaviour {
             handsAnimator.SetBool("walk", true);
             bodyAnimator.SetBool("walk", true);
         }
-        // 걷는 효과음
+        /* 걷는 효과음
         if(isWalk && isGrounded && !switchA)
         {
             switchA = true;
@@ -215,7 +216,7 @@ public class B_PlayerControl : MonoBehaviour {
         {
             switchA = false;
             ThisAudio.loop = false;
-        }
+        }*/
 
         // 낙하 모션
         if (!isFall && ThisBody.velocity.y < 0 && !isGrounded)
@@ -232,6 +233,9 @@ public class B_PlayerControl : MonoBehaviour {
         // 필요한 경우 방향을 바꾼다.
         if (!isDrag && ((dirX < 0f && Facing == FaceDirection.FaceRight) || (dirX > 0f && Facing == FaceDirection.FaceLeft)))
             FlipDirection();
+
+        if (switchB && Facing == FaceDirection.FaceLeft)
+            FlipDirection();
             
     }
 
@@ -243,6 +247,10 @@ public class B_PlayerControl : MonoBehaviour {
             if (!isGrounded)
             {
                 isDrag = true;
+                if (Facing == FaceDirection.FaceLeft)
+                    ThisBody.AddForce(new Vector2(1, -1) * 50);
+                else
+                    ThisBody.AddForce(new Vector2(-1, -1) * 50);
             }
             else
                 isDrag = false;
@@ -258,8 +266,14 @@ public class B_PlayerControl : MonoBehaviour {
                 fc = true;
             if (!isGrounded && fc)
             {
-                if(!isFloor)
+                if (!isFloor)
+                {
                     isDrag = true;
+                    if (Facing == FaceDirection.FaceLeft)
+                        ThisBody.AddForce(new Vector2(1, -1) * 10);
+                    else
+                        ThisBody.AddForce(new Vector2(-1, -1) * 10);
+                }
             }
             else
                 isDrag = false;
@@ -289,10 +303,10 @@ public class B_PlayerControl : MonoBehaviour {
             {
                 isFloor = true;
                 Invoke("OffIsFloor", 0.5f);
-                collision.isTrigger = true;
+                ThisCollider.isTrigger = true;
             }
             else
-                collision.isTrigger = false;
+                ThisCollider.isTrigger = false;
         }
 
         if (Health != 0 && HitFlag && !shield.isActiveAndEnabled)
@@ -314,6 +328,8 @@ public class B_PlayerControl : MonoBehaviour {
                 {
                     Health += damage;
                     UIM.HealPlayer(damage);
+                    if (Health >= 600)
+                        Health = 600;
                 }
                 faceAnimator.SetTrigger("hit");
                 handsAnimator.SetTrigger("hit");
@@ -349,6 +365,8 @@ public class B_PlayerControl : MonoBehaviour {
                 {
                     Health += 30;
                     UIM.HealPlayer(30);
+                    if (Health >= 600)
+                        Health = 600;
                 }
                 faceAnimator.SetTrigger("hit");
                 handsAnimator.SetTrigger("hit");
@@ -369,11 +387,12 @@ public class B_PlayerControl : MonoBehaviour {
             }
         }
 
-        // 클리어 후 문에 닿으면 방향 전환
-        if (collision.CompareTag("door0") || collision.CompareTag("door1"))
+        if (collision.CompareTag("door0"))
         {
+            switchB = true;
             FlipDirection();
         }
+
     }
 
     private void DragOff()
@@ -391,8 +410,15 @@ public class B_PlayerControl : MonoBehaviour {
     public void Door0()
     {
         isDrag = true;
+        ThisTransform.position = new Vector2(-6.4f, -4f);
         ThisBody.velocity = Vector2.right * 6;
         Invoke("DragOff", 0.5f);
+        Invoke("SwitchBOff", 0.5f);
+    }
+
+    private void SwitchBOff()
+    {
+        switchB = false;
     }
 
     // 아이템 관련

@@ -38,8 +38,9 @@ public class B_EnemyMovement : MonoBehaviour {
     public float rotationRadius = 2f, angularSpeed = 2f;
     float posX, posY, angle = -1f, digree;
     int i = 0, page = 1, count = 0;
-    bool flag = true, flip = true, clear = false, switchA = false;
+    bool flag = true, flip = true, clear = false, switchA = false, switchB = false;
     Vector2 targetDir, Dir;
+    Vector3 UpMiddle = new Vector3(0, 16.7f, 0);
     //  체력 5칸
     int Health;
     public B_UIManager UIM;
@@ -158,7 +159,6 @@ public class B_EnemyMovement : MonoBehaviour {
                         {
                             page = 1;
                             ThisBody.velocity = new Vector2(0, 0);
-                            new WaitForSecondsRealtime(3f);
                         }
                         else
                             ThisBody.velocity = (Path_UpTogether[1].position - ThisTransform.position) * 5f;
@@ -204,6 +204,21 @@ public class B_EnemyMovement : MonoBehaviour {
                     }
                 }
                 break;
+
+            /* LastPang 모드 일 때 */
+            case B_UIManager.enemyMode.LastPang:
+                if (!switchB)
+                {
+                    if (ThisTransform.position == UpMiddle)
+                    {
+                        switchB = true;
+                        ThisBody.velocity = new Vector2(0, 0);
+                        StartCoroutine(ModeMotion());
+                    }
+                    else
+                        ThisBody.velocity = (UpMiddle - ThisTransform.position) * 5f;
+                }
+                break;
         }
 
         // target(플레이어)가 있는 방향으로 고개를 돌림
@@ -223,7 +238,7 @@ public class B_EnemyMovement : MonoBehaviour {
     // 모드 바뀔 때 모션
     IEnumerator ModeMotion()
     {
-        yield return new WaitForSecondsRealtime(0.75f);
+        yield return new WaitForSecondsRealtime(1.5f);
         headAnimator.ResetTrigger("hit");
         headAnimator.ResetTrigger("attack");
         bodyAnimator.ResetTrigger("hit");
@@ -359,7 +374,7 @@ public class B_EnemyMovement : MonoBehaviour {
         else if (mode == B_UIManager.enemyMode.UpTogether)
         {
             Bullets[k].Invoke("Delete", 1.5f);
-            Invoke("ActivateBullet", 2.5f);
+            Invoke("ActivateBullet", 3f);
         }
     }
 
@@ -417,6 +432,7 @@ public class B_EnemyMovement : MonoBehaviour {
             Vector2 ThisPosition = ThisTransform.position;
             ClearEnemy.GetComponent<Transform>().position = new Vector2(ThisPosition.x, ThisPosition.y - 1.2f);
             gameObject.SetActive(false);
+            UIM.ClearSound();
             ClearEnemy.SetActive(true);
             if (ThisName.Equals("enemy1"))
             {
