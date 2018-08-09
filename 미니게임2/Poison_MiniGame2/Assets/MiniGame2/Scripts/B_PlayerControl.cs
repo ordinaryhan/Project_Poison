@@ -7,16 +7,18 @@ using UnityStandardAssets.CrossPlatformInput;
 public class B_PlayerControl : MonoBehaviour {
 
     // 플레이어가 바라보는 방향
-    public enum FaceDirection { FaceLeft = -1, FaceRight = 1 };
+    public enum FaceDirection { FaceRight = -1, FaceLeft = 1 };
     public FaceDirection Facing = FaceDirection.FaceRight;
     // 바닥 태그가 지정된 오브젝트
     public LayerMask GroundLayer;
     // rigidbody에 대한 참조
-    private Rigidbody2D ThisBody = null;
+    private Rigidbody2D ThisBody = null, bulletBody;
     // transform에 대한 참조
     private Transform ThisTransform = null;
     // 착지 여부
     public bool isGrounded = false;
+    // 이동 여부
+    public bool isDrag = false;
     // 속도 변수
     public float MaxSpeed = 10f, Speed = 5f;
     public float JumpPower = 500;
@@ -45,33 +47,39 @@ public class B_PlayerControl : MonoBehaviour {
     // UIManager관련
     public B_UIManager UIM;
     // 체력 체크
-    public int Health = 600;
+    private int Health;
     bool HitFlag = true;
     // 아이템
     public bool isItem = false;
     public B_FlipHourglass HourglassScript;
     // 필요 변수 선언
-    bool isFall = false;
+    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchA = false;
     float dirX;
+    // 효과음
+    public AudioClip playerMove, playerJump, playerAttack, createShield, playerHit, itemSound;
+    private AudioSource ThisAudio;
 
     // Use this for initialization
     private void Awake()
     {
         // 이 객체의 정보들을 담는다.
+        ThisAudio = GetComponent<AudioSource>();
         ThisBody = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
+        bulletBody = bullet.GetComponent<Rigidbody2D>();
         playerShield.SetActive(false);
         bullet.gameObject.SetActive(false);
         FlipDirection();
-        
+        Health = UIM.playerMaxHP;
     }
 
     // 플레이어가 착지 상태인지 여부를 반환한다.
     private bool GetGrounded()
     {
         // 바닥을 확인한다
-        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(transform.position.x - 1.2f, transform.position.y - 1.2f),
-            new Vector2(transform.position.x, transform.position.y), GroundLayer);
+        Vector3 ThisPosition = ThisTransform.position;
+        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x, ThisPosition.y - 1.2f),
+            new Vector2(ThisPosition.x, ThisPosition.y - 0.8f), GroundLayer);
         if (HitColliders.Length > 0)
             return true;
         return false;
@@ -92,6 +100,7 @@ public class B_PlayerControl : MonoBehaviour {
         if (!isGrounded || !CanJump)
             return;
         // 점프한다.
+        SoundManager.instance.PlaySingle(playerJump);
         ThisBody.AddForce(Vector2.up * JumpPower);
         CanJump = false;
         Invoke("ActivateJump", JumpTimeOut);
@@ -111,14 +120,14 @@ public class B_PlayerControl : MonoBehaviour {
 
         if (AttackLimit > 0 && CanAttack)
         {
+            SoundManager.instance.PlaySingle(playerAttack);
             CanAttack = false;
             faceAnimator.SetTrigger("attack");
             handsAnimator.SetTrigger("attack");
-            new WaitForSeconds(3);
             bullet.gameObject.SetActive(true);
             bullet.position = barrel.position;
             bullet.rotation = barrel.rotation;
-            bullet.GetComponent<Rigidbody2D>().AddForce(barrel.up * bulletSpeed);
+            bulletBody.AddForce(barrel.up * bulletSpeed);
             AttackLimit--;
             UIM.Attack();
         }
@@ -139,6 +148,7 @@ public class B_PlayerControl : MonoBehaviour {
 
         if (ShieldLimit > 0 && CanShield)
         {
+            SoundManager.instance.PlaySingle(createShield);
             CanShield = false;
             playerShield.SetActive(true);
             ShieldLimit--;
@@ -158,27 +168,53 @@ public class B_PlayerControl : MonoBehaviour {
     private void FixedUpdate()
     {
         // 이동
-        dirX = CrossPlatformInputManager.GetAxis("Horizontal");
-        ThisBody.velocity = new Vector2(dirX * Speed, ThisBody.velocity.y);
+        if (!isDrag)
+        {
+            dirX = CrossPlatformInputManager.GetAxis("Horizontal");
+            ThisBody.velocity = new Vector2(dirX * Speed, ThisBody.velocity.y);
+        }
 
-        //점프
+        // 땅에 서 있는지의 여부 체크
         isGrounded = GetGrounded();
+        // (땅에 서 있는데 이동불가인 상태)*는 0.5초간만 지속된다. (공격 당했을 시 + 페이크 문에 닿았을 시)*
+        if (isGrounded && isDrag && !DragFlag)
+        {
+            DragFlag = true;
+            Invoke("DragOff", 0.5f);
+        }
+        // 점프
         if (CrossPlatformInputManager.GetButtonDown("Jump"))
             Jump();
 
         // 속도를 제한한다.
         ThisBody.velocity = new Vector2(Mathf.Clamp(ThisBody.velocity.x, -MaxSpeed, MaxSpeed), Mathf.Clamp(ThisBody.velocity.y, -Mathf.Infinity, JumpPower));
-
+        
+        // 이동 여부 확인
+        isWalk = handsAnimator.GetBool("walk");
+        
         // 걷는 모션
-        if (handsAnimator.GetBool("walk") && ThisBody.velocity.x == 0)
+        if (isWalk && ThisBody.velocity.x == 0)
         {
             handsAnimator.SetBool("walk", false);
             bodyAnimator.SetBool("walk", false);
         }
-        if (!handsAnimator.GetBool("walk") && ThisBody.velocity.x != 0)
+        if (!isWalk && ThisBody.velocity.x != 0)
         {
             handsAnimator.SetBool("walk", true);
             bodyAnimator.SetBool("walk", true);
+        }
+        // 걷는 효과음
+        if(isWalk && isGrounded && !switchA)
+        {
+            switchA = true;
+            ThisAudio.clip = playerMove;
+            ThisAudio.Play();
+            ThisAudio.loop = true;
+        }
+        else if((!isWalk || !isGrounded) && switchA)
+        {
+            switchA = false;
+            ThisAudio.loop = false;
         }
 
         // 낙하 모션
@@ -194,18 +230,77 @@ public class B_PlayerControl : MonoBehaviour {
         }
 
         // 필요한 경우 방향을 바꾼다.
-        if ((dirX < 0f && Facing == FaceDirection.FaceLeft) || (dirX > 0f && Facing == FaceDirection.FaceRight))
+        if (!isDrag && ((dirX < 0f && Facing == FaceDirection.FaceRight) || (dirX > 0f && Facing == FaceDirection.FaceLeft)))
             FlipDirection();
             
+    }
+
+    // 벽, 바닥에 옆면에 붙어있기 금지
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("wall"))
+        {
+            if (!isGrounded)
+            {
+                isDrag = true;
+            }
+            else
+                isDrag = false;
+        }
+        else if (collision.CompareTag("side"))
+        {
+            bool fc = false;
+            float playerX = ThisTransform.position.x;
+            float collisionX = collision.transform.position.x;
+            if ((collisionX < playerX) && Facing == FaceDirection.FaceLeft)
+                fc = true;
+            else if ((collisionX > playerX) && Facing == FaceDirection.FaceRight)
+                fc = true;
+            if (!isGrounded && fc)
+            {
+                if(!isFloor)
+                    isDrag = true;
+            }
+            else
+                isDrag = false;
+        }
+    }
+
+    private void OffIsFloor()
+    {
+        isFloor = false;
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("floor"))
+            isFloor = false;
     }
 
     // 말탄환에 맞거나 enemy와 충돌했을 경우
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // 점프 시 발판에 방해받지 않게 하기
+        if (collision.CompareTag("floor"))
+        {
+            Vector2 playerXY = ThisTransform.position;
+            Vector2 collisionXY = collision.transform.position;
+            if (collisionXY.y > playerXY.y - 0.5f)
+            {
+                isFloor = true;
+                Invoke("OffIsFloor", 0.5f);
+                collision.isTrigger = true;
+            }
+            else
+                collision.isTrigger = false;
+        }
+
         if (Health != 0 && HitFlag && !shield.isActiveAndEnabled)
         {
-            if (collision.tag.Equals("letterbullet"))
+            // 말탄환에 맞았을 경우
+            if (collision.CompareTag("letterbullet"))
             {
+                SoundManager.instance.PlaySingle(playerHit);
                 HitFlag = false;
                 int damage = collision.GetComponent<B_DestroyInTime>().power;
                 // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
@@ -223,11 +318,25 @@ public class B_PlayerControl : MonoBehaviour {
                 faceAnimator.SetTrigger("hit");
                 handsAnimator.SetTrigger("hit");
                 Invoke("HitFlagOn", 1f);
+                // 맞은 방향 반대편으로 밀려나는 효과
+                isDrag = true;
+                float playerX = ThisTransform.position.x;
+                float collisionX = collision.transform.position.x;
+                if (collisionX < playerX)
+                {
+                    ThisBody.velocity = Vector2.right * 2;
+                }
+                else if (collisionX > playerX)
+                {
+                    ThisBody.velocity = Vector2.left * 2;
+                }
+                Invoke("DragOff", 1f);
             }
 
-            if (collision.tag.Equals("enemy1") || collision.tag.Equals("enemy2"))
+            // 적과 충돌한 경우
+            if (collision.CompareTag("enemy1") || collision.CompareTag("enemy2"))
             {
-                print("enemy in");
+                SoundManager.instance.PlaySingle(playerHit);
                 HitFlag = false;
                 // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
                 if (!isItem)
@@ -243,15 +352,34 @@ public class B_PlayerControl : MonoBehaviour {
                 }
                 faceAnimator.SetTrigger("hit");
                 handsAnimator.SetTrigger("hit");
-                Invoke("HitFlagOn", 1f);
+                Invoke("HitFlagOn", 0.5f);
+                // 맞은 방향 반대편으로 밀려나는 효과
+                isDrag = true;
+                float playerX = ThisTransform.position.x;
+                float collisionX = collision.transform.position.x;
+                if (collisionX < playerX)
+                {
+                    ThisBody.velocity = Vector2.right * 4;
+                }
+                else if (collisionX > playerX)
+                {
+                    ThisBody.velocity = Vector2.left * 4;
+                }
+                Invoke("DragOff", 0.5f);
             }
         }
 
         // 클리어 후 문에 닿으면 방향 전환
-        if (collision.tag.Equals("door0") || collision.tag.Equals("door1"))
+        if (collision.CompareTag("door0") || collision.CompareTag("door1"))
         {
             FlipDirection();
         }
+    }
+
+    private void DragOff()
+    {
+        isDrag = false;
+        DragFlag = false;
     }
 
     private void HitFlagOn()
@@ -259,9 +387,20 @@ public class B_PlayerControl : MonoBehaviour {
         HitFlag = true;
     }
 
+    // Door0에 닿으면 왼쪽 아래로 이동하는데, 이 때 앞으로 튕겨져 나오는 듯한 효과 주기
+    public void Door0()
+    {
+        isDrag = true;
+        ThisBody.velocity = Vector2.right * 6;
+        Invoke("DragOff", 0.5f);
+    }
+
     // 아이템 관련
     public void ItemOn()
     {
+        AudioSource UIMAudio = UIM.GetComponent<AudioSource>();
+        UIMAudio.clip = itemSound;
+        UIMAudio.Play();
         UIM.isItem = true;
         HourglassScript.doFlip = true;
         isItem = true;
@@ -270,6 +409,9 @@ public class B_PlayerControl : MonoBehaviour {
 
     private void ItemOff()
     {
+        AudioSource UIMAudio = UIM.GetComponent<AudioSource>();
+        UIMAudio.clip = itemSound;
+        UIMAudio.Play();
         UIM.isItem = false;
         HourglassScript.doFlip = true;
         isItem = false;
