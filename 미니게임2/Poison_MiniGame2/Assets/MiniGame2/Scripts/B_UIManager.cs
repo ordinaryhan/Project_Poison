@@ -37,7 +37,6 @@ public class B_UIManager : MonoBehaviour {
     public Button attackButton;
     public Button shieldButton;
     public Transform ground;
-    private Rigidbody2D groundBody;
     private B_FloorReset groundScript;
     // 효과음
     public AudioClip breakGlass, activeDoor, enemyClear, floorOn;
@@ -57,7 +56,6 @@ public class B_UIManager : MonoBehaviour {
         myAnimator1 = attackButton.GetComponent<Animator>();
         myAnimator2 = shieldButton.GetComponent<Animator>();
         ThisTransform = GetComponent<Transform>();
-        groundBody = ground.GetComponent<Rigidbody2D>();
         groundScript = ground.GetComponent<B_FloorReset>();
         transformC = hourglassC.GetComponent<Transform>();
         enemy1_scroll = enemy1_bar.GetComponent<Scrollbar>();
