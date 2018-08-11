@@ -12,7 +12,7 @@ public class B_PlayerControl : MonoBehaviour {
     // 바닥 태그가 지정된 오브젝트
     public LayerMask GroundLayer;
     // player에 대한 참조
-    private Rigidbody2D ThisBody = null, bulletBody;
+    private Rigidbody2D ThisBody = null, bulletBody = null;
     private Transform ThisTransform = null;
     private CapsuleCollider2D ThisCollider = null;
     // 착지 여부
@@ -53,10 +53,10 @@ public class B_PlayerControl : MonoBehaviour {
     public bool isItem = false;
     public B_FlipHourglass HourglassScript;
     // 필요 변수 선언
-    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchA = false, switchB = false;
+    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchB = false;
     float dirX;
     // 효과음
-    public AudioClip playerMove, playerJump, playerAttack, createShield, playerHit, itemSound;
+    public AudioClip playerJump, playerAttack, createShield, playerHit, itemSound;
     private AudioSource ThisAudio;
 
     // Use this for initialization
@@ -74,12 +74,73 @@ public class B_PlayerControl : MonoBehaviour {
         Health = UIM.playerMaxHP;
     }
 
+    // Update is called once per frame
+    private void FixedUpdate()
+    {
+        // 이동
+        if (!isDrag)
+        {
+            dirX = CrossPlatformInputManager.GetAxis("Horizontal");
+            ThisBody.velocity = new Vector2(dirX * Speed, ThisBody.velocity.y);
+        }
+
+        // 땅에 서 있는지의 여부 체크
+        isGrounded = GetGrounded();
+        // (땅에 서 있는데 이동불가인 상태)*는 0.4초간만 지속된다. (공격 당했을 시 + 페이크 문에 닿았을 시)*
+        if (isGrounded && isDrag && !DragFlag)
+        {
+            DragFlag = true;
+            Invoke("DragOff", 0.4f);
+        }
+        // 점프
+        if (CrossPlatformInputManager.GetButtonDown("Jump"))
+            Jump();
+
+        // 속도를 제한한다.
+        ThisBody.velocity = new Vector2(Mathf.Clamp(ThisBody.velocity.x, -MaxSpeed, MaxSpeed), Mathf.Clamp(ThisBody.velocity.y, -Mathf.Infinity, JumpPower));
+
+        // 이동 여부 확인
+        isWalk = handsAnimator.GetBool("walk");
+
+        // 걷는 모션
+        if (isWalk && ThisBody.velocity.x == 0)
+        {
+            handsAnimator.SetBool("walk", false);
+            bodyAnimator.SetBool("walk", false);
+        }
+        if (!isWalk && ThisBody.velocity.x != 0)
+        {
+            handsAnimator.SetBool("walk", true);
+            bodyAnimator.SetBool("walk", true);
+        }
+
+        // 낙하 모션
+        if (!isFall && ThisBody.velocity.y < 0 && !isGrounded)
+        {
+            isFall = true;
+            handsAnimator.SetTrigger("fall");
+        }
+        else if (isFall && isGrounded)
+        {
+            isFall = false;
+            handsAnimator.SetTrigger("land");
+        }
+
+        // 필요한 경우 방향을 바꾼다.
+        if (!isDrag && ((dirX < 0f && Facing == FaceDirection.FaceRight) || (dirX > 0f && Facing == FaceDirection.FaceLeft)))
+            FlipDirection();
+
+        if (switchB && Facing == FaceDirection.FaceLeft)
+            FlipDirection();
+
+    }
+
     // 플레이어가 착지 상태인지 여부를 반환한다.
     private bool GetGrounded()
     {
         // 바닥을 확인한다
         Vector3 ThisPosition = ThisTransform.position;
-        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x, ThisPosition.y - 1.2f),
+        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x, ThisPosition.y - 1f),
             new Vector2(ThisPosition.x, ThisPosition.y - 0.8f), GroundLayer);
         if (HitColliders.Length > 0)
             return true;
@@ -121,7 +182,8 @@ public class B_PlayerControl : MonoBehaviour {
 
         if (AttackLimit > 0 && CanAttack)
         {
-            SoundManager.instance.PlaySingle(playerAttack);
+            ThisAudio.clip = playerAttack;
+            ThisAudio.Play();
             CanAttack = false;
             faceAnimator.SetTrigger("attack");
             handsAnimator.SetTrigger("attack");
@@ -165,80 +227,6 @@ public class B_PlayerControl : MonoBehaviour {
         playerShield.SetActive(false);
     }
 
-    // Update is called once per frame
-    private void FixedUpdate()
-    {
-        // 이동
-        if (!isDrag)
-        {
-            dirX = CrossPlatformInputManager.GetAxis("Horizontal");
-            ThisBody.velocity = new Vector2(dirX * Speed, ThisBody.velocity.y);
-        }
-
-        // 땅에 서 있는지의 여부 체크
-        isGrounded = GetGrounded();
-        // (땅에 서 있는데 이동불가인 상태)*는 0.5초간만 지속된다. (공격 당했을 시 + 페이크 문에 닿았을 시)*
-        if (isGrounded && isDrag && !DragFlag)
-        {
-            DragFlag = true;
-            Invoke("DragOff", 0.5f);
-        }
-        // 점프
-        if (CrossPlatformInputManager.GetButtonDown("Jump"))
-            Jump();
-
-        // 속도를 제한한다.
-        ThisBody.velocity = new Vector2(Mathf.Clamp(ThisBody.velocity.x, -MaxSpeed, MaxSpeed), Mathf.Clamp(ThisBody.velocity.y, -Mathf.Infinity, JumpPower));
-        
-        // 이동 여부 확인
-        isWalk = handsAnimator.GetBool("walk");
-        
-        // 걷는 모션
-        if (isWalk && ThisBody.velocity.x == 0)
-        {
-            handsAnimator.SetBool("walk", false);
-            bodyAnimator.SetBool("walk", false);
-        }
-        if (!isWalk && ThisBody.velocity.x != 0)
-        {
-            handsAnimator.SetBool("walk", true);
-            bodyAnimator.SetBool("walk", true);
-        }
-        /* 걷는 효과음
-        if(isWalk && isGrounded && !switchA)
-        {
-            switchA = true;
-            ThisAudio.clip = playerMove;
-            ThisAudio.Play();
-            ThisAudio.loop = true;
-        }
-        else if((!isWalk || !isGrounded) && switchA)
-        {
-            switchA = false;
-            ThisAudio.loop = false;
-        }*/
-
-        // 낙하 모션
-        if (!isFall && ThisBody.velocity.y < 0 && !isGrounded)
-        {
-            isFall = true;
-            handsAnimator.SetTrigger("fall");
-        }
-        else if(isFall && isGrounded)
-        {
-            isFall = false;
-            handsAnimator.SetTrigger("land");
-        }
-
-        // 필요한 경우 방향을 바꾼다.
-        if (!isDrag && ((dirX < 0f && Facing == FaceDirection.FaceRight) || (dirX > 0f && Facing == FaceDirection.FaceLeft)))
-            FlipDirection();
-
-        if (switchB && Facing == FaceDirection.FaceLeft)
-            FlipDirection();
-            
-    }
-
     // 벽, 바닥에 옆면에 붙어있기 금지
     private void OnTriggerStay2D(Collider2D collision)
     {
@@ -248,9 +236,9 @@ public class B_PlayerControl : MonoBehaviour {
             {
                 isDrag = true;
                 if (Facing == FaceDirection.FaceLeft)
-                    ThisBody.AddForce(new Vector2(1, -1) * 50);
-                else
-                    ThisBody.AddForce(new Vector2(-1, -1) * 50);
+                    ThisBody.AddForce(new Vector2(1, -1) * 5);
+                else if(Facing == FaceDirection.FaceRight)
+                    ThisBody.AddForce(new Vector2(-1, -1) * 5);
             }
             else
                 isDrag = false;
@@ -270,9 +258,9 @@ public class B_PlayerControl : MonoBehaviour {
                 {
                     isDrag = true;
                     if (Facing == FaceDirection.FaceLeft)
-                        ThisBody.AddForce(new Vector2(1, -1) * 10);
-                    else
-                        ThisBody.AddForce(new Vector2(-1, -1) * 10);
+                        ThisBody.AddForce(new Vector2(1, -1) * 5);
+                    else if (Facing == FaceDirection.FaceRight)
+                        ThisBody.AddForce(new Vector2(-1, -1) * 5);
                 }
             }
             else

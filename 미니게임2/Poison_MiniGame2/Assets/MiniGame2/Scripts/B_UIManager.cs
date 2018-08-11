@@ -37,11 +37,12 @@ public class B_UIManager : MonoBehaviour {
     public Button attackButton;
     public Button shieldButton;
     public Transform ground;
-    private Rigidbody2D groundBody;
     private B_FloorReset groundScript;
     // 효과음
     public AudioClip breakGlass, activeDoor, enemyClear, floorOn;
     private AudioSource ThisAudio;
+    // 설정 버튼
+    public GameObject TimeStop_Screen;
     // static
     public static B_UIManager instance = null;
 
@@ -55,7 +56,6 @@ public class B_UIManager : MonoBehaviour {
         myAnimator1 = attackButton.GetComponent<Animator>();
         myAnimator2 = shieldButton.GetComponent<Animator>();
         ThisTransform = GetComponent<Transform>();
-        groundBody = ground.GetComponent<Rigidbody2D>();
         groundScript = ground.GetComponent<B_FloorReset>();
         transformC = hourglassC.GetComponent<Transform>();
         enemy1_scroll = enemy1_bar.GetComponent<Scrollbar>();
@@ -268,6 +268,22 @@ public class B_UIManager : MonoBehaviour {
     {
         ThisAudio.clip = floorOn;
         ThisAudio.Play();
+    }
+
+    // 게임 일시 정지
+    public void TimeStop()
+    {
+        if (!TimeStop_Screen.activeSelf)
+        {
+            TimeStop_Screen.SetActive(true);
+            Time.timeScale = 0;
+        }
+    }
+    // 일시 정지 취소
+    public void TimeGo()
+    {
+        TimeStop_Screen.SetActive(false);
+        Time.timeScale = 1;
     }
 
 }

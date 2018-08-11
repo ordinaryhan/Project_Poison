@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class B_EnemyMovement : MonoBehaviour {
@@ -19,9 +18,10 @@ public class B_EnemyMovement : MonoBehaviour {
     [SerializeField]
     public float[] bulletTimeOut;
     // 공격/방어를 위한
-    public Transform[] barrel;
-    public Transform[] bullet;
-    private B_DestroyInTime[] Bullets;
+    public Transform LastBarrelCenter;
+    public Transform[] LastBarrel, LastBullet;
+    public Transform[] barrel, bullet;
+    private B_DestroyInTime[] Bullets = null, LastBullets = null;
     public float destroyTime = 1f;
     public B_PlayerControl target;
     private Transform targetTransform;
@@ -29,7 +29,9 @@ public class B_EnemyMovement : MonoBehaviour {
     private bool enemy2_CanAttack = true;
     // 애니메이션을 위한
     public Animator headAnimator, wingsAnimator, bodyAnimator;
-    public GameObject waterball;
+    public GameObject waterball, Ihead;
+    public SpriteRenderer wingL, wingR;
+    public Sprite VwingL, VwingR;
     // 이동 관련
     [SerializeField]
     public Transform[] rotationCenter;
@@ -64,10 +66,16 @@ public class B_EnemyMovement : MonoBehaviour {
         ThisName = ThisTransform.tag;
         targetTransform = target.GetComponent<Transform>();
         Bullets = new B_DestroyInTime[bullet.Length];
+        LastBullets = new B_DestroyInTime[LastBullet.Length];
         for (int i = 0; i < bullet.Length; i++)
         {
             bullet[i].gameObject.SetActive(false);
             Bullets[i] = bullet[i].GetComponent<B_DestroyInTime>();
+        }
+        for (int i = 0; i < LastBullet.Length; i++)
+        {
+            LastBullet[i].gameObject.SetActive(false);
+            LastBullets[i] = LastBullet[i].GetComponent<B_DestroyInTime>();
         }
         waterball.SetActive(false);
         ClearEnemy.SetActive(false);
@@ -96,7 +104,7 @@ public class B_EnemyMovement : MonoBehaviour {
 
     // Update is called once per frame
     private void FixedUpdate() {
-
+        
         // 모드 확인
         CheckMode();
         // 모드에 따라 코드 진행
@@ -214,6 +222,7 @@ public class B_EnemyMovement : MonoBehaviour {
                         switchB = true;
                         ThisBody.velocity = new Vector2(0, 0);
                         StartCoroutine(ModeMotion());
+                        StartCoroutine(LastAttack());
                     }
                     else
                         ThisBody.velocity = (UpMiddle - ThisTransform.position) * 5f;
@@ -238,18 +247,73 @@ public class B_EnemyMovement : MonoBehaviour {
     // 모드 바뀔 때 모션
     IEnumerator ModeMotion()
     {
-        yield return new WaitForSecondsRealtime(1.5f);
         headAnimator.ResetTrigger("hit");
         headAnimator.ResetTrigger("attack");
         bodyAnimator.ResetTrigger("hit");
+        wingsAnimator.ResetTrigger("hit");
+        wingsAnimator.ResetTrigger("attack");
+        if (mode == B_UIManager.enemyMode.UpTogether)
+            yield return new WaitForSecondsRealtime(1.5f);
+        else
+        {
+            wingL.sprite = VwingL;
+            wingR.sprite = VwingR;
+        }
         bodyAnimator.SetTrigger("mode");
         yield return new WaitForSecondsRealtime(0.1f);
         wingsAnimator.ResetTrigger("hit");
         wingsAnimator.ResetTrigger("attack");
         wingsAnimator.SetTrigger("mode");
+        if (mode == B_UIManager.enemyMode.LastPang)
+            Ihead.SetActive(true);
         yield return new WaitForSecondsRealtime(0.05f);
         ThisAudio.clip = modeChange;
         ThisAudio.Play();
+    }
+
+    // LastPang 모드 공격 패턴 (이 모드에선 적은 제자리에서 공격을 반복함.)
+    IEnumerator LastAttack()
+    {
+        yield return new WaitForSecondsRealtime(2f);
+        while (Health > 0)
+        {
+            // 준비된 말탄환 28개 (9*3 = 27 / 한 화면에 3번 반복 가능)
+            for (int count = 0; count < 8; count++)
+            {
+                int index = 0;
+                // 5방향으로 말탄환을 날린다. (0, 2, 4, 6, 8)
+                for (int k = 0; k < 9; k += 2)
+                {
+                    index = k + (count%3) * 9;
+                    targetDir = LastBarrel[k].position;
+                    Dir = targetDir - (Vector2)ThisTransform.position;
+                    LastBullet[index].gameObject.SetActive(true);
+                    LastBullet[index].position = LastBarrel[k].position;
+                    LastBullet[index].rotation = LastBarrel[k].rotation;
+                    LastBullets[index].MoveBullet(Dir, bulletSpeed, 0);
+                }
+                yield return new WaitForSecondsRealtime(0.3f);
+                // 4방향으로 말탄환을 날린다. (1, 3, 5, 7)
+                for (int k = 1; k < 9; k += 2)
+                {
+                    index = k + (count%3 )* 9;
+                    targetDir = LastBarrel[k].position;
+                    Dir = targetDir - (Vector2)ThisTransform.position;
+                    LastBullet[index].gameObject.SetActive(true);
+                    LastBullet[index].position = LastBarrel[k].position;
+                    LastBullet[index].rotation = LastBarrel[k].rotation;
+                    LastBullets[index].MoveBullet(Dir, bulletSpeed, 0);
+                }
+                yield return new WaitForSecondsRealtime(0.3f);
+                // 공격 범위 조정을 위해 LastBarrel 좌우로 회전
+                if (count % 4 == 0 || count % 4 == 3)
+                    LastBarrelCenter.Rotate(new Vector3(0, 0, 9f));
+                else
+                    LastBarrelCenter.Rotate(new Vector3(0, 0, -9f));
+            }
+            // 공격 딜레이
+            yield return new WaitForSecondsRealtime(2f);
+        }
     }
 
     // enemy2 공격 함수1

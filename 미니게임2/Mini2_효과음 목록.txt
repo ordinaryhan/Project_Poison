@@ -1,8 +1,7 @@
 /* bgm은 긴박한 분위기 */
 [효과음(.wav)] < AudioSource 위치
--+ player 이동 소리 <player
 ++ player 점프 소리
-++ player 공격 소리
+++ player 공격 소리 < Player
 ++ player 공격 당하는 소리
 ++ player 방어 소리
 ++ player 방어막 깨지는 소리 < shield

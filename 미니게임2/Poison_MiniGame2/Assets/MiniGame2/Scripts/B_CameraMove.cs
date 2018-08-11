@@ -46,7 +46,7 @@ public class B_CameraMove : MonoBehaviour {
             {
                 if (ThisTransform.position == UP1)
                 {
-                    ThisBody.velocity = new Vector2(0, 0);
+                    ThisBody.velocity = Vector2.zero;
                     Invoke("SetSwitchA", 0.5f);
                 }
                 else
@@ -73,7 +73,7 @@ public class B_CameraMove : MonoBehaviour {
                 Vector3 targetXY = new Vector3(x, y, -25);
                 if (ThisTransform.position == targetXY)
                 {
-                    ThisBody.velocity = new Vector2(0, 0);
+                    ThisBody.velocity = Vector2.zero;
                     switchB = true;
                 }
                 else
@@ -88,7 +88,7 @@ public class B_CameraMove : MonoBehaviour {
                 // 카메라 위치 이동
                 if (ThisTransform.position == UP2)
                 {
-                    ThisBody.velocity = new Vector2(0, 0);
+                    ThisBody.velocity = Vector2.zero;
                     switchC = true;
                 }
                 else
@@ -108,14 +108,33 @@ public class B_CameraMove : MonoBehaviour {
         {
             if (!switchE || !switchF)
             {
-                // 카메라 위치 이동
-                if (ThisTransform.position == UP2)
+                if (y <= 0)
                 {
-                    ThisBody.velocity = new Vector2(0, 0);
+                    y = 0;
+                }
+                else if (y >= 13.58f)
+                {
+                    y = 13.58f;
+                }
+                if (x <= -1)
+                {
+                    x = -1;
+                }
+                else if (x >= 1)
+                {
+                    x = 1;
+                }
+                targetPosition = new Vector3(x, y, -25);
+                // 카메라 위치 이동
+                if (ThisTransform.position == targetPosition)
+                {
+                    ThisBody.velocity = Vector2.zero;
                     switchE = true;
                 }
                 else
+                {
                     ThisBody.velocity = (targetPosition - ThisTransform.position) * 3f;
+                }
                 // 카메라 크기 조정
                 if (ThisCamera.orthographicSize <= 5.733f)
                 {
@@ -125,7 +144,7 @@ public class B_CameraMove : MonoBehaviour {
                 else
                     ThisCamera.orthographicSize -= 0.01f;
             }
-            else
+            else if(switchE && switchF)
             {
                 if (y <= 0)
                 {
@@ -144,7 +163,6 @@ public class B_CameraMove : MonoBehaviour {
                     x = 1;
                 }
                 ThisTransform.position = new Vector3(x, y, -25);
-                ThisCamera.orthographicSize = 5.733f;
             }
         }
         // normal모드 시 작동
