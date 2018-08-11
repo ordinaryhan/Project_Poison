@@ -131,10 +131,10 @@ TextureImporter:
       name: gearIcon
       rect:
         serializedVersion: 2
-        x: 1292
+        x: 1420
         y: 1773
-        width: 297
-        height: 275
+        width: 170
+        height: 160
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
