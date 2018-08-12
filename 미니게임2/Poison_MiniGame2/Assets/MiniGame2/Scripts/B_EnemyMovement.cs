@@ -331,7 +331,7 @@ public class B_EnemyMovement : MonoBehaviour {
         yield return new WaitForSecondsRealtime(2f);
         // 참고 - 준비된 말탄환 28개
         int index = 0;
-        while (Health > 0)
+        while (Health > 0 && UIM.mode == B_UIManager.enemyMode.LastPang)
         {
             /* 패턴 1 => 말탄환 좌우로 마구마구 공격*/
             for (int count = 0; count <= 7; count++)
@@ -372,6 +372,10 @@ public class B_EnemyMovement : MonoBehaviour {
             }
             // 공격 딜레이
             yield return new WaitForSecondsRealtime(2f);
+
+            // 패턴1 -> 패턴2로 가는 와중 모드가 바뀌면 while문을 빠져나감. (gameover 상황 등등)
+            if (UIM.mode != B_UIManager.enemyMode.LastPang)
+                break;
 
             /* 패턴 2 => LeftFloor[5] 중 한 곳 + RightFloor[5] 중 한 곳, 총 두 곳을 향해 말탄환을 동시에 3개씩 발사하고 플레이어를 향해 한 발 발사한다 */
             FloorShuffle();
@@ -434,7 +438,7 @@ public class B_EnemyMovement : MonoBehaviour {
                 LastBullets1[index].MoveBullet(Dir, bulletSpeed, 0);
                 LastBarrel2[0].Rotate(0, 0, -digree);
                 // 공격 딜레이
-                yield return new WaitForSecondsRealtime(2f);
+                yield return new WaitForSecondsRealtime(3f);
             }
             // 공격 딜레이
             yield return new WaitForSecondsRealtime(3f);

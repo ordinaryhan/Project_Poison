@@ -41,8 +41,8 @@ public class B_UIManager : MonoBehaviour {
     // 효과음
     public AudioClip breakGlass, activeDoor, enemyClear, floorOn;
     private AudioSource ThisAudio;
-    // 설정 버튼
-    public GameObject TimeStop_Screen;
+    // UIScreen
+    public GameObject TimeStop_Screen, GameOver_Screen, Result_Screen, Good, Bad;
     // static
     public static B_UIManager instance = null;
 
@@ -115,6 +115,7 @@ public class B_UIManager : MonoBehaviour {
             breakHourglass = true;
             BreakHourglass.SetTrigger("break");
             Invoke("BreakSound", 1.5f);
+            Invoke("GameOver", 3f);
         }
 
         // 적 하나의 체력이 절반이하로 떨어지면 mode를 UpTogether로 바꾼다.
@@ -231,6 +232,9 @@ public class B_UIManager : MonoBehaviour {
             moveSand = true;
             playerHP += power;
         }
+
+        if (playerHP > playerMaxHP)
+            playerHP = playerMaxHP;
     }
 
     // 적 체력 관련
@@ -283,6 +287,32 @@ public class B_UIManager : MonoBehaviour {
     {
         ThisAudio.clip = floorOn;
         ThisAudio.Play();
+    }
+
+    // 게임 오버 창 뜨게 하기
+    public void GameOver()
+    {
+        mode = enemyMode.End;
+        Time.timeScale = 0;
+        GameOver_Screen.SetActive(true);
+    }
+
+    // 게임 결과 창 뜨게 하기
+    public void Result()
+    {
+        mode = enemyMode.End;
+        Time.timeScale = 0;
+        Result_Screen.SetActive(true);
+        if(playerHP >= 250)
+        {
+            Good.SetActive(true);
+            Bad.SetActive(false);
+        }
+        else
+        {
+            Good.SetActive(false);
+            Bad.SetActive(true);
+        }
     }
 
     // 게임 일시 정지

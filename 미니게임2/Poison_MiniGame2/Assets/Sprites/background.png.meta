@@ -28,6 +28,12 @@ TextureImporter:
     21300046: ClearMessage
     21300048: waterball_white
     21300050: markX
+    21300052: PlayerHeal1
+    21300054: OK
+    21300056: GameOver
+    21300058: GotoMain
+    21300060: good
+    21300062: bad
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -547,13 +553,133 @@ TextureImporter:
         width: 209
         height: 148
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
       spriteID: 1db6dfcbe4855a34286406bdb5c298d8
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerHeal1
+      rect:
+        serializedVersion: 2
+        x: 1332
+        y: 898
+        width: 400
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e9d8176974b9a8643bab75187a113b91
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: OK
+      rect:
+        serializedVersion: 2
+        x: 1478
+        y: 1291
+        width: 150
+        height: 75
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bea0f2a9d4803314fae88e887e528a2f
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GameOver
+      rect:
+        serializedVersion: 2
+        x: 1305
+        y: 794
+        width: 360
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 353a03377fa51c1418ac95e9464aa90f
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GotoMain
+      rect:
+        serializedVersion: 2
+        x: 1311
+        y: 709
+        width: 240
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e3ae330f9348ab46bf3a4183661300e
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: good
+      rect:
+        serializedVersion: 2
+        x: 1312
+        y: 599
+        width: 200
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c375525dbc09eb149b7c798dbef98e6f
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bad
+      rect:
+        serializedVersion: 2
+        x: 1552
+        y: 608
+        width: 210
+        height: 70
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1546eff92a3157742be6573e89784206
       vertices: []
       indices: 
       edges: []

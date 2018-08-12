@@ -46,6 +46,7 @@ public class B_PlayerControl : MonoBehaviour {
     public Animator bodyAnimator;
     // UIManager관련
     public B_UIManager UIM;
+    public GameObject OK;
     // 체력 체크
     private int Health;
     bool HitFlag = true;
@@ -53,7 +54,7 @@ public class B_PlayerControl : MonoBehaviour {
     public bool isItem = false;
     public B_FlipHourglass HourglassScript;
     // 필요 변수 선언
-    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchB = false;
+    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchB = false, healFlag = true;
     float dirX;
     // 효과음
     public AudioClip playerJump, playerAttack, createShield, playerHit, itemSound;
@@ -429,6 +430,30 @@ public class B_PlayerControl : MonoBehaviour {
         UIM.isItem = false;
         HourglassScript.doFlip = true;
         isItem = false;
+    }
+
+    // 설정 창에 있는 playerHeal 버튼 기능 (30초에 한번 가능)
+    public void HealPlayer(int power)
+    {
+        if (Health <= 600 && healFlag)
+        {
+            healFlag = false;
+            OK.SetActive(true);
+            Health += power;
+            UIM.HealPlayer(power);
+            UIM.hourglassA.value = Health;
+            UIM.hourglassB.value = 600 - Health;
+            Invoke("SetHealFlag", 30f);
+        }
+
+        if (Health > 600)
+            Health = 600;
+    }
+
+    private void SetHealFlag()
+    {
+        OK.SetActive(false);
+        healFlag = true;
     }
 
     // 플레이어를 죽이는 함수
