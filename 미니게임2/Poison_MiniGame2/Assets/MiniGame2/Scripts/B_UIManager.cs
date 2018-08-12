@@ -41,8 +41,10 @@ public class B_UIManager : MonoBehaviour {
     // 효과음
     public AudioClip breakGlass, activeDoor, enemyClear, floorOn;
     private AudioSource ThisAudio;
-    // 설정 버튼
-    public GameObject TimeStop_Screen;
+    // 클리어 후에 없어져야 하는 것
+    public GameObject[] RemoveItem;
+    // UIScreen
+    public GameObject TimeStop_Screen, GameOver_Screen, Result_Screen, Good, Bad;
     // static
     public static B_UIManager instance = null;
 
@@ -115,6 +117,7 @@ public class B_UIManager : MonoBehaviour {
             breakHourglass = true;
             BreakHourglass.SetTrigger("break");
             Invoke("BreakSound", 1.5f);
+            Invoke("GameOver", 3f);
         }
 
         // 적 하나의 체력이 절반이하로 떨어지면 mode를 UpTogether로 바꾼다.
@@ -135,6 +138,10 @@ public class B_UIManager : MonoBehaviour {
         if (!flag1 && !flag2 && !doflag)
         {
             doflag = true;
+            for(int i = 0; i < RemoveItem.Length; i++)
+            {
+                RemoveItem[i].SetActive(false);
+            }
             Invoke("DoorActivate", 1f);
         }
 
@@ -231,6 +238,9 @@ public class B_UIManager : MonoBehaviour {
             moveSand = true;
             playerHP += power;
         }
+
+        if (playerHP > playerMaxHP)
+            playerHP = playerMaxHP;
     }
 
     // 적 체력 관련
@@ -245,6 +255,21 @@ public class B_UIManager : MonoBehaviour {
         enemy2HP--;
         enemy2_scroll.size = (float) enemy2HP / enemyMaxHP;
     }
+    // LastPang 모드 진입 시 enemy 체력 +1
+    public void HealEnemy()
+    {
+        // enemy1이 살아남은 경우
+        if (enemy1HP > 0 && enemy1HP < enemyMaxHP)
+        {
+            enemy1HP += 2;
+            enemy1_scroll.size = (float) enemy1HP / enemyMaxHP;
+        }
+        else if (enemy2HP > 0 && enemy2HP < enemyMaxHP)
+        {
+            enemy2HP += 2;
+            enemy2_scroll.size = (float) enemy2HP / enemyMaxHP;
+        }
+    }
 
     // 공격/방어 개수 제한 관련
     public void Attack()
@@ -253,6 +278,14 @@ public class B_UIManager : MonoBehaviour {
         attackLimitText1.text = "" + attackLimit;
         attackLimitText2.text = "" + attackLimit;
         myAnimator1.SetTrigger("Attack");
+        if(attackLimit == 0)
+            Invoke("AttackLimitOver", 5f);
+    }
+
+    private void AttackLimitOver()
+    {
+        if (flag1 || flag2)
+            GameOver();
     }
 
     public void Shield()
@@ -268,6 +301,32 @@ public class B_UIManager : MonoBehaviour {
     {
         ThisAudio.clip = floorOn;
         ThisAudio.Play();
+    }
+
+    // 게임 오버 창 뜨게 하기
+    public void GameOver()
+    {
+        mode = enemyMode.End;
+        Time.timeScale = 0;
+        GameOver_Screen.SetActive(true);
+    }
+
+    // 게임 결과 창 뜨게 하기
+    public void Result()
+    {
+        mode = enemyMode.End;
+        Time.timeScale = 0;
+        Result_Screen.SetActive(true);
+        if(playerHP >= 250)
+        {
+            Good.SetActive(true);
+            Bad.SetActive(false);
+        }
+        else
+        {
+            Good.SetActive(false);
+            Bad.SetActive(true);
+        }
     }
 
     // 게임 일시 정지

@@ -45,6 +45,7 @@ public class B_OnTrigger : MonoBehaviour {
         else if (collision.CompareTag("Player") && ThisTag.Equals("door1"))
         {
             SoundManager.instance.PlaySingle(soundEffect);
+            B_UIManager.instance.Result();
         }
         else if(collision.CompareTag("floor_middle"))
         {
