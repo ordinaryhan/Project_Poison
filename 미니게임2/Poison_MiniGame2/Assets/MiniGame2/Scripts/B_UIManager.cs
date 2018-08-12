@@ -41,6 +41,8 @@ public class B_UIManager : MonoBehaviour {
     // 효과음
     public AudioClip breakGlass, activeDoor, enemyClear, floorOn;
     private AudioSource ThisAudio;
+    // 클리어 후에 없어져야 하는 것
+    public GameObject[] RemoveItem;
     // UIScreen
     public GameObject TimeStop_Screen, GameOver_Screen, Result_Screen, Good, Bad;
     // static
@@ -136,6 +138,10 @@ public class B_UIManager : MonoBehaviour {
         if (!flag1 && !flag2 && !doflag)
         {
             doflag = true;
+            for(int i = 0; i < RemoveItem.Length; i++)
+            {
+                RemoveItem[i].SetActive(false);
+            }
             Invoke("DoorActivate", 1f);
         }
 
@@ -272,6 +278,14 @@ public class B_UIManager : MonoBehaviour {
         attackLimitText1.text = "" + attackLimit;
         attackLimitText2.text = "" + attackLimit;
         myAnimator1.SetTrigger("Attack");
+        if(attackLimit == 0)
+            Invoke("AttackLimitOver", 5f);
+    }
+
+    private void AttackLimitOver()
+    {
+        if (flag1 || flag2)
+            GameOver();
     }
 
     public void Shield()

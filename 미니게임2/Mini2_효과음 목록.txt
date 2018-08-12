@@ -15,4 +15,5 @@
 -+ enemy mode 변할 때 소리 < enemy
 ++ enemy clear되는 소리 < UI
 - 체력 회복 소리
+- markX 소리
 - 결과 화면 소리 (good/bad/game over)

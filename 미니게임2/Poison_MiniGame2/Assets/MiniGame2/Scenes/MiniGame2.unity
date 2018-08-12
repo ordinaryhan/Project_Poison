@@ -276,11 +276,15 @@ MonoBehaviour:
   activeDoor: {fileID: 8300000, guid: 74dc549265a056047967612744d6cdbe, type: 3}
   enemyClear: {fileID: 8300000, guid: abc8234d392925942981f4440721fd98, type: 3}
   floorOn: {fileID: 8300000, guid: efdd5dfdbab3d0a45b73ec1e8192ed81, type: 3}
+  RemoveItem:
+  - {fileID: 2118633347}
+  - {fileID: 361510576}
+  - {fileID: 1572353729}
   TimeStop_Screen: {fileID: 1275235299}
   GameOver_Screen: {fileID: 1788870823}
-  Result_Screen: {fileID: 0}
-  Good: {fileID: 0}
-  Bad: {fileID: 0}
+  Result_Screen: {fileID: 1266064683}
+  Good: {fileID: 1978228825}
+  Bad: {fileID: 1804165640}
 --- !u!4 &25016163
 Transform:
   m_ObjectHideFlags: 0
