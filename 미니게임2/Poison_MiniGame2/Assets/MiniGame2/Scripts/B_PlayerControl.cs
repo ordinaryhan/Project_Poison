@@ -430,7 +430,7 @@ public class B_PlayerControl : MonoBehaviour {
         isItem = false;
     }
 
-    // 설정 창에 있는 playerHeal 버튼 기능 (30초에 한번 가능)
+    // 설정 창에 있는 playerHeal 버튼 기능 (15초에 한번 가능)
     public void HealPlayer(int power)
     {
         if (Health <= 600 && healFlag)
@@ -441,7 +441,7 @@ public class B_PlayerControl : MonoBehaviour {
             UIM.HealPlayer(power);
             UIM.hourglassA.value = Health;
             UIM.hourglassB.value = 600 - Health;
-            Invoke("SetHealFlag", 30f);
+            Invoke("SetHealFlag", 15f);
         }
 
         if (Health > 600)

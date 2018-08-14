@@ -44,6 +44,7 @@ public class B_UIManager : MonoBehaviour {
     private AudioSource ThisAudio;
     // 클리어 후에 없어져야 하는 것
     public GameObject[] RemoveItem;
+    public GameObject RemoveCanvas;
     // UIScreen
     public GameObject TimeStop_Screen, GameOver_Screen, Result_Screen, Good, Bad;
     // static
@@ -156,6 +157,10 @@ public class B_UIManager : MonoBehaviour {
         Vector3 pos = ground.position;
         pos.y -= 11f;
         ground.position = pos;
+        for (int i = 0; i < RemoveItem.Length; i++)
+        {
+            RemoveItem[i].SetActive(false);
+        }
     }
 
     private void ChangeMode()
@@ -250,14 +255,21 @@ public class B_UIManager : MonoBehaviour {
     public void HitEnemy1()
     {
         enemy1HP--;
-        enemy1_scroll.size = (float) enemy1HP / enemyMaxHP;
+        if(enemy1HP > 0)
+            enemy1_scroll.size = (float) enemy1HP / enemyMaxHP;
+        else
+            enemy1_scroll.size = 0;
     }
 
     public void HitEnemy2()
     {
         enemy2HP--;
-        enemy2_scroll.size = (float) enemy2HP / enemyMaxHP;
+        if(enemy2HP > 0)
+            enemy2_scroll.size = (float) enemy2HP / enemyMaxHP;
+        else
+            enemy2_scroll.size = 0;
     }
+
     // LastPang 모드 진입 시 enemy 체력 +1
     public void HealEnemy()
     {
@@ -340,6 +352,7 @@ public class B_UIManager : MonoBehaviour {
     // 게임 오버 창 뜨게 하기
     public void GameOver()
     {
+        RemoveCanvas.SetActive(false);
         mode = enemyMode.End;
         Time.timeScale = 0;
         GameOver_Screen.SetActive(true);
@@ -348,6 +361,7 @@ public class B_UIManager : MonoBehaviour {
     // 게임 결과 창 뜨게 하기
     public void Result()
     {
+        RemoveCanvas.SetActive(false);
         mode = enemyMode.End;
         Time.timeScale = 0;
         Result_Screen.SetActive(true);
@@ -366,6 +380,7 @@ public class B_UIManager : MonoBehaviour {
     // 게임 일시 정지
     public void TimeStop()
     {
+        RemoveCanvas.SetActive(false);
         ThisAudio.clip = buttonClick;
         ThisAudio.Play();
         if (!TimeStop_Screen.activeSelf)
@@ -390,6 +405,7 @@ public class B_UIManager : MonoBehaviour {
         Result_Screen.SetActive(false);
         GameOver_Screen.SetActive(false);
         Time.timeScale = 1;
+        RemoveCanvas.SetActive(true);
     }
 
     // 메인화면으로 가기 (지금은 임시로 재시작 기능으로 구현)

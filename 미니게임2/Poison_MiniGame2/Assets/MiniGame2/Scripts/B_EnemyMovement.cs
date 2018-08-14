@@ -327,8 +327,11 @@ public class B_EnemyMovement : MonoBehaviour {
         yield return new WaitForSecondsRealtime(0.05f);
         ThisAudio.clip = modeChange;
         ThisAudio.Play();
-        if(mode == B_UIManager.enemyMode.LastPang && Health != UIM.enemyMaxHP)
+        if (mode == B_UIManager.enemyMode.LastPang && Health != UIM.enemyMaxHP)
+        {
             UIM.HealEnemy();
+            Health += 2;
+        }
     }
 
     // LastPang 모드 공격 패턴 (이 모드에선 적은 제자리에서 공격을 반복함.)
