@@ -141,8 +141,8 @@ public class B_PlayerControl : MonoBehaviour {
     {
         // 바닥을 확인한다
         Vector3 ThisPosition = ThisTransform.position;
-        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x, ThisPosition.y - 1f),
-            new Vector2(ThisPosition.x, ThisPosition.y - 0.8f), GroundLayer);
+        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x - 0.05f, ThisPosition.y - 1f),
+            new Vector2(ThisPosition.x + 0.05f, ThisPosition.y - 0.8f), GroundLayer);
         if (HitColliders.Length > 0)
             return true;
         return false;
@@ -413,9 +413,8 @@ public class B_PlayerControl : MonoBehaviour {
     // 아이템 관련
     public void ItemOn()
     {
-        AudioSource UIMAudio = UIM.GetComponent<AudioSource>();
-        UIMAudio.clip = itemSound;
-        UIMAudio.Play();
+        ThisAudio.clip = itemSound;
+        ThisAudio.Play();
         UIM.isItem = true;
         HourglassScript.doFlip = true;
         isItem = true;
@@ -424,9 +423,8 @@ public class B_PlayerControl : MonoBehaviour {
 
     private void ItemOff()
     {
-        AudioSource UIMAudio = UIM.GetComponent<AudioSource>();
-        UIMAudio.clip = itemSound;
-        UIMAudio.Play();
+        ThisAudio.clip = itemSound;
+        ThisAudio.Play();
         UIM.isItem = false;
         HourglassScript.doFlip = true;
         isItem = false;

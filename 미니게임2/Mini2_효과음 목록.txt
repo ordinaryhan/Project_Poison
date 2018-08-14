@@ -8,15 +8,17 @@
 ++ 모래시계 깨지는 소리 < UI
 ++ door 활성화 소리 <UI
 ++ door 입장 소리
-++ 아이템 먹을 때 소리 <UI
+++ 아이템 먹을 때 소리 < Player
 ++ 발판 켜지는 소리
-- enemy 공격 소리 (???) < enemy
+-+ enemy 공격 소리 (???) < enemy
+   -+ enemy1/enemy2
+   -+ enemy LastPang 패턴1/패턴2
 ++ enemy 공격 당하는 소리 < enemy
 ++ enemy mode 변할 때 소리 < UI
 ㄴ 모드 변할 때 시각적 효과 추가하면 좋을 듯
 ++ enemy clear되는 소리 < UI
-- 체력 회복 소리
-ㄴ 체력 회복 시각적 효과 추가하면 좋을 듯
-- markX 소리
-- 버튼 클릭 소리
+++ 체력 회복 소리 < UI
+ㄴ or 체력 회복 시각적 효과 추가하면 좋을 듯
+++ markX 소리 < enemy
+++ 버튼 클릭 소리 < UI
 - 결과 화면 소리 (good/bad/game over)

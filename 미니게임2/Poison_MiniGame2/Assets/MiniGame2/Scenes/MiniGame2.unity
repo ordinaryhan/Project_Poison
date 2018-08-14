@@ -291,6 +291,8 @@ MonoBehaviour:
   enemyClear: {fileID: 8300000, guid: abc8234d392925942981f4440721fd98, type: 3}
   floorOn: {fileID: 8300000, guid: efdd5dfdbab3d0a45b73ec1e8192ed81, type: 3}
   modeWait: {fileID: 8300000, guid: c3a02e8388fb1954f857d200cd86b8e3, type: 3}
+  buttonClick: {fileID: 8300000, guid: ea36c1f3157e373498f3cbad03ecf061, type: 3}
+  healthUP: {fileID: 8300000, guid: b8e8f3b18a624a2408c0cb91b0a327d0, type: 3}
   RemoveItem:
   - {fileID: 2118633347}
   - {fileID: 361510576}
@@ -7568,6 +7570,9 @@ MonoBehaviour:
   enemyAttack: {fileID: 8300000, guid: 6bacc0903ac5af24c93d5e54d9913971, type: 3}
   enemyHit: {fileID: 8300000, guid: a65c6cce01c55844080d36acb527d62b, type: 3}
   modeChange: {fileID: 8300000, guid: f6270183a57a5cf4fb99ba20bff699b9, type: 3}
+  marking: {fileID: 8300000, guid: 197a8f47f772a2c43a7fbc475c01f56b, type: 3}
+  LastPang1: {fileID: 8300000, guid: dc1044f5e66747547a4bc5e5981624e1, type: 3}
+  LastPang2: {fileID: 8300000, guid: 6efc51bfc4da895409e08996d8cf95af, type: 3}
 --- !u!1 &792697697
 GameObject:
   m_ObjectHideFlags: 0
@@ -16766,9 +16771,12 @@ MonoBehaviour:
   item1: {fileID: 127823003}
   item2: {fileID: 1658083045}
   barrelPoint: {fileID: 1395218596}
-  enemyAttack: {fileID: 0}
+  enemyAttack: {fileID: 8300000, guid: 0596fc3bbdde09148a62caed5dfa44e4, type: 3}
   enemyHit: {fileID: 8300000, guid: a65c6cce01c55844080d36acb527d62b, type: 3}
   modeChange: {fileID: 8300000, guid: f6270183a57a5cf4fb99ba20bff699b9, type: 3}
+  marking: {fileID: 8300000, guid: 197a8f47f772a2c43a7fbc475c01f56b, type: 3}
+  LastPang1: {fileID: 8300000, guid: dc1044f5e66747547a4bc5e5981624e1, type: 3}
+  LastPang2: {fileID: 8300000, guid: 6efc51bfc4da895409e08996d8cf95af, type: 3}
 --- !u!1 &1853929470
 GameObject:
   m_ObjectHideFlags: 0
@@ -17115,6 +17123,17 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 150
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 25016162}
+        m_MethodName: HealthUP_Sound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0

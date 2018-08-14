@@ -40,7 +40,7 @@ public class B_UIManager : MonoBehaviour {
     public Transform ground;
     private B_FloorReset groundScript;
     // 효과음
-    public AudioClip breakGlass, activeDoor, enemyClear, floorOn, modeWait;
+    public AudioClip breakGlass, activeDoor, enemyClear, floorOn, modeWait, buttonClick, healthUP;
     private AudioSource ThisAudio;
     // 클리어 후에 없어져야 하는 것
     public GameObject[] RemoveItem;
@@ -261,6 +261,7 @@ public class B_UIManager : MonoBehaviour {
     // LastPang 모드 진입 시 enemy 체력 +1
     public void HealEnemy()
     {
+        B_SoundManager.instance.PlaySingle(healthUP);
         // enemy1이 살아남은 경우
         if (enemy1HP > 0 && enemy1HP < enemyMaxHP)
         {
@@ -329,8 +330,11 @@ public class B_UIManager : MonoBehaviour {
     // 발판 생성 효과음
     public void FloorSound()
     {
-        ThisAudio.clip = floorOn;
-        ThisAudio.Play();
+        if (!(ThisAudio.clip == modeWait && ThisAudio.isPlaying))
+        {
+            ThisAudio.clip = floorOn;
+            ThisAudio.Play();
+        }
     }
 
     // 게임 오버 창 뜨게 하기
@@ -362,16 +366,29 @@ public class B_UIManager : MonoBehaviour {
     // 게임 일시 정지
     public void TimeStop()
     {
+        ThisAudio.clip = buttonClick;
+        ThisAudio.Play();
         if (!TimeStop_Screen.activeSelf)
         {
             TimeStop_Screen.SetActive(true);
             Time.timeScale = 0;
         }
     }
+
+    public void HealthUP_Sound()
+    {
+        ThisAudio.clip = healthUP;
+        ThisAudio.Play();
+    }
+
     // 일시 정지 취소
     public void TimeGo()
     {
+        ThisAudio.clip = buttonClick;
+        ThisAudio.Play();
         TimeStop_Screen.SetActive(false);
+        Result_Screen.SetActive(false);
+        GameOver_Screen.SetActive(false);
         Time.timeScale = 1;
     }
 
