@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class B_UIManager : MonoBehaviour {
 
@@ -32,14 +33,14 @@ public class B_UIManager : MonoBehaviour {
     float PositionZ;
     bool switchA = false, switchB = false;
     // 애니메이션을 위한
-    private Animator myAnimator1;
-    private Animator myAnimator2;
-    public Button attackButton;
-    public Button shieldButton;
+    public Image attackButton;
+    public Sprite[] attackDelay;
+    public Image shieldButton;
+    public Sprite[] shieldDelay;
     public Transform ground;
     private B_FloorReset groundScript;
     // 효과음
-    public AudioClip breakGlass, activeDoor, enemyClear, floorOn;
+    public AudioClip breakGlass, activeDoor, enemyClear, floorOn, modeWait;
     private AudioSource ThisAudio;
     // 클리어 후에 없어져야 하는 것
     public GameObject[] RemoveItem;
@@ -55,8 +56,6 @@ public class B_UIManager : MonoBehaviour {
         else if (instance != this)
             Destroy(gameObject);
         ThisAudio = GetComponent<AudioSource>();
-        myAnimator1 = attackButton.GetComponent<Animator>();
-        myAnimator2 = shieldButton.GetComponent<Animator>();
         ThisTransform = GetComponent<Transform>();
         groundScript = ground.GetComponent<B_FloorReset>();
         transformC = hourglassC.GetComponent<Transform>();
@@ -88,7 +87,7 @@ public class B_UIManager : MonoBehaviour {
         {
             enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear2Target.position.x - 0.25f, clear2Target.position.y + 0.7f, PositionZ));
         }
-
+        
         // 모래시계 UI 관련
         if (playerHP > 0)
         {
@@ -161,11 +160,15 @@ public class B_UIManager : MonoBehaviour {
 
     private void ChangeMode()
     {
+        ThisAudio.clip = modeWait;
+        ThisAudio.Play();
         mode = enemyMode.UpTogether;
     }
 
     private void LastMode()
     {
+        ThisAudio.clip = modeWait;
+        ThisAudio.Play();
         mode = enemyMode.LastPang;
         groundScript.activeScript = false;
         groundScript.CreateFloors();
@@ -271,15 +274,28 @@ public class B_UIManager : MonoBehaviour {
         }
     }
 
-    // 공격/방어 개수 제한 관련
+    // 공격 개수 제한 + 공격 딜레이 애니메이션 관련
     public void Attack()
     {
         attackLimit--;
         attackLimitText1.text = "" + attackLimit;
         attackLimitText2.text = "" + attackLimit;
-        myAnimator1.SetTrigger("Attack");
+        StartCoroutine("AttackAnimation");
         if(attackLimit == 0)
             Invoke("AttackLimitOver", 5f);
+    }
+
+    IEnumerator AttackAnimation()
+    {
+        int init = attackDelay.Length - 1;
+        for (int i = init - 1; i > 0; i--)
+        {
+            attackButton.sprite = attackDelay[i];
+            yield return new WaitForSecondsRealtime(0.9f);
+        }
+        attackButton.sprite = attackDelay[0];
+        yield return new WaitForSecondsRealtime(0.25f);
+        attackButton.sprite = attackDelay[init];
     }
 
     private void AttackLimitOver()
@@ -288,12 +304,26 @@ public class B_UIManager : MonoBehaviour {
             GameOver();
     }
 
+    // 방어 개수 제한 + 방어 딜레이 애니메이션 관련
     public void Shield()
     {
         shieldLimit--;
         shieldLimitText1.text = "" + shieldLimit;
         shieldLimitText2.text = "" + shieldLimit;
-        myAnimator2.SetTrigger("Shield");
+        StartCoroutine("ShieldAnimation");
+    }
+
+    IEnumerator ShieldAnimation()
+    {
+        int init = shieldDelay.Length - 1;
+        for (int i = init - 1; i > 0; i--)
+        {
+            shieldButton.sprite = shieldDelay[i];
+            yield return new WaitForSecondsRealtime(0.9f);
+        }
+        shieldButton.sprite = shieldDelay[0];
+        yield return new WaitForSecondsRealtime(0.25f);
+        shieldButton.sprite = shieldDelay[init];
     }
 
     // 발판 생성 효과음
@@ -343,6 +373,24 @@ public class B_UIManager : MonoBehaviour {
     {
         TimeStop_Screen.SetActive(false);
         Time.timeScale = 1;
+    }
+
+    // 메인화면으로 가기 (지금은 임시로 재시작 기능으로 구현)
+    public void Restart()
+    {
+        TimeGo();
+        SceneManager.LoadScene("MiniGame2");
+    }
+
+    // 결과 화면에서 메인화면으로 가기 (지금은 임시로 게임종료 기능으로 구현)
+    public void Quit()
+    {
+        TimeGo();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit(); // 종료
+#endif
     }
 
 }

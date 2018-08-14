@@ -38,13 +38,13 @@ public class B_OnTrigger : MonoBehaviour {
         }
         else if (collision.CompareTag("Player") && ThisTag.Equals("door0"))
         {
-            SoundManager.instance.PlaySingle(soundEffect);
+            B_SoundManager.instance.PlaySingle(soundEffect);
             Camera.position = new Vector3(Camera.position.x, 0f, Camera.position.z);
             collision.GetComponent<B_PlayerControl>().Door0();
         }
         else if (collision.CompareTag("Player") && ThisTag.Equals("door1"))
         {
-            SoundManager.instance.PlaySingle(soundEffect);
+            B_SoundManager.instance.PlaySingle(soundEffect);
             B_UIManager.instance.Result();
         }
         else if(collision.CompareTag("floor_middle"))

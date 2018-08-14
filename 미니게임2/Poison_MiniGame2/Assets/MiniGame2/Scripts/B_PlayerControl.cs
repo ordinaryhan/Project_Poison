@@ -24,8 +24,8 @@ public class B_PlayerControl : MonoBehaviour {
     public float JumpPower = 500;
     public float JumpTimeOut = 1f;
     public float bulletSpeed = 500f;
-    public float bulletTimeOut = 3f;
-    public float shieldTimeOut = 3f;
+    public float AttackTimeOut = 3f;
+    public float shieldTimeOut = 5f;
     // 현재 점프/공격/방어할 수 있는지 여부
     private bool CanJump = true;
     private bool CanAttack = true;
@@ -163,7 +163,7 @@ public class B_PlayerControl : MonoBehaviour {
         if (!isGrounded || !CanJump)
             return;
         // 점프한다.
-        SoundManager.instance.PlaySingle(playerJump);
+        B_SoundManager.instance.PlaySingle(playerJump);
         ThisBody.AddForce(Vector2.up * JumpPower);
         CanJump = false;
         Invoke("ActivateJump", JumpTimeOut);
@@ -195,7 +195,7 @@ public class B_PlayerControl : MonoBehaviour {
             AttackLimit--;
             UIM.Attack();
         }
-        Invoke("ActivateBullet", bulletTimeOut);
+        Invoke("ActivateBullet", AttackTimeOut);
     }
 
     // 공격 딜레이. 제한 시간이 지나야 CanJump 변수를 활성화한다.
@@ -212,7 +212,7 @@ public class B_PlayerControl : MonoBehaviour {
 
         if (ShieldLimit > 0 && CanShield)
         {
-            SoundManager.instance.PlaySingle(createShield);
+            B_SoundManager.instance.PlaySingle(createShield);
             CanShield = false;
             playerShield.SetActive(true);
             ShieldLimit--;
@@ -303,7 +303,7 @@ public class B_PlayerControl : MonoBehaviour {
             // 말탄환에 맞았을 경우
             if (collision.CompareTag("letterbullet"))
             {
-                SoundManager.instance.PlaySingle(playerHit);
+                B_SoundManager.instance.PlaySingle(playerHit);
                 HitFlag = false;
                 int damage = collision.GetComponent<B_DestroyInTime>().power;
                 // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
@@ -341,7 +341,7 @@ public class B_PlayerControl : MonoBehaviour {
             // 적과 충돌한 경우
             if (collision.CompareTag("enemy1") || collision.CompareTag("enemy2"))
             {
-                SoundManager.instance.PlaySingle(playerHit);
+                B_SoundManager.instance.PlaySingle(playerHit);
                 HitFlag = false;
                 // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
                 if (!isItem)

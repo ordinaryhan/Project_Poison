@@ -57,7 +57,7 @@ public class B_EnemyMovement : MonoBehaviour {
     private SpriteRenderer HitMsg;
     public Transform barrelPoint;
     // 효과음
-    public AudioClip enemyHit, modeChange;
+    public AudioClip enemyAttack, enemyHit, modeChange;
     private AudioSource ThisAudio;
 
     // Use this for initialization
@@ -184,7 +184,7 @@ public class B_EnemyMovement : MonoBehaviour {
                     }
 
                     if (enemy1_CanAttack)
-                        Enemy1_Attack();
+                        StartCoroutine("Enemy1_Attack");
 
                 }
                 // enemy2의 UpTogether 모드 이동 패턴
@@ -307,7 +307,7 @@ public class B_EnemyMovement : MonoBehaviour {
         wingsAnimator.ResetTrigger("hit");
         wingsAnimator.ResetTrigger("attack");
         if (mode == B_UIManager.enemyMode.UpTogether)
-            yield return new WaitForSecondsRealtime(1.5f);
+            yield return new WaitForSecondsRealtime(1.75f);
         else
         {
             wingL.sprite = VwingL;
@@ -549,8 +549,8 @@ public class B_EnemyMovement : MonoBehaviour {
         flag = false;
         i = (i + 1) % 4;
         angle -= 1.47f;
-        Enemy1_Attack();
-        Invoke("SetFlag", 0.8f);
+        StartCoroutine("Enemy1_Attack");
+        Invoke("SetFlag", 1.5f);
     }
 
     private void SetFlag()
@@ -560,12 +560,15 @@ public class B_EnemyMovement : MonoBehaviour {
     }
 
     // enemy1 공격 함수
-    public void Enemy1_Attack()
-    {
-        if (!enemy1_CanAttack)
-            return;
-        
+    IEnumerator Enemy1_Attack()
+    {        
         enemy1_CanAttack = false;
+        if (!ThisAudio.isPlaying)
+        {
+            ThisAudio.clip = enemyAttack;
+            ThisAudio.Play();
+            yield return new WaitForSecondsRealtime(0.75f);
+        }
         headAnimator.SetTrigger("attack");
         wingsAnimator.SetTrigger("attack");
         // target(플레이어) 방향으로 말탄환을 날린다.
