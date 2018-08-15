@@ -50,6 +50,10 @@ TextureImporter:
     21300090: shield1
     21300092: shield0
     21300094: exit
+    21300096: GameStart
+    21300098: easy
+    21300100: normal
+    21300102: GameName
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -1009,13 +1013,93 @@ TextureImporter:
         width: 80
         height: 40
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
       spriteID: 34a05e13a5904894cb5ea434b4f6dd92
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GameStart
+      rect:
+        serializedVersion: 2
+        x: 1303
+        y: 504
+        width: 400
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5220e2bbe70d484fb6f0ce9c531fcfc
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: easy
+      rect:
+        serializedVersion: 2
+        x: 1295
+        y: 368
+        width: 220
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ada29005acbd2142b9a6a5dd34e1363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: normal
+      rect:
+        serializedVersion: 2
+        x: 1529
+        y: 365
+        width: 250
+        height: 125
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 18e4c1a664b913b4d8cde828a9b647e7
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GameName
+      rect:
+        serializedVersion: 2
+        x: 1325
+        y: 304
+        width: 400
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 13f68ac81d6e11c4aadcc37dc970543b
       vertices: []
       indices: 
       edges: []

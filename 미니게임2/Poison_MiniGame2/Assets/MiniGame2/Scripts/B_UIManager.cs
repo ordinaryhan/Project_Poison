@@ -6,6 +6,10 @@ using UnityEngine.SceneManagement;
 
 public class B_UIManager : MonoBehaviour {
 
+    /* 테스트용 변수*/
+    public B_PlayerControl player;
+    public B_EnemyMovement enemy1, enemy2;
+
     private Transform ThisTransform;
     public Camera mainCame;
     public Transform playerTarget, enemy1Target, enemy2Target, clear1Target, clear2Target;
@@ -46,11 +50,16 @@ public class B_UIManager : MonoBehaviour {
     public GameObject[] RemoveItem;
     public GameObject RemoveCanvas;
     // UIScreen
-    public GameObject TimeStop_Screen, GameOver_Screen, Result_Screen, Good, Bad;
+    public GameObject TimeStop_Screen, GameOver_Screen, Result_Screen, Good, Bad, GameStart_Screen;
     // static
     public static B_UIManager instance = null;
 
     private void Awake()
+    {
+        GameStart();
+    }
+
+    private void Start()
     {
         if (instance == null)
             instance = this;
@@ -377,6 +386,37 @@ public class B_UIManager : MonoBehaviour {
         }
     }
 
+    // 테스트 용 함수
+    // 게임 시작 창
+    public void GameStart()
+    {
+        RemoveCanvas.SetActive(false);
+        GameStart_Screen.SetActive(true);
+        Time.timeScale = 0;
+    }
+    // easyMode 선택 시
+    public void EasyMode()
+    {
+        enemy1.Health = enemy2.Health = enemyMaxHP = 6;
+        player.AttackLimit = attackLimit = 10;
+        enemy1HP = enemyMaxHP;
+        enemy2HP = enemyMaxHP;
+        attackLimitText1.text = "" + attackLimit;
+        attackLimitText2.text = "" + attackLimit;
+        TimeGo();
+    }
+    // normalMode 선택 시
+    public void NormalMode()
+    {
+        enemy1.Health = enemy2.Health = enemyMaxHP = 10;
+        player.AttackLimit = attackLimit = 15;
+        enemy1HP = enemyMaxHP;
+        enemy2HP = enemyMaxHP;
+        attackLimitText1.text = "" + attackLimit;
+        attackLimitText2.text = "" + attackLimit;
+        TimeGo();
+    }
+
     // 게임 일시 정지
     public void TimeStop()
     {
@@ -401,6 +441,7 @@ public class B_UIManager : MonoBehaviour {
     {
         ThisAudio.clip = buttonClick;
         ThisAudio.Play();
+        GameStart_Screen.SetActive(false);
         TimeStop_Screen.SetActive(false);
         Result_Screen.SetActive(false);
         GameOver_Screen.SetActive(false);

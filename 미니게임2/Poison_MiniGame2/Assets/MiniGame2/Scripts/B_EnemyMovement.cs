@@ -46,11 +46,11 @@ public class B_EnemyMovement : MonoBehaviour {
     public float rotationRadius = 2f, angularSpeed = 2f;
     float posX, posY, angle = -1f, digree;
     int i = 0, page = 1, count = 0;
-    bool flag = true, flip = true, clear = false, switchA = false, switchB = false, switchC = false;
+    bool flag = true, flip = true, clear = false, switchA = false, switchB = false, switchC = false, testFlag = true;
     Vector2 targetDir, Dir;
     Vector3 UpMiddle = new Vector3(0, 16.7f, 0);
     //  체력 5칸
-    int Health;
+    public int Health;
     public B_UIManager UIM;
     private AudioSource UIMAudio;
     // 클리어 관련
@@ -146,11 +146,12 @@ public class B_EnemyMovement : MonoBehaviour {
                         angle = angle + Time.deltaTime * angularSpeed;
                     }
 
-                    if (enemy2_CanAttack)
+                    if (enemy2_CanAttack && !testFlag)
                     {
                         enemy2_CanAttack = false;
                         StartCoroutine(Enemy2_Attack1());
                     }
+                    testFlag = false;
                 }
                 break;
 
@@ -644,6 +645,7 @@ public class B_EnemyMovement : MonoBehaviour {
     {
         if (collision.tag.Equals("waterbullet") && Health > 0)
         {
+            print(Health);
             Health--;
             headAnimator.SetTrigger("hit");
             wingsAnimator.SetTrigger("hit");

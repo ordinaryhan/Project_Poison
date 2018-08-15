@@ -36,9 +36,9 @@ public class B_PlayerControl : MonoBehaviour {
     // 공격/방어를 위한
     public Transform barrel;
     public Transform bullet;
-    public int AttackLimit = 15;
+    public int AttackLimit;
     public Collider2D shield;
-    public int ShieldLimit = 5;
+    int ShieldLimit;
     public GameObject playerShield;
     // 애니메이션을 위한
     public Animator faceAnimator;
@@ -73,6 +73,8 @@ public class B_PlayerControl : MonoBehaviour {
         bullet.gameObject.SetActive(false);
         FlipDirection();
         Health = UIM.playerMaxHP;
+        AttackLimit = UIM.attackLimit;
+        ShieldLimit = UIM.shieldLimit;
     }
 
     // Update is called once per frame
@@ -183,6 +185,7 @@ public class B_PlayerControl : MonoBehaviour {
 
         if (AttackLimit > 0 && CanAttack)
         {
+            print("플레이어 공격 limit : " + AttackLimit);
             ThisAudio.clip = playerAttack;
             ThisAudio.Play();
             CanAttack = false;
