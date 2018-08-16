@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class B_UIManager : MonoBehaviour {
+
+    /* 테스트용 변수*/
+    public B_PlayerControl player;
+    public B_EnemyMovement enemy1, enemy2;
 
     private Transform ThisTransform;
     public Camera mainCame;
@@ -32,31 +37,35 @@ public class B_UIManager : MonoBehaviour {
     float PositionZ;
     bool switchA = false, switchB = false;
     // 애니메이션을 위한
-    private Animator myAnimator1;
-    private Animator myAnimator2;
-    public Button attackButton;
-    public Button shieldButton;
+    public Image attackButton;
+    public Sprite[] attackDelay;
+    public Image shieldButton;
+    public Sprite[] shieldDelay;
     public Transform ground;
     private B_FloorReset groundScript;
     // 효과음
-    public AudioClip breakGlass, activeDoor, enemyClear, floorOn;
+    public AudioClip breakGlass, activeDoor, enemyClear, floorOn, modeWait, buttonClick, healthUP;
     private AudioSource ThisAudio;
     // 클리어 후에 없어져야 하는 것
     public GameObject[] RemoveItem;
+    public GameObject RemoveCanvas;
     // UIScreen
-    public GameObject TimeStop_Screen, GameOver_Screen, Result_Screen, Good, Bad;
+    public GameObject TimeStop_Screen, GameOver_Screen, Result_Screen, Good, Bad, GameStart_Screen;
     // static
     public static B_UIManager instance = null;
 
     private void Awake()
+    {
+        GameStart();
+    }
+
+    private void Start()
     {
         if (instance == null)
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
         ThisAudio = GetComponent<AudioSource>();
-        myAnimator1 = attackButton.GetComponent<Animator>();
-        myAnimator2 = shieldButton.GetComponent<Animator>();
         ThisTransform = GetComponent<Transform>();
         groundScript = ground.GetComponent<B_FloorReset>();
         transformC = hourglassC.GetComponent<Transform>();
@@ -88,7 +97,7 @@ public class B_UIManager : MonoBehaviour {
         {
             enemy2_bar.position = mainCame.WorldToScreenPoint(new Vector3(clear2Target.position.x - 0.25f, clear2Target.position.y + 0.7f, PositionZ));
         }
-
+        
         // 모래시계 UI 관련
         if (playerHP > 0)
         {
@@ -157,15 +166,23 @@ public class B_UIManager : MonoBehaviour {
         Vector3 pos = ground.position;
         pos.y -= 11f;
         ground.position = pos;
+        for (int i = 0; i < RemoveItem.Length; i++)
+        {
+            RemoveItem[i].SetActive(false);
+        }
     }
 
     private void ChangeMode()
     {
+        ThisAudio.clip = modeWait;
+        ThisAudio.Play();
         mode = enemyMode.UpTogether;
     }
 
     private void LastMode()
     {
+        ThisAudio.clip = modeWait;
+        ThisAudio.Play();
         mode = enemyMode.LastPang;
         groundScript.activeScript = false;
         groundScript.CreateFloors();
@@ -247,17 +264,25 @@ public class B_UIManager : MonoBehaviour {
     public void HitEnemy1()
     {
         enemy1HP--;
-        enemy1_scroll.size = (float) enemy1HP / enemyMaxHP;
+        if(enemy1HP > 0)
+            enemy1_scroll.size = (float) enemy1HP / enemyMaxHP;
+        else
+            enemy1_scroll.size = 0;
     }
 
     public void HitEnemy2()
     {
         enemy2HP--;
-        enemy2_scroll.size = (float) enemy2HP / enemyMaxHP;
+        if(enemy2HP > 0)
+            enemy2_scroll.size = (float) enemy2HP / enemyMaxHP;
+        else
+            enemy2_scroll.size = 0;
     }
+
     // LastPang 모드 진입 시 enemy 체력 +1
     public void HealEnemy()
     {
+        B_SoundManager.instance.PlaySingle(healthUP);
         // enemy1이 살아남은 경우
         if (enemy1HP > 0 && enemy1HP < enemyMaxHP)
         {
@@ -271,15 +296,28 @@ public class B_UIManager : MonoBehaviour {
         }
     }
 
-    // 공격/방어 개수 제한 관련
+    // 공격 개수 제한 + 공격 딜레이 애니메이션 관련
     public void Attack()
     {
         attackLimit--;
         attackLimitText1.text = "" + attackLimit;
         attackLimitText2.text = "" + attackLimit;
-        myAnimator1.SetTrigger("Attack");
+        StartCoroutine("AttackAnimation");
         if(attackLimit == 0)
             Invoke("AttackLimitOver", 5f);
+    }
+
+    IEnumerator AttackAnimation()
+    {
+        int init = attackDelay.Length - 1;
+        for (int i = init - 1; i > 0; i--)
+        {
+            attackButton.sprite = attackDelay[i];
+            yield return new WaitForSecondsRealtime(0.9f);
+        }
+        attackButton.sprite = attackDelay[0];
+        yield return new WaitForSecondsRealtime(0.25f);
+        attackButton.sprite = attackDelay[init];
     }
 
     private void AttackLimitOver()
@@ -288,24 +326,42 @@ public class B_UIManager : MonoBehaviour {
             GameOver();
     }
 
+    // 방어 개수 제한 + 방어 딜레이 애니메이션 관련
     public void Shield()
     {
         shieldLimit--;
         shieldLimitText1.text = "" + shieldLimit;
         shieldLimitText2.text = "" + shieldLimit;
-        myAnimator2.SetTrigger("Shield");
+        StartCoroutine("ShieldAnimation");
+    }
+
+    IEnumerator ShieldAnimation()
+    {
+        int init = shieldDelay.Length - 1;
+        for (int i = init - 1; i > 0; i--)
+        {
+            shieldButton.sprite = shieldDelay[i];
+            yield return new WaitForSecondsRealtime(0.9f);
+        }
+        shieldButton.sprite = shieldDelay[0];
+        yield return new WaitForSecondsRealtime(0.25f);
+        shieldButton.sprite = shieldDelay[init];
     }
 
     // 발판 생성 효과음
     public void FloorSound()
     {
-        ThisAudio.clip = floorOn;
-        ThisAudio.Play();
+        if (!(ThisAudio.clip == modeWait && ThisAudio.isPlaying))
+        {
+            ThisAudio.clip = floorOn;
+            ThisAudio.Play();
+        }
     }
 
     // 게임 오버 창 뜨게 하기
     public void GameOver()
     {
+        RemoveCanvas.SetActive(false);
         mode = enemyMode.End;
         Time.timeScale = 0;
         GameOver_Screen.SetActive(true);
@@ -314,6 +370,7 @@ public class B_UIManager : MonoBehaviour {
     // 게임 결과 창 뜨게 하기
     public void Result()
     {
+        RemoveCanvas.SetActive(false);
         mode = enemyMode.End;
         Time.timeScale = 0;
         Result_Screen.SetActive(true);
@@ -329,20 +386,85 @@ public class B_UIManager : MonoBehaviour {
         }
     }
 
+    // 테스트 용 함수
+    // 게임 시작 창
+    public void GameStart()
+    {
+        RemoveCanvas.SetActive(false);
+        GameStart_Screen.SetActive(true);
+        Time.timeScale = 0;
+    }
+    // easyMode 선택 시
+    public void EasyMode()
+    {
+        enemy1.Health = enemy2.Health = enemyMaxHP = 6;
+        player.AttackLimit = attackLimit = 10;
+        enemy1HP = enemyMaxHP;
+        enemy2HP = enemyMaxHP;
+        attackLimitText1.text = "" + attackLimit;
+        attackLimitText2.text = "" + attackLimit;
+        TimeGo();
+    }
+    // normalMode 선택 시
+    public void NormalMode()
+    {
+        enemy1.Health = enemy2.Health = enemyMaxHP = 10;
+        player.AttackLimit = attackLimit = 15;
+        enemy1HP = enemyMaxHP;
+        enemy2HP = enemyMaxHP;
+        attackLimitText1.text = "" + attackLimit;
+        attackLimitText2.text = "" + attackLimit;
+        TimeGo();
+    }
+
     // 게임 일시 정지
     public void TimeStop()
     {
+        RemoveCanvas.SetActive(false);
+        ThisAudio.clip = buttonClick;
+        ThisAudio.Play();
         if (!TimeStop_Screen.activeSelf)
         {
             TimeStop_Screen.SetActive(true);
             Time.timeScale = 0;
         }
     }
+
+    public void HealthUP_Sound()
+    {
+        ThisAudio.clip = healthUP;
+        ThisAudio.Play();
+    }
+
     // 일시 정지 취소
     public void TimeGo()
     {
+        ThisAudio.clip = buttonClick;
+        ThisAudio.Play();
+        GameStart_Screen.SetActive(false);
         TimeStop_Screen.SetActive(false);
+        Result_Screen.SetActive(false);
+        GameOver_Screen.SetActive(false);
         Time.timeScale = 1;
+        RemoveCanvas.SetActive(true);
+    }
+
+    // 메인화면으로 가기 (지금은 임시로 재시작 기능으로 구현)
+    public void Restart()
+    {
+        TimeGo();
+        SceneManager.LoadScene("MiniGame2");
+    }
+
+    // 결과 화면에서 메인화면으로 가기 (지금은 임시로 게임종료 기능으로 구현)
+    public void Quit()
+    {
+        TimeGo();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit(); // 종료
+#endif
     }
 
 }

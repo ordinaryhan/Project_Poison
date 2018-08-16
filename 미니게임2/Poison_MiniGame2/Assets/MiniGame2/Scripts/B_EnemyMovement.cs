@@ -46,24 +46,26 @@ public class B_EnemyMovement : MonoBehaviour {
     public float rotationRadius = 2f, angularSpeed = 2f;
     float posX, posY, angle = -1f, digree;
     int i = 0, page = 1, count = 0;
-    bool flag = true, flip = true, clear = false, switchA = false, switchB = false, switchC = false;
+    bool flag = true, flip = true, clear = false, switchA = false, switchB = false, switchC = false, testFlag = true;
     Vector2 targetDir, Dir;
     Vector3 UpMiddle = new Vector3(0, 16.7f, 0);
     //  체력 5칸
-    int Health;
+    public int Health;
     public B_UIManager UIM;
+    private AudioSource UIMAudio;
     // 클리어 관련
     public GameObject ClearEnemy, HitMessage, item1, item2;
     private SpriteRenderer HitMsg;
     public Transform barrelPoint;
     // 효과음
-    public AudioClip enemyHit, modeChange;
+    public AudioClip enemyAttack, enemyHit, modeChange, marking, LastPang1, LastPang2;
     private AudioSource ThisAudio;
 
     // Use this for initialization
     private void Awake()
     {
         // 이 객체의 정보들을 담는다.
+        UIMAudio = UIM.GetComponent<AudioSource>();
         ThisAudio = GetComponent<AudioSource>();
         HitMsg = HitMessage.GetComponent<SpriteRenderer>();
         Health = UIM.enemyMaxHP;
@@ -144,11 +146,12 @@ public class B_EnemyMovement : MonoBehaviour {
                         angle = angle + Time.deltaTime * angularSpeed;
                     }
 
-                    if (enemy2_CanAttack)
+                    if (enemy2_CanAttack && !testFlag)
                     {
                         enemy2_CanAttack = false;
                         StartCoroutine(Enemy2_Attack1());
                     }
+                    testFlag = false;
                 }
                 break;
 
@@ -184,7 +187,7 @@ public class B_EnemyMovement : MonoBehaviour {
                     }
 
                     if (enemy1_CanAttack)
-                        Enemy1_Attack();
+                        StartCoroutine("Enemy1_Attack");
 
                 }
                 // enemy2의 UpTogether 모드 이동 패턴
@@ -267,7 +270,6 @@ public class B_EnemyMovement : MonoBehaviour {
                         LastBullets1[index].MoveBullet(Dir, bulletSpeed, 0);
                         LastBarrel2[k].Rotate(0, 0, -digree);
                     }
-                    UIM.HealEnemy();
                 }
                 if (!switchB)
                 {
@@ -307,14 +309,17 @@ public class B_EnemyMovement : MonoBehaviour {
         wingsAnimator.ResetTrigger("hit");
         wingsAnimator.ResetTrigger("attack");
         if (mode == B_UIManager.enemyMode.UpTogether)
-            yield return new WaitForSecondsRealtime(1.5f);
+        {
+            bodyAnimator.SetTrigger("mode");
+            yield return new WaitForSecondsRealtime(1.75f);
+        }
         else
         {
             wingL.sprite = VwingL;
             wingR.sprite = VwingR;
+            bodyAnimator.SetTrigger("mode");
         }
-        bodyAnimator.SetTrigger("mode");
-        yield return new WaitForSecondsRealtime(0.1f);
+        yield return new WaitForSecondsRealtime(0.3f);
         wingsAnimator.ResetTrigger("hit");
         wingsAnimator.ResetTrigger("attack");
         wingsAnimator.SetTrigger("mode");
@@ -323,6 +328,11 @@ public class B_EnemyMovement : MonoBehaviour {
         yield return new WaitForSecondsRealtime(0.05f);
         ThisAudio.clip = modeChange;
         ThisAudio.Play();
+        if (mode == B_UIManager.enemyMode.LastPang && Health != UIM.enemyMaxHP)
+        {
+            UIM.HealEnemy();
+            Health += 2;
+        }
     }
 
     // LastPang 모드 공격 패턴 (이 모드에선 적은 제자리에서 공격을 반복함.)
@@ -334,6 +344,8 @@ public class B_EnemyMovement : MonoBehaviour {
         while (Health > 0 && UIM.mode == B_UIManager.enemyMode.LastPang)
         {
             /* 패턴 1 => 말탄환 좌우로 마구마구 공격*/
+            ThisAudio.clip = LastPang1;
+            ThisAudio.Play();
             for (int count = 0; count <= 7; count++)
             {
                 // 5방향으로 말탄환을 날린다. (0, 2, 4, 6, 8)
@@ -382,12 +394,16 @@ public class B_EnemyMovement : MonoBehaviour {
             for (int i = 0; i < 5; i++)
             {
                 // 타겟 Floor 표시
+                ThisAudio.clip = marking;
+                ThisAudio.Play();
+                yield return new WaitForSecondsRealtime(0.25f);
                 markX_L.gameObject.SetActive(true);
                 markX_R.gameObject.SetActive(true);
                 markX_L.position = LeftFloor[i].position;
                 markX_R.position = RightFloor[i].position;
+                yield return new WaitForSecondsRealtime(0.25f);
                 // 말탄환 애니메이션
-                for(int k = 0; k < 7; k++)
+                for (int k = 0; k < 7; k++)
                 {
                     bulletObject[k].SetActive(true);
                     bulletAnimator[k].SetTrigger("Ready");
@@ -396,6 +412,8 @@ public class B_EnemyMovement : MonoBehaviour {
                 yield return new WaitForSecondsRealtime(0.3f);
                 markX_L.gameObject.SetActive(false);
                 markX_R.gameObject.SetActive(false);
+                ThisAudio.clip = LastPang2;
+                ThisAudio.Play();
                 // 애니메이션 끝나면 말탄환 생성 및 발사 (오른쪽+왼쪽)
                 for (int barrel_index = 1; barrel_index <= 3; barrel_index++)
                 {
@@ -470,6 +488,12 @@ public class B_EnemyMovement : MonoBehaviour {
         flag = false;
         headAnimator.SetTrigger("attack");
         wingsAnimator.SetTrigger("attack");
+        if (!ThisAudio.isPlaying && !waterball.activeSelf && !UIMAudio.isPlaying)
+        {
+            ThisAudio.clip = enemyAttack;
+            ThisAudio.Play();
+            yield return new WaitForSecondsRealtime(0.75f);
+        }
         // 상하좌우+대각선4방향으로 말탄환을 날린다.
         for (int k = 0; k < 8; k++)
         {
@@ -494,6 +518,12 @@ public class B_EnemyMovement : MonoBehaviour {
         for (int i = 0; i < 5; i++) {
             headAnimator.SetTrigger("attack");
             wingsAnimator.SetTrigger("attack");
+            if (!ThisAudio.isPlaying && !waterball.activeSelf && !UIMAudio.isPlaying)
+            {
+                ThisAudio.clip = enemyAttack;
+                ThisAudio.Play();
+                yield return new WaitForSecondsRealtime(0.75f);
+            }
             for (int k = 2; k <= 6; k++)
             {
                 barrel[k].rotation = R[k-2];
@@ -514,6 +544,12 @@ public class B_EnemyMovement : MonoBehaviour {
                 BarrelCenter.Rotate(new Vector3(0, 0, -22.5f));
             headAnimator.SetTrigger("attack");
             wingsAnimator.SetTrigger("attack");
+            if (!ThisAudio.isPlaying && !waterball.activeSelf && !UIMAudio.isPlaying)
+            {
+                ThisAudio.clip = enemyAttack;
+                ThisAudio.Play();
+                yield return new WaitForSecondsRealtime(0.75f);
+            }
             for (int k = 6; k >= 2; k--)
             {
                 targetDir = barrel[k].position;
@@ -549,8 +585,8 @@ public class B_EnemyMovement : MonoBehaviour {
         flag = false;
         i = (i + 1) % 4;
         angle -= 1.47f;
-        Enemy1_Attack();
-        Invoke("SetFlag", 0.8f);
+        StartCoroutine("Enemy1_Attack");
+        Invoke("SetFlag", 1.5f);
     }
 
     private void SetFlag()
@@ -560,12 +596,15 @@ public class B_EnemyMovement : MonoBehaviour {
     }
 
     // enemy1 공격 함수
-    public void Enemy1_Attack()
-    {
-        if (!enemy1_CanAttack)
-            return;
-        
+    IEnumerator Enemy1_Attack()
+    {        
         enemy1_CanAttack = false;
+        if (!ThisAudio.isPlaying && !waterball.activeSelf && !UIMAudio.isPlaying)
+        {
+            ThisAudio.clip = enemyAttack;
+            ThisAudio.Play();
+            yield return new WaitForSecondsRealtime(0.75f);
+        }
         headAnimator.SetTrigger("attack");
         wingsAnimator.SetTrigger("attack");
         // target(플레이어) 방향으로 말탄환을 날린다.
@@ -606,6 +645,7 @@ public class B_EnemyMovement : MonoBehaviour {
     {
         if (collision.tag.Equals("waterbullet") && Health > 0)
         {
+            print(Health);
             Health--;
             headAnimator.SetTrigger("hit");
             wingsAnimator.SetTrigger("hit");
