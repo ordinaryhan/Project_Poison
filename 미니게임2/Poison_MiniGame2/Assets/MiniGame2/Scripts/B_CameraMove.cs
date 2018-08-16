@@ -20,10 +20,17 @@ public class B_CameraMove : MonoBehaviour {
         ThisTransform = GetComponent<Transform>();
         ThisBody = GetComponent<Rigidbody2D>();
         ThisCamera = GetComponent<Camera>();
+        setupCamera();
     }
 
-    // 모드를 확인한다. (모드는 UIManager가 관리한다.)
-    private void CheckMode()
+    // 화면 해상도
+    private void setupCamera()
+    {
+        Screen.SetResolution(1280, 800, false);
+    }
+
+// 모드를 확인한다. (모드는 UIManager가 관리한다.)
+private void CheckMode()
     {
         mode = UIM.mode;
     }

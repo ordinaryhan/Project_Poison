@@ -24,8 +24,8 @@ public class B_PlayerControl : MonoBehaviour {
     public float JumpPower = 500;
     public float JumpTimeOut = 1f;
     public float bulletSpeed = 500f;
-    public float bulletTimeOut = 3f;
-    public float shieldTimeOut = 3f;
+    public float AttackTimeOut = 3f;
+    public float shieldTimeOut = 5f;
     // 현재 점프/공격/방어할 수 있는지 여부
     private bool CanJump = true;
     private bool CanAttack = true;
@@ -36,9 +36,9 @@ public class B_PlayerControl : MonoBehaviour {
     // 공격/방어를 위한
     public Transform barrel;
     public Transform bullet;
-    public int AttackLimit = 15;
+    public int AttackLimit;
     public Collider2D shield;
-    public int ShieldLimit = 5;
+    int ShieldLimit;
     public GameObject playerShield;
     // 애니메이션을 위한
     public Animator faceAnimator;
@@ -46,6 +46,7 @@ public class B_PlayerControl : MonoBehaviour {
     public Animator bodyAnimator;
     // UIManager관련
     public B_UIManager UIM;
+    public GameObject OK;
     // 체력 체크
     private int Health;
     bool HitFlag = true;
@@ -53,7 +54,7 @@ public class B_PlayerControl : MonoBehaviour {
     public bool isItem = false;
     public B_FlipHourglass HourglassScript;
     // 필요 변수 선언
-    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchB = false;
+    bool isFall = false, DragFlag = false, isFloor = false, isWalk, switchB = false, healFlag = true;
     float dirX;
     // 효과음
     public AudioClip playerJump, playerAttack, createShield, playerHit, itemSound;
@@ -72,6 +73,8 @@ public class B_PlayerControl : MonoBehaviour {
         bullet.gameObject.SetActive(false);
         FlipDirection();
         Health = UIM.playerMaxHP;
+        AttackLimit = UIM.attackLimit;
+        ShieldLimit = UIM.shieldLimit;
     }
 
     // Update is called once per frame
@@ -140,8 +143,8 @@ public class B_PlayerControl : MonoBehaviour {
     {
         // 바닥을 확인한다
         Vector3 ThisPosition = ThisTransform.position;
-        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x, ThisPosition.y - 1f),
-            new Vector2(ThisPosition.x, ThisPosition.y - 0.8f), GroundLayer);
+        Collider2D[] HitColliders = Physics2D.OverlapAreaAll(new Vector2(ThisPosition.x - 0.05f, ThisPosition.y - 1f),
+            new Vector2(ThisPosition.x + 0.05f, ThisPosition.y - 0.8f), GroundLayer);
         if (HitColliders.Length > 0)
             return true;
         return false;
@@ -162,7 +165,7 @@ public class B_PlayerControl : MonoBehaviour {
         if (!isGrounded || !CanJump)
             return;
         // 점프한다.
-        SoundManager.instance.PlaySingle(playerJump);
+        B_SoundManager.instance.PlaySingle(playerJump);
         ThisBody.AddForce(Vector2.up * JumpPower);
         CanJump = false;
         Invoke("ActivateJump", JumpTimeOut);
@@ -182,6 +185,7 @@ public class B_PlayerControl : MonoBehaviour {
 
         if (AttackLimit > 0 && CanAttack)
         {
+            print("플레이어 공격 limit : " + AttackLimit);
             ThisAudio.clip = playerAttack;
             ThisAudio.Play();
             CanAttack = false;
@@ -194,7 +198,7 @@ public class B_PlayerControl : MonoBehaviour {
             AttackLimit--;
             UIM.Attack();
         }
-        Invoke("ActivateBullet", bulletTimeOut);
+        Invoke("ActivateBullet", AttackTimeOut);
     }
 
     // 공격 딜레이. 제한 시간이 지나야 CanJump 변수를 활성화한다.
@@ -211,7 +215,7 @@ public class B_PlayerControl : MonoBehaviour {
 
         if (ShieldLimit > 0 && CanShield)
         {
-            SoundManager.instance.PlaySingle(createShield);
+            B_SoundManager.instance.PlaySingle(createShield);
             CanShield = false;
             playerShield.SetActive(true);
             ShieldLimit--;
@@ -302,7 +306,7 @@ public class B_PlayerControl : MonoBehaviour {
             // 말탄환에 맞았을 경우
             if (collision.CompareTag("letterbullet"))
             {
-                SoundManager.instance.PlaySingle(playerHit);
+                B_SoundManager.instance.PlaySingle(playerHit);
                 HitFlag = false;
                 int damage = collision.GetComponent<B_DestroyInTime>().power;
                 // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
@@ -340,7 +344,7 @@ public class B_PlayerControl : MonoBehaviour {
             // 적과 충돌한 경우
             if (collision.CompareTag("enemy1") || collision.CompareTag("enemy2"))
             {
-                SoundManager.instance.PlaySingle(playerHit);
+                B_SoundManager.instance.PlaySingle(playerHit);
                 HitFlag = false;
                 // 아이템 x일 시, 체력이 데미지 양만큼 깎인다.
                 if (!isItem)
@@ -412,9 +416,8 @@ public class B_PlayerControl : MonoBehaviour {
     // 아이템 관련
     public void ItemOn()
     {
-        AudioSource UIMAudio = UIM.GetComponent<AudioSource>();
-        UIMAudio.clip = itemSound;
-        UIMAudio.Play();
+        ThisAudio.clip = itemSound;
+        ThisAudio.Play();
         UIM.isItem = true;
         HourglassScript.doFlip = true;
         isItem = true;
@@ -423,12 +426,35 @@ public class B_PlayerControl : MonoBehaviour {
 
     private void ItemOff()
     {
-        AudioSource UIMAudio = UIM.GetComponent<AudioSource>();
-        UIMAudio.clip = itemSound;
-        UIMAudio.Play();
+        ThisAudio.clip = itemSound;
+        ThisAudio.Play();
         UIM.isItem = false;
         HourglassScript.doFlip = true;
         isItem = false;
+    }
+
+    // 설정 창에 있는 playerHeal 버튼 기능 (15초에 한번 가능)
+    public void HealPlayer(int power)
+    {
+        if (Health <= 600 && healFlag)
+        {
+            healFlag = false;
+            OK.SetActive(true);
+            Health += power;
+            UIM.HealPlayer(power);
+            UIM.hourglassA.value = Health;
+            UIM.hourglassB.value = 600 - Health;
+            Invoke("SetHealFlag", 15f);
+        }
+
+        if (Health > 600)
+            Health = 600;
+    }
+
+    private void SetHealFlag()
+    {
+        OK.SetActive(false);
+        healFlag = true;
     }
 
     // 플레이어를 죽이는 함수
