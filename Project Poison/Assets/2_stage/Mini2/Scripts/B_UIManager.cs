@@ -235,6 +235,7 @@ public class B_UIManager : MonoBehaviour {
     {
         moveSand = true;
         playerHP -= power;
+        s_variable.score[1] = playerHP;
     }
 
     public void HealPlayer(int power)
@@ -401,22 +402,20 @@ public class B_UIManager : MonoBehaviour {
         RemoveCanvas.SetActive(true);
     }
 
-    // 메인화면으로 가기 (지금은 임시로 재시작 기능으로 구현)
+    // 메인화면으로 가기 (설정창에서 게임 그만 두고 메인 화면으로 돌아갈 때)
     public void Restart()
     {
         TimeGo();
-        SceneManager.LoadScene("MiniGame2");
+        s_variable.score[1] = 0;
+        SceneManager.LoadScene("4_main");
     }
 
-    // 결과 화면에서 메인화면으로 가기 (지금은 임시로 게임종료 기능으로 구현)
+    // 결과 화면에서 메인화면으로 가기
     public void Quit()
     {
         TimeGo();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit(); // 종료
-#endif
+        if(playerHP > 0) s_variable.finish2 = true;
+        SceneManager.LoadScene("4_main");
     }
 
 }

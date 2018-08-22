@@ -37,6 +37,10 @@ public class s_collection : MonoBehaviour {
     {
         //Stage 결과 score에 저장하기
 
+        score[0] = s_variable.score[0];
+        score[1] = s_variable.score[1];
+        score[2] = s_variable.score[2];
+
         if (score[0] > 420) grade[0] = true;
         if (score[0] <= 420) grade[0] = false;
         if (score[1] > 250) grade[1] = true;
@@ -44,25 +48,28 @@ public class s_collection : MonoBehaviour {
         if (score[2] > 150) grade[2] = true;
         if (score[2] <= 150) grade[2] = false;
 
-        if (collectNum == Collect.one)
+        if (s_variable.finish1 && s_variable.finish2 && s_variable.finish3)
         {
-            if ((grade[0] && grade[1] && grade[2]) || (grade[0] && grade[1] && !grade[2]))
-                iscollect[0] = true;
-        }
-        if(collectNum == Collect.two)
-        {
-            if ((grade[0] && !grade[1] && grade[2]) || (grade[0] && !grade[1] && !grade[2]))
-                iscollect[1] = true;
-        }
-        if(collectNum == Collect.three)
-        {
-            if ((!grade[0] && grade[1] && grade[2]) || (!grade[0] && grade[1] && !grade[2]))
-                iscollect[2] = true;
-        }
-        if(collectNum == Collect.four)
-        {
-            if (!(grade[0] && grade[1] && grade[2]) || !(grade[0] && grade[1] && !grade[2]))
-                iscollect[3] = true;
+            if (collectNum == Collect.one)
+            {
+                if ((grade[0] && grade[1] && grade[2]) || (grade[0] && grade[1] && !grade[2]))
+                    iscollect[0] = true;
+            }
+            if (collectNum == Collect.two)
+            {
+                if ((grade[0] && !grade[1] && grade[2]) || (grade[0] && !grade[1] && !grade[2]))
+                    iscollect[1] = true;
+            }
+            if (collectNum == Collect.three)
+            {
+                if ((!grade[0] && grade[1] && grade[2]) || (!grade[0] && grade[1] && !grade[2]))
+                    iscollect[2] = true;
+            }
+            if (collectNum == Collect.four)
+            {
+                if (!(grade[0] && grade[1] && grade[2]) || !(grade[0] && grade[1] && !grade[2]))
+                    iscollect[3] = true;
+            }
         }
 
     }
