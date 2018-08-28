@@ -189,7 +189,7 @@ public class C_ScoreUpdate : MonoBehaviour {
         Time.timeScale = 1; 
     }
 
-    // 메인화면으로 가기 (지금은 임시로 재시작 기능으로 구현)
+    // 메인화면으로 가기
     public void Restart()
     {
         Audio.clip = buttonClick;
@@ -199,15 +199,25 @@ public class C_ScoreUpdate : MonoBehaviour {
         SceneManager.LoadScene("4_main");
     }
 
-    // 결과 화면에서 메인화면으로 가기 (지금은 임시로 게임종료 기능으로 구현)
+    // 결과 화면에서 메인화면으로 가기 (
     public void Quit()
     {
         Audio.clip = buttonClick;
         Audio.Play();
         TimeGo();
         if (playerHP > 0) s_variable.finish3 = true;
-
         SceneManager.LoadScene("4_main");
+    }
+
+    // 앱 종료
+    public void Exit()
+    {
+        TimeGo();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit(); // 종료
+#endif
     }
 
     IEnumerator ending()
