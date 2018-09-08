@@ -6,8 +6,6 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class C_PlayerMovement : MonoBehaviour {
 
-    public C_ScoreUpdate UIM;
-
     // 플레이어가 바라보는 방향
     public enum FaceDirection { FaceRight = -1, FaceLeft = 1 };
     public FaceDirection Facing = FaceDirection.FaceRight;
@@ -27,10 +25,7 @@ public class C_PlayerMovement : MonoBehaviour {
     public float MaxSpeed = 10f, Speed = 5f;
 
     bool isWalk = false;
-
-    //체력
-    public int maxHealth = 600;
-    int health;
+    float health;
     bool isDie = false;
 
     //아이템
@@ -81,8 +76,7 @@ public class C_PlayerMovement : MonoBehaviour {
     void Awake() {
         rigid = GetComponent<Rigidbody2D>();
         ThisTransform = GetComponent<Transform>();
-
-        health = maxHealth;
+        health = s_variable.score[1];
         EnemyScript = new C_EnemyMove[Enemy.Length];
         for(int i = 0; i < EnemyScript.Length; i++)
         {
@@ -120,12 +114,19 @@ public class C_PlayerMovement : MonoBehaviour {
             Shuffle();
             //Instantiate(생성시킬 오브젝트, 생성될 위치, 생성됐을때 회전값);
             //
-            for(int i = 0; i<itemarr.Length; i++)
+            for (int i = 0; i < itemarr.Length; i++)
             {
                 item.transform.position = itemarr[i].position;
                 item.SetActive(true);
                 yield return new WaitForSeconds(5f);
                 item.SetActive(false);
+
+                if (C_ScoreUpdate.instance.isItem)//Mathf.Abs(ThisTransform.localScale.x) == 7)
+                {
+                    item.SetActive(false); //아이템 생성 X
+                    yield return new WaitForSeconds(8f);
+                    item.SetActive(true);
+                }
             }
            
         }
@@ -231,14 +232,13 @@ public class C_PlayerMovement : MonoBehaviour {
                     enemyBody.velocity = Vector3.left * 20;
                 }
             }
-            else if (!isUnBeatTime)
+            else
             {
                 health -= 25;
-                UIM.HitPlayer(25);
+                C_ScoreUpdate.instance.HitPlayer(25);
                 if (health > 0)
                 {
                     isUnBeatTime = true;
-                    StartCoroutine("UnBeatTime");
                     Random_Position();
                 }
             }
@@ -257,7 +257,6 @@ public class C_PlayerMovement : MonoBehaviour {
     //적과 충돌하면 랜덤위치로 이동
     void Random_Position()
     {
-        int j = 0;
         bool[] tempP = new bool[PathCenter.Length];
         for (int k = 0; k < PathCenter.Length; k++)
         {
@@ -286,6 +285,11 @@ public class C_PlayerMovement : MonoBehaviour {
 
     public void CheckItem()
     {
+        //누적 게이지가 0이하거나 거대화 상태면 item효과 실행 X
+        if (C_ScoreUpdate.instance.score <= 0 || C_ScoreUpdate.instance.isItem)
+            return;
+
+        C_ScoreUpdate.instance.ScoreReset1();
         StartCoroutine("Itemact");
     }
 
@@ -321,7 +325,7 @@ public class C_PlayerMovement : MonoBehaviour {
                
                 break;
             }
-            //서서히 커지기
+            //서서히 작아지기
             else
             {
                 Audio.clip = bigger;
@@ -348,8 +352,7 @@ public class C_PlayerMovement : MonoBehaviour {
             }
 
         }
-        float keeptime = C_ScoreUpdate.instance.accumulate * 1.5f;
-        C_ScoreUpdate.instance.ScoreReset();
+        float keeptime = 5f;// C_ScoreUpdate.instance.accumulate * 1.5f;
         yield return new WaitForSeconds(keeptime);
 
         //크기원래대로

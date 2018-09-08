@@ -46,7 +46,7 @@ public class B_PlayerControl : MonoBehaviour {
     public B_UIManager UIM;
     public GameObject OK;
     // 체력 체크
-    private int Health;
+    private float Health;
     bool HitFlag = true;
     // 아이템
     public bool isItem = false;
@@ -70,7 +70,7 @@ public class B_PlayerControl : MonoBehaviour {
         playerShield.SetActive(false);
         bullet.gameObject.SetActive(false);
         FlipDirection();
-        Health = UIM.playerMaxHP;
+        Health = s_variable.score[0];
         ShieldLimit = UIM.shieldLimit;
     }
 

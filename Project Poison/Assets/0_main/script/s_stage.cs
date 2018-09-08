@@ -8,7 +8,7 @@ public class s_stage : MonoBehaviour {
     
     public enum Stage { one, two, three }
     public Stage stage;
-    private int[] score = new int[3];
+    private bool[] isFinish = new bool[3];
 
     public GameObject rock;
 
@@ -18,34 +18,33 @@ public class s_stage : MonoBehaviour {
     public GameObject talk;
     public GameObject Skip;
 
+    public AudioSource Audio;
+    public AudioClip one, two, three;
+
 
     void Start () {
         if(rock != null) rock.SetActive(true);
-        for(int i=0; i<3; i++)
-        {
-            score[i] = 0;
-        }
-	}
-	
-	void Update () {
+        isFinish[0] = s_variable.finish1;
+        isFinish[1] = s_variable.finish2;
+        isFinish[2] = s_variable.finish3;
 
-        StageClear();
-
-        //Debug.Log("1: " + score[0] + " 2: " + score[1] + " 3: " + score[2]);
     }
+
+    private void Update()
+    {
+        Debug.Log(s_variable.score[0] + ", " + s_variable.score[1] + ", " + s_variable.score[2]);
+        StageClear();
+    }
+
     public void StageClear()
     {
         //Stage 결과 score에 저장하기
-        s_variable.score[0] = 600;
-        score[0] = s_variable.score[0];
-        score[1] = s_variable.score[1];
-        score[2] = s_variable.score[2];
 
-        if (stage == Stage.two && score[0]>0)
+        if (stage == Stage.two && isFinish[0])
         {
             if (rock != null) rock.SetActive(false);
         }
-        if (stage == Stage.three && score[1] > 0)
+        if (stage == Stage.three && isFinish[1])
         {
             if (rock != null) rock.SetActive(false);
         }
@@ -57,14 +56,17 @@ public class s_stage : MonoBehaviour {
     }
     IEnumerator started()
     {
-        Skip.SetActive(true);
-        background.SetActive(true);
-        yield return new WaitForSecondsRealtime(1f);
-        Player.SetActive(true);
-        Enemy.SetActive(true);
 
         if (stage == Stage.one)
         {
+            Audio.clip = one;
+            Audio.Play();
+            Skip.SetActive(true);
+            background.SetActive(true);
+            yield return new WaitForSecondsRealtime(1f);
+            Player.SetActive(true);
+            Enemy.SetActive(true);
+
             background.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/background");
             Enemy.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/one");
             yield return new WaitForSecondsRealtime(0.5f);
@@ -75,10 +77,19 @@ public class s_stage : MonoBehaviour {
                 talk.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/one" + i);
                 yield return new WaitForSecondsRealtime(2f);
             }
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            SceneManager.LoadScene(1);
         }
-        if (stage == Stage.two)
+        if (stage == Stage.two && !rock.activeSelf)
         {
+
+            Audio.clip = two;
+            Audio.Play();
+            Skip.SetActive(true);
+            background.SetActive(true);
+            yield return new WaitForSecondsRealtime(1f);
+            Player.SetActive(true);
+            Enemy.SetActive(true);
+
             background.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/background");
             Enemy.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/two");
             yield return new WaitForSecondsRealtime(0.5f);
@@ -100,10 +111,19 @@ public class s_stage : MonoBehaviour {
                 }
             }
 
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
+            SceneManager.LoadScene(2);
         }
-        if (stage == Stage.three)
+        if (stage == Stage.three && !rock.activeSelf)
         {
+
+            Audio.clip = three;
+            Audio.Play();
+            Skip.SetActive(true);
+            background.SetActive(true);
+            yield return new WaitForSecondsRealtime(1f);
+            Player.SetActive(true);
+            Enemy.SetActive(true);
+
             background.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/background");
             Enemy.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/three");
             yield return new WaitForSecondsRealtime(0.5f);
@@ -125,7 +145,7 @@ public class s_stage : MonoBehaviour {
                 }
             }
 
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 3);
+            SceneManager.LoadScene(3);
         }
         
         yield return null;

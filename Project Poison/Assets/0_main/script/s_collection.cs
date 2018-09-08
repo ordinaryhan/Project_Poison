@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class s_collection : MonoBehaviour {
     public enum Collect { one, two, three, four }
@@ -9,9 +10,12 @@ public class s_collection : MonoBehaviour {
     private bool[] grade = new bool[3];
     private bool[] iscollect = new bool[4];
 
-    public GameObject Collection;
+    public GameObject Collection, Thisobject;
     public GameObject rock;
     public GameObject image;
+
+    public AudioSource AudioSource;
+    public AudioClip bgm, good, soso, bad;
 
     void Start()
     {
@@ -92,25 +96,47 @@ public class s_collection : MonoBehaviour {
 
     public void collection()
     {
+
         if (collectNum == Collect.one && iscollect[0])
         {
             image.SetActive(true);
             Collection.SetActive(false);
+
+            AudioSource.clip = good;
+            AudioSource.Play();
         }
         if (collectNum == Collect.two && iscollect[1])
         {
             image.SetActive(true);
             Collection.SetActive(false);
+
+            AudioSource.clip = soso;
+            AudioSource.Play();
         }
         if (collectNum == Collect.three && iscollect[2])
         {
             image.SetActive(true);
             Collection.SetActive(false);
+
+            AudioSource.clip = soso;
+            AudioSource.Play();
         }
         if (collectNum == Collect.four && iscollect[3])
         {
             image.SetActive(true);
             Collection.SetActive(false);
+
+            AudioSource.clip = bad;
+            AudioSource.Play();
         }
+    }
+
+    public void Back()
+    {
+        Collection.SetActive(true);
+        Thisobject.SetActive(false);
+
+        AudioSource.clip = bgm;
+        AudioSource.Play();
     }
 }

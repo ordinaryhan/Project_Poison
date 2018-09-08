@@ -5,21 +5,22 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 
-public class C_ScoreUpdate : MonoBehaviour {
+public class C_ScoreUpdate : MonoBehaviour
+{
     public int score = 0;
     public Image TimeBar;
     float timeLeft;
     public float maxTime = 3f;
     public Text scoreLabel;
-    public Image ScoreBar ;
+    public Image ScoreBar;
     public int accumulate = 0;
     public static C_ScoreUpdate instance = null;
     public bool isItem = false;
 
     //모래시계
     public Slider hourglassA, hourglassB, hourglassC;
-    public int playerMaxHP = 600;
-    int playerHP;
+    public float playerMaxHP = 600;
+    public float playerHP;
     public Animator BreakHourglass;
     public bool moveSand = false, breakHourglass = false;
     float diffHP;
@@ -30,13 +31,15 @@ public class C_ScoreUpdate : MonoBehaviour {
     public GameObject RemoveCanvas;
 
     public AudioSource bgm, Audio;
-    public AudioClip bgm3, good, soso, bad, buttonClick;
-    public GameObject story, talk, talkingEnemy, player, storyback;
-    private bool[] grade = new bool[3];
+    public AudioClip bgm3, buttonClick;
+    //public GameObject story, talk, talkingEnemy, player, storyback;
+    //private bool[] grade = new bool[3];
+    public GameObject ThisCanvas, ResultCanvas;
+    public GameObject inGame;
 
     void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
@@ -44,7 +47,8 @@ public class C_ScoreUpdate : MonoBehaviour {
         {
             Destroy(gameObject);
         }
-        playerHP = playerMaxHP;
+        Time.timeScale = 1;
+        playerHP = s_variable.score[1];
         hourglassA.value = playerHP;
         hourglassB.value = playerMaxHP - playerHP;
         hourglassC.value = 0;
@@ -57,21 +61,25 @@ public class C_ScoreUpdate : MonoBehaviour {
     public void ScoreReset()
     {
         accumulate = 0;
-        ScoreBar.fillAmount = 0;
+    }
+    public void ScoreReset1()
+    {
+        score -= 1;
+        scoreLabel.text = score.ToString();
     }
     public void ScoreSet()
     {
         accumulate += 1;
         if (!isItem)
         {
-            ScoreBar.fillAmount += 1 / 60f;
+            score += 1;
+            scoreLabel.text = score.ToString();
         }
-        score += 50;
-        scoreLabel.text = score.ToString();
+       
     }
     void Update()
     {
-        
+
         // 모래시계 UI 관련
         if (playerHP > 0)
         {
@@ -146,7 +154,6 @@ public class C_ScoreUpdate : MonoBehaviour {
     {
         moveSand = true;
         playerHP -= power;
-        s_variable.score[2] = playerHP;
     }
 
     // 게임 오버 창 뜨게 하기
@@ -160,10 +167,15 @@ public class C_ScoreUpdate : MonoBehaviour {
     // 게임 결과 창 뜨게 하기
     public void Result()
     {
-        Time.timeScale = 0;
+        if (playerHP > 0)
+        {
+            s_variable.finish3 = true;
+            s_variable.score[2] = playerHP;
+        }
+        //Time.timeScale = 0;
         RemoveCanvas.SetActive(false);
         Result_Screen.SetActive(true);
-
+  
         StartCoroutine(ending());
     }
 
@@ -174,6 +186,7 @@ public class C_ScoreUpdate : MonoBehaviour {
         Audio.Play();
         if (!TimeStop_Screen.activeSelf)
         {
+            RemoveCanvas.SetActive(false);
             TimeStop_Screen.SetActive(true);
             Time.timeScale = 0;
         }
@@ -184,9 +197,12 @@ public class C_ScoreUpdate : MonoBehaviour {
     {
         Audio.clip = buttonClick;
         Audio.Play();
+        RemoveCanvas.SetActive(true);
         TimeStop_Screen.SetActive(false);
         GameOver_Screen.SetActive(false);
-        Time.timeScale = 1; 
+        Result_Screen.SetActive(false);//
+        Time.timeScale = 1;
+
     }
 
     // 메인화면으로 가기
@@ -195,8 +211,7 @@ public class C_ScoreUpdate : MonoBehaviour {
         Audio.clip = buttonClick;
         Audio.Play();
         TimeGo();
-        s_variable.score[2] = 0;
-        SceneManager.LoadScene("4_main");
+        SceneManager.LoadScene(4);
     }
 
     // 결과 화면에서 메인화면으로 가기 (
@@ -205,8 +220,7 @@ public class C_ScoreUpdate : MonoBehaviour {
         Audio.clip = buttonClick;
         Audio.Play();
         TimeGo();
-        if (playerHP > 0) s_variable.finish3 = true;
-        SceneManager.LoadScene("4_main");
+            SceneManager.LoadScene(4);
     }
 
     // 앱 종료
@@ -219,109 +233,22 @@ public class C_ScoreUpdate : MonoBehaviour {
         Application.Quit(); // 종료
 #endif
     }
-
     IEnumerator ending()
     {
-
+        inGame.SetActive(false);
         if (playerHP >= 150)
         {
-
             Good.SetActive(true);
             yield return new WaitForSecondsRealtime(3f);
 
-            storyback.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/background");
-            story.SetActive(true);
-            talkingEnemy.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/three");
-            yield return new WaitForSecondsRealtime(3f);
-
-            for (int i = 1; i <= 6; i++)
-            {
-                talk.SetActive(true);
-                talk.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/three_good" + i);
-                yield return new WaitForSecondsRealtime(3f);
-            }
         }
         else if (playerHP > 0)
         {
             Bad.SetActive(true);
             yield return new WaitForSecondsRealtime(3f);
-
-            story.SetActive(true);
-            talkingEnemy.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/three");
-            yield return new WaitForSecondsRealtime(3f);
-
-
-            for (int i = 1; i <= 6; i++)
-            {
-                talk.SetActive(true);
-                talk.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/three_bad" + i);
-                yield return new WaitForSecondsRealtime(3f);
-
-            }
         }
 
-        player.SetActive(false);
-        talkingEnemy.SetActive(false);
-        talk.SetActive(false);
-
-        if (s_variable.score[0] > 420) grade[0] = true;
-        if (s_variable.score[0] <= 420) grade[0] = false;
-        if (s_variable.score[1] > 250) grade[1] = true;
-        if (s_variable.score[1] <= 250) grade[1] = false;
-        if (s_variable.score[2] > 150) grade[2] = true;
-        if (s_variable.score[2] <= 150) grade[2] = false;
-
-        if ((grade[0] && grade[1] && grade[2]) || (grade[0] && grade[1] && !grade[2]))
-        {
-            for (int i = 1; i <= 3; i++)
-            {
-                storyback.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/ending" + i);
-                yield return new WaitForSecondsRealtime(3f);
-            }
-            bgm.clip = good;
-            bgm.Play();
-            storyback.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/ending_good1");
-            yield return new WaitForSecondsRealtime(3f);
-            storyback.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/ending_good2");
-            yield return new WaitForSecondsRealtime(3f);
-        }
-        if ((grade[0] && !grade[1] && grade[2]) || (grade[0] && !grade[1] && !grade[2]))
-        {
-            for (int i = 1; i <= 3; i++)
-            {
-                storyback.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/ending" + i);
-                yield return new WaitForSecondsRealtime(3f);
-            }
-            bgm.clip = soso;
-            bgm.Play();
-            storyback.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/ending_soso1");
-            yield return new WaitForSecondsRealtime(3f);
-        }
-        if ((!grade[0] && grade[1] && grade[2]) || (!grade[0] && grade[1] && !grade[2]))
-        {
-            for (int i = 1; i <= 3; i++)
-            {
-                storyback.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/ending" + i);
-                yield return new WaitForSecondsRealtime(3f);
-            }
-            bgm.clip = soso;
-            bgm.Play();
-            storyback.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/ending_soso2");
-            yield return new WaitForSecondsRealtime(3f);
-        }
-        if (!(grade[0] && grade[1] && grade[2]) || !(grade[0] && grade[1] && !grade[2]))
-        {
-            for (int i = 1; i <= 3; i++)
-            {
-                storyback.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/ending" + i);
-                yield return new WaitForSecondsRealtime(3f);
-            }
-            bgm.clip = bad;
-            bgm.Play();
-            storyback.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/ending_bad");
-            yield return new WaitForSecondsRealtime(3f);
-        }
-
-        SceneManager.LoadScene("4_main");
+        ResultCanvas.SetActive(true);
+        ThisCanvas.SetActive(false);
     }
 }

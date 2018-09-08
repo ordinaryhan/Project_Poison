@@ -17,8 +17,8 @@ public class B_UIManager : MonoBehaviour {
     private Transform transformC;
     public Animator BreakHourglass;
     public int shieldLimit = 5;
-    public int playerMaxHP = 600;
-    int playerHP;
+    public float playerMaxHP=600;
+    float playerHP;
     public bool moveSand = false, enemy2_page2 = false;
     // 적 공격 패턴
     public enum enemyMode { normal = -1, UpTogether = 0, LastPang = 1, End = 2};
@@ -60,13 +60,14 @@ public class B_UIManager : MonoBehaviour {
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
+        Time.timeScale = 1;
         ThisAudio = GetComponent<AudioSource>();
         ThisTransform = GetComponent<Transform>();
         groundScript = ground.GetComponent<B_FloorReset>();
         transformC = hourglassC.GetComponent<Transform>();
         enemy1_scroll = enemy1_bar.GetComponent<Scrollbar>();
         enemy2_scroll = enemy2_bar.GetComponent<Scrollbar>();
-        playerHP = playerMaxHP;
+        playerHP = s_variable.score[0];
         enemy1HP = enemyMaxHP;
         enemy2HP = enemyMaxHP;
         door1.SetActive(false);
@@ -157,7 +158,7 @@ public class B_UIManager : MonoBehaviour {
         door2.SetActive(true);
         mode = enemyMode.End;
         Vector3 pos = ground.position;
-        pos.y -= 11f;
+        pos.y -= 13.45f;
         ground.position = pos;
         for (int i = 0; i < RemoveItem.Length; i++)
         {
@@ -239,7 +240,6 @@ public class B_UIManager : MonoBehaviour {
     {
         moveSand = true;
         playerHP -= power;
-        s_variable.score[1] = playerHP;
     }
 
     public void HealPlayer(int power)
@@ -359,12 +359,15 @@ public class B_UIManager : MonoBehaviour {
     // 게임 결과 창 뜨게 하기 
     public void Result()
     {
+        if (playerHP > 0)
+        {
+            s_variable.finish2 = true;
+            s_variable.score[1] = playerHP;
+        }
         RemoveCanvas.SetActive(false);
         mode = enemyMode.End;
-        Time.timeScale = 0;
         Result_Screen.SetActive(true);
-    
-        StartCoroutine(ending());
+        StartCoroutine("ending");
     }
     
     // 게임 일시 정지
@@ -392,26 +395,31 @@ public class B_UIManager : MonoBehaviour {
         ThisAudio.clip = buttonClick;
         ThisAudio.Play();
         TimeStop_Screen.SetActive(false);
-        Result_Screen.SetActive(false);
-        GameOver_Screen.SetActive(false);
         Time.timeScale = 1;
-        RemoveCanvas.SetActive(true);
+        if(mode != enemyMode.End)
+            RemoveCanvas.SetActive(true);
     }
 
     // 메인화면으로 가기 (설정창에서 게임 그만 두고 메인 화면으로 돌아갈 때)
     public void Restart()
     {
+        ThisAudio.clip = buttonClick;
+        ThisAudio.Play();
         TimeGo();
-        s_variable.score[1] = 0;
-        SceneManager.LoadScene("4_main");
+        SceneManager.LoadScene(4);
     }
 
     // 결과 화면에서 메인화면으로 가기
     public void Quit()
     {
         TimeGo();
-        if(playerHP > 0) s_variable.finish2 = true;
-        SceneManager.LoadScene("4_main");
+        if (playerHP > 0)
+        {
+            s_variable.finish2 = true;
+            s_variable.score[1] = playerHP;
+        }
+        StopCoroutine("ending");
+            SceneManager.LoadScene(4);
     }
 
     // 앱 종료
@@ -463,6 +471,6 @@ public class B_UIManager : MonoBehaviour {
             }
         }
 
-        SceneManager.LoadScene("4_main");
+        SceneManager.LoadScene(4);
     }
 }
